@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   CContainer,
   CHeader,
@@ -22,7 +22,9 @@ import {
   cilContrast,
   cilSun,
 } from "@coreui/icons";
-import { CIcon } from "@coreui/icons-react";
+import {CIcon} from "@coreui/icons-react";
+import SecureContent from "src/components/SecureContent";
+import AppHeaderDropdown from "src/components/LoggedInHeader";
 
 
 const GoogleIcon = () => (
@@ -52,9 +54,9 @@ const GoogleIcon = () => (
 )
 
 
-const AppHeader = ({ removeMargins = false }) => { // Accept removeMargins prop with a default value of false
+const AppHeader = ({removeMargins = false}) => { // Accept removeMargins prop with a default value of false
   const headerRef = useRef();
-  const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
+  const {colorMode, setColorMode} = useColorModes('coreui-free-react-admin-template-theme');
   const dispatch = useDispatch();
   const sidebarShow = useSelector((state) => state.sidebarShow);
   const [modalVisible, setModalVisible] = useState(false)
@@ -71,10 +73,10 @@ const AppHeader = ({ removeMargins = false }) => { // Accept removeMargins prop 
       {/* Set margin based on the removeMargins prop */}
       <CContainer className="border-bottom px-4" fluid>
         <CHeaderToggler
-          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-          style={{ marginInlineStart: '-14px' }}
+          onClick={() => dispatch({type: 'set', sidebarShow: !sidebarShow})}
+          style={{marginInlineStart: '-14px'}}
         >
-          <CIcon icon={cilMenu} size="lg" />
+          <CIcon icon={cilMenu} size="lg"/>
         </CHeaderToggler>
 
         <CHeaderNav>
@@ -124,7 +126,14 @@ const AppHeader = ({ removeMargins = false }) => { // Accept removeMargins prop 
           <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>
-          <CButton color="primary" onClick={() => setModalVisible(true)}>  <GoogleIcon /> Login</CButton>
+          <SecureContent
+            fallback={
+              <CButton color="primary" href="api/login">
+              <GoogleIcon/>Login </CButton>
+            }
+          >
+            <AppHeaderDropdown/>
+          </SecureContent>
         </CHeaderNav>
       </CContainer>
     </CHeader>

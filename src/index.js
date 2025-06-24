@@ -5,11 +5,14 @@ import 'core-js'
 
 import App from './App'
 import store from './store'
+import {ModalProvider} from "src/api/ModalProvider";
 
 
 createRoot(document.getElementById('root')).render(
 
   <Provider store={store}>
-    <App />
+    <ModalProvider>
+      <App />
+    </ModalProvider>
   </Provider>
 )

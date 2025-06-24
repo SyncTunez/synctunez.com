@@ -14,4 +14,14 @@ const _nav = [
   }
 ]
 
+const _nav2 = [
+  {
+    component: CNavItem,
+    name: 'Home',
+    to: '/home',
+    icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
+  }
+]
+
+
 export default _nav

@@ -2,7 +2,8 @@ import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import {
-  CCloseButton,
+  CButton,
+  CCloseButton, CContainer, CLink, CNavbarBrand,
   CSidebar,
   CSidebarBrand,
   CSidebarFooter,
@@ -18,6 +19,7 @@ import { sygnet } from 'src/assets/brand/sygnet'
 
 // sidebar nav config
 import navigation from '../_nav'
+import {cibSpotify, cibTidal, cibYoutube} from "@coreui/icons";
 
 const AppSidebar = (({ forceUnfoldable = false }) => {
   const dispatch = useDispatch()
@@ -36,16 +38,29 @@ const AppSidebar = (({ forceUnfoldable = false }) => {
       >
         <CSidebarHeader className="border-bottom">
           <CSidebarBrand to="/">
-            <CIcon customClassName="sidebar-brand-full" icon={logo} height={32} />
-            <CIcon customClassName="sidebar-brand-narrow" icon={sygnet} height={32} />
+            <CIcon customClassName="sidebar-brand-full" icon={logo} height={32}/>
+            <CIcon customClassName="sidebar-brand-narrow" icon={sygnet} height={32}/>
           </CSidebarBrand>
           <CCloseButton
             className="d-lg-none"
             dark
-            onClick={() => dispatch({ type: 'set', sidebarShow: false })}
+            onClick={() => dispatch({type: 'set', sidebarShow: false})}
           />
         </CSidebarHeader>
-        <AppSidebarNav items={navigation} />
+        <AppSidebarNav items={navigation}/>
+
+        <hr className="my-1"/>
+        <CSidebarFooter className="pt-3">
+          <CContainer fluid className="text-center">
+            <small>
+              &copy; {new Date().getFullYear()} SyncTunz | <CLink href="/tos" className="ml-2">TOS</CLink>
+            </small>
+            <br />
+            <small>
+
+            </small>
+          </CContainer>
+        </CSidebarFooter>
       </CSidebar>
     </>
   )
