@@ -1,31 +1,46 @@
-import React, { useContext } from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 import {
   CButton,
   CCard,
   CCardBody, CCardFooter, CCardHeader,
-  CCol,
+  CCol, CModal, CModalBody, CModalFooter, CModalHeader,
   CRow, CWidgetStatsF,
 } from "@coreui/react";
 import {
   cibSpotify,
-  cibTidal,
-  cilUserPlus,
-  cilUserX,
+  cibTidal, cilUser
 } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
-import { youtube } from "../../assets/brand/other/youtube";
-import { AppleLogo } from "../../assets/brand/other/apple";
+import { youtube } from "src/assets/brand/other/youtube";
+import { AppleLogo } from "src/assets/brand/other/apple";
 import {UserContext} from "src/api/UserContext";
 import SecureContent from "src/components/SecureContent";
 import FriendsCard from "src/views/dash/impl/FriendsCard";
+import api from 'src/api/apiClient'
 
 const DashboardContent = () => {
   const { userAccount } = useContext(UserContext);
+  const isLinkedSpotify = userAccount?.hasSpotify === true;
+  const [visible, setVisible] = useState(false);
 
-  const url = typeof userAccount?.hasSpotify === "boolean"
-    ? String(userAccount.hasSpotify)
-    : "unknown";
+  const [spotifyName, setSpotifyName] = useState(null);
+  const [spotifyID, setSpotifyID] = useState(null);
+
+  useEffect(() => {
+    if (isLinkedSpotify) {
+      api.authorized.get("spotify/account","json")
+        .then((res) => {
+          if (res.data?.display_name) {
+            setSpotifyName(res.data.display_name);
+            setSpotifyID(res.data.id);
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching Spotify account:", err);
+        });
+    }
+  }, [isLinkedSpotify]);
 
   return (
     <>
@@ -34,16 +49,40 @@ const DashboardContent = () => {
           <CWidgetStatsF
             className="mb-3"
             icon={<CIcon icon={cibSpotify} height={36} style={{ color: '#1DB954' }} />}
-            title="?"
+            title={spotifyName}
             value="Spotify"
             footer={
-              <CButton style={{ width: "100%" }} href={"api/link/spotify/"} color="primary" >
-                Link {url}
-              </CButton>
+              isLinkedSpotify ? (
+                <div className="d-flex gap-2">
+                  <CButton
+                    color="secondary"
+                    style={{ width: "50%" }}
+                    href={`https://open.spotify.com/user/${spotifyID}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <CIcon icon={cilUser} className="me-1" />
+                    Profile
+                  </CButton>
+                  <CButton
+                    color="danger"
+                    style={{ width: "50%" }}
+                    onClick={() => setVisible(true)}
+                  >
+                    Unlink
+                  </CButton>
+                </div>
+              ) : (
+                <CButton
+                  style={{ width: "100%" }}
+                  href={api.buildUrl("link/spotify")}
+                  color="primary"
+                >
+                  Link
+                </CButton>
+              )
             }
-          >
-            <CButton color="link" href="https://spotify.com" >Link</CButton>
-          </CWidgetStatsF>
+          />
         </CCol>
 
         <CCol xs={3}>
@@ -124,6 +163,30 @@ const DashboardContent = () => {
           </CCard>
         </CCol>
       </CRow>
+
+      <CModal visible={visible} onClose={() => setVisible(false)}>
+        <CModalHeader>Are you sure?</CModalHeader>
+        <CModalBody>
+          Do you really want to unlink your Spotify account? You will need to re-link it later if needed.
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setVisible(false)}>Cancel</CButton>
+          <CButton
+            color="danger"
+            onClick={async () => {
+              try {
+                await api.authorized.get("spotify/unlink")
+                window.location.reload() // Refresh the page
+              } catch (error) {
+                console.error("Unlink failed", error)
+              }
+            }}
+          >
+            Unlink
+          </CButton>
+        </CModalFooter>
+      </CModal>
+
     </>
   );
 };

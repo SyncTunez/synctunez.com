@@ -20,7 +20,7 @@ import RegisterModal from "src/components/modals/RegisterModal";
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
 
 const App = () => {
-  const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
+  const { isColorModeSet, setColorMode } = useColorModes('theme')
   const storedTheme = useSelector((state) => state.theme)
   const [showRegisterModal, setShowRegisterModal] = useState(false)
 
