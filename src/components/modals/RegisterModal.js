@@ -10,8 +10,6 @@ import {
   CFormLabel,
 } from '@coreui/react'
 
-import { UserApi } from '../api/Api'
-
 const RegisterModal = ({ visible, onClose }) => {
   const [username, setUsername] = useState('')
   const [error, setError] = useState('')
@@ -26,11 +24,9 @@ const RegisterModal = ({ visible, onClose }) => {
     }
 
     try {
-      const response = await fetch(
-        'api/register?username=' + encodeURIComponent(username),
-        {
-          method: 'POST',
-        },
+      const response = await api.unauthorized.get(
+        api.buildUrl('register', { username }),
+        null
       )
 
       const data = await response.json()

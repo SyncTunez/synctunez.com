@@ -4,6 +4,8 @@ import {
   cilHome,
 } from "@coreui/icons";
 import { CNavItem } from '@coreui/react'
+import {MdDashboard} from "react-icons/md";
+
 
 const _nav = [
   {
@@ -11,15 +13,12 @@ const _nav = [
     name: 'Home',
     to: '/home',
     icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
-  }
-]
-
-const _nav2 = [
+  },
   {
     component: CNavItem,
-    name: 'Home',
-    to: '/home',
-    icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
+    name: 'Dashboard',
+    to: '/dashboard',
+    icon: <MdDashboard/>,
   }
 ]
 

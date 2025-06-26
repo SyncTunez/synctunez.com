@@ -14,7 +14,7 @@ import {
   CFormLabel,
 } from '@coreui/react'
 import './scss/style.scss'
-import RegisterModal from "src/components/RegisterModal";
+import RegisterModal from "src/components/modals/RegisterModal";
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))

@@ -1,6 +1,6 @@
 import AppContent from './AppContent'
-import AppHeader from './AppHeader'
-import AppSidebar from './AppSidebar'
+import AppHeader from './structure/AppHeader'
+import AppSidebar from './structure/AppSidebar'
 
 export {
   AppContent,

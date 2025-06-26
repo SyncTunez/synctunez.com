@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {createContext, useContext} from 'react'
 import {
   CAvatar,
   CBadge,
@@ -21,25 +21,17 @@ import {
   cilUser, cilAccountLogout,
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-import { UserApi } from '../api/Api'
+import {UserContext} from "src/api/UserContext";
+import api from "src/api/apiClient";
 
-const AppHeaderDropdown = () => {
+const ProfileHeaderDropdown = () => {
 
-  const handleLogout = () => {
-    window.location.href = 'http://127.0.0.1:8080/logout'
-  }
-
-  const activeUser = UserApi.getActiveUser();
-  const url = activeUser?.profilePicture
-    ? typeof activeUser.profilePicture === 'string'
-      ? activeUser.profilePicture
-      : activeUser.profilePicture.url ?? ''
-    : '';
+  const { userAccount } = useContext(UserContext);
 
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
-        <CAvatar src={url} size="md" />
+        <CAvatar src={userAccount.profilePicture} size="md" />
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">Account</CDropdownHeader>
@@ -95,7 +87,7 @@ const AppHeaderDropdown = () => {
           </CBadge>
         </CDropdownItem>
         <CDropdownDivider />
-        <CDropdownItem href="api/auth/logout" style={{ cursor: 'pointer' }}>
+        <CDropdownItem href={api.buildUrl('logout')} style={{ cursor: 'pointer' }}>
           <CIcon icon={cilAccountLogout} className="me-2" />
           Logout
         </CDropdownItem>
@@ -104,4 +96,4 @@ const AppHeaderDropdown = () => {
   )
 }
 
-export default AppHeaderDropdown
+export default ProfileHeaderDropdown

@@ -24,8 +24,8 @@ import {
 } from "@coreui/icons";
 import {CIcon} from "@coreui/icons-react";
 import SecureContent from "src/components/SecureContent";
-import AppHeaderDropdown from "src/components/LoggedInHeader";
-
+import ProfileHeaderDropdown from "src/components/structure/LoggedInHeader";
+import api from 'src/api/apiClient'
 
 const GoogleIcon = () => (
   <svg
@@ -126,13 +126,10 @@ const AppHeader = ({removeMargins = false}) => { // Accept removeMargins prop wi
           <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>
-          <SecureContent
-            fallback={
-              <CButton color="primary" href="api/login">
-              <GoogleIcon/>Login </CButton>
-            }
-          >
-            <AppHeaderDropdown/>
+          <SecureContent fallback={<CButton color="primary" href={api.buildUrl('login')}>
+            <GoogleIcon/>Login </CButton>
+          }>
+            <ProfileHeaderDropdown/>
           </SecureContent>
         </CHeaderNav>
       </CContainer>
