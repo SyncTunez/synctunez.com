@@ -1,1 +1,27 @@
 // Here you can add other styles
+
+.CSidebarFooter .btn {
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.CSidebarFooter .btn:hover {
+  background-color: var(--cui-primary) !important;
+  border-color: var(--cui-primary) !important;
+  color: var(--cui-btn-color) !important; /* Ensure text color is readable on hover */
+}
+
+.profile-header-button {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: var(--cui-body-color) !important; /* Adjust text color for better visibility against transparent background */
+}
+
+.profile-header-button:hover {
+  background-color: var(--cui-primary) !important;
+  border-color: var(--cui-primary) !important;
+  color: var(--cui-btn-color) !important; /* Ensure text color is readable on hover */
+}
+
+.profile-header-button:hover .profile-status-text {
+  color: var(--cui-btn-hover-color, #f8f8f8) !important; /* Lighter color on hover, with a fallback */
+}

@@ -14,3 +14,11 @@
 
 // If you want to add custom CSS you can put it here
 @import "custom";
+
+/* Stronger rule to hide dot/caret above avatar in sidebar footer dropdown */
+.CSidebarFooter .dropdown-toggle, .CSidebarFooter .dropdown-toggle::after, .CSidebarFooter .dropdown-toggle::before {
+  background-image: none !important;
+  box-shadow: none !important;
+  content: none !important;
+  display: inline-block;
+}
