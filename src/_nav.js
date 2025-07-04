@@ -19,6 +19,12 @@ const _nav = [
     name: 'Dashboard',
     to: '/dashboard',
     icon: <MdDashboard/>,
+  },
+  {
+    component: CNavItem,
+    name: 'Play',
+    to: '/merge',
+    icon: <MdDashboard/>,
   }
 ]
 

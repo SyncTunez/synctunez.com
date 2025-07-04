@@ -18,14 +18,8 @@ import api from "src/api/apiClient";
 import { MusicTracks } from "src/api/data/MusicTracks";
 import UnlinkModal from "src/views/dash/impl/UnlinkModal";
 import {MusicPlatforms} from "src/api/data/MusicPlatforms";
+import { platformIcons } from "src/api/data/MusicPlatforms";
 import LikedSongsCard from "src/views/dash/impl/LikedSongsCard";
-
-const platformIcons = {
-  [MusicPlatforms.SPOTIFY]: <CIcon icon={cibSpotify} height={36} style={{ color: "#1DB954" }} />,
-  [MusicPlatforms.APPLE_MUSIC]: <AppleLogo />,
-  [MusicPlatforms.YOUTUBE]: <CIcon icon={youtube} height={36} style={{ color: "#FF0000" }} />,
-  [MusicPlatforms.TIDAL]: <CIcon icon={cibTidal} height={36} style={{ color: "#000000" }} />,
-};
 
 const DashboardContent = () => {
   const { userAccount } = useContext(UserContext);
@@ -33,7 +27,7 @@ const DashboardContent = () => {
     [MusicPlatforms.SPOTIFY]: userAccount?.hasSpotify === true,
     [MusicPlatforms.YOUTUBE]: userAccount?.hasYoutube === true,
     [MusicPlatforms.APPLE_MUSIC]: false, // You can add real logic later
-    [MusicPlatforms.TIDAL]: false,
+    [MusicPlatforms.TIDAL]: userAccount?.hasTidal === true
   };
 
   const [spotifyName, setSpotifyName] = useState(null);
