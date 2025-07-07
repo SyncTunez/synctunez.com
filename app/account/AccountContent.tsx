@@ -1,6 +1,6 @@
 "use client";
 
-import React, {Suspense, useEffect, useState} from "react";
+import React, {Suspense, useEffect, useState, useRef} from "react";
 import { UserAvatarProfile } from "@/components/ui/user-avatar-profile";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,7 @@ import { authorized } from '@/lib/api/apiClient';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useSearchParams } from 'next/navigation';
 import { Skeleton } from "@/components/ui/skeleton";
+import {useLiveResourceJson} from "@/hooks/useLiveResource";
 
 const serviceIcons = [
     { key: "hasSpotify", label: "Spotify", icon: <IconBrandSpotify className="text-green-500" /> },
@@ -71,35 +72,17 @@ export default function AccountContent() {
     const [selectedTab, setSelectedTab] = React.useState(tabIndex);
     const [cardsSwapped, setCardsSwapped] = React.useState(false);
 
-    // Spotify ID state
-    const [spotifyAccount, setSpotifyAccount] = useState<SpotifyAccount | null>(null);
-    const [isLoadingSpotify, setIsLoadingSpotify] = useState(false);
-    const [spotifyError, setSpotifyError] = useState(false);
+    const {
+        data: spotifyAccountData,
+        error: spotifyError
+    } = useLiveResourceJson<SpotifyAccount>({
+        fetchUrl: buildUrl('spotify/account'),
+        eventName: 'SpotifyAccount',
+        reconnectIntervalMs: 5000
+    });
+
     const [showUnlinkDialog, setShowUnlinkDialog] = useState(false);
     const [isUnlinking, setIsUnlinking] = useState(false);
-
-    useEffect(() => {
-        const fetchSpotifyAccount = async () => {
-            if (userAccount?.hasSpotify && !spotifyAccount) {
-                setIsLoadingSpotify(true);
-                setSpotifyError(false);
-                try {
-                    const res = await authorized.get('spotify/account');
-                    if (res.status === 200) {
-                        setSpotifyAccount(res.data as SpotifyAccount);
-                    } else {
-                        setSpotifyError(true);
-                    }
-                } catch {
-                    setSpotifyAccount(null);
-                    setSpotifyError(true);
-                } finally {
-                    setIsLoadingSpotify(false);
-                }
-            }
-        };
-        fetchSpotifyAccount();
-    }, [userAccount?.hasSpotify, spotifyAccount]);
 
     async function handleUnlinkSpotify() {
         setIsUnlinking(true);
@@ -168,10 +151,10 @@ export default function AccountContent() {
                                         const spotifyAuthUrl = isSpotify && userAccount && (userAccount as any).profileUrl
                                             ? (userAccount as any).profileUrl
                                             : buildUrl('/link/spotify');
-                                        const spotifyProfileUrl = spotifyAccount?.id ? `https://open.spotify.com/user/${spotifyAccount.id}` : undefined;
+                                        const spotifyProfileUrl = isSpotify && spotifyAccountData ? `https://open.spotify.com/user/${spotifyAccountData.id}` : undefined;
                                         return (
                                             <Card key={service.key} className={`w-full min-w-[180px] min-h-[180px] h-full min-w-0 p-2 relative ${isSpotify ? 'flex flex-col items-center text-center gap-1' : (isConnected ? 'flex flex-row items-center gap-4' : 'flex flex-col items-center text-center gap-1')}`}>
-                                                {(isSpotify && isConnected && (isLoadingSpotify || spotifyError)) ? (
+                                                {(isSpotify && isConnected && (spotifyAccountData === null || spotifyError)) ? (
                                                     <div className="flex flex-col items-center w-full p-4">
                                                         <Skeleton className="w-14 h-14 rounded-full mb-2" />
                                                         <Skeleton className="w-24 h-4 mb-1" />
@@ -215,13 +198,13 @@ export default function AccountContent() {
                                                     </div>
                                                     <CardHeader className="p-0 pb-1 w-full flex flex-col items-center">
                                                         <CardTitle className="text-lg">{service.label}</CardTitle>
-                                                        {isConnected && spotifyAccount?.images && spotifyAccount.images[0]?.url ? (
-                                                            <img src={spotifyAccount.images[0].url} alt="Spotify profile" className="rounded-full w-14 h-14 object-cover my-2 border" />
+                                                        {isConnected && (spotifyAccountData as SpotifyAccount)?.images?.[0]?.url ? (
+                                                            <img src={(spotifyAccountData as SpotifyAccount)?.images?.[0]?.url} alt="Spotify profile" className="rounded-full w-14 h-14 object-cover my-2 border" />
                                                         ) : null}
                                                         <CardDescription>
                                                             {isConnected
-                                                                ? spotifyAccount?.display_name
-                                                                    ? <span>{spotifyAccount.display_name}</span>
+                                                                ? (spotifyAccountData as SpotifyAccount)?.display_name
+                                                                    ? <span>{(spotifyAccountData as SpotifyAccount)?.display_name}</span>
                                                                     : 'Connected'
                                                                 : 'Not Connected'}
                                                         </CardDescription>
