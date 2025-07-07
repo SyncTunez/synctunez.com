@@ -2,10 +2,17 @@ import {
     Sidebar, SidebarContent, SidebarFooter, SidebarGroup,
     SidebarGroupContent, SidebarGroupLabel, SidebarHeader,
     SidebarMenu, SidebarMenuButton, SidebarMenuItem,
-    SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton,
+    SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton, useSidebar, SidebarTrigger, SidebarSeparator
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { IconBrandGoogleFilled, IconChevronRight } from "@tabler/icons-react";
+import {
+    IconBell,
+    IconBrandGoogleFilled,
+    IconChevronRight,
+    IconChevronsDown,
+    IconLogout2,
+    IconUserCircle
+} from "@tabler/icons-react";
 import { AppHeaderContent } from "@/components/sidebar/app-header-content";
 import Link from "next/link";
 import SecureContentWrapper from "@/components/SecureContentWrapper";
@@ -15,8 +22,22 @@ import { NAV_PAGES } from "@/lib/navConfig";
 import {
     Collapsible, CollapsibleContent, CollapsibleTrigger
 } from "@/components/ui/collapsible";
+import {cookies} from "next/headers";
+import {cn} from "@/lib/utils";
+import {RegisterButton} from "@/components/sidebar/RegisterButton";
+import {
+    DropdownMenu,
+    DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import {UserAvatarProfile} from "@/components/ui/user-avatar-profile";
+import React from "react";
+import {SideBarToggle} from "@/components/sidebar/SideBarToggle";
 
 export function AppSidebar() {
+
     const renderNavIcons = (filterAuthed: boolean) =>
         NAV_PAGES
             .filter(item => !filterAuthed || !item.requiresAuth)
@@ -37,10 +58,12 @@ export function AppSidebar() {
                         >
                             <SidebarMenuItem>
                                 <CollapsibleTrigger asChild>
-                                    <SidebarMenuButton tooltip={item.label} className="min-w-8 duration-200 ease-linear">
+                                    <SidebarMenuButton tooltip={item.label}
+                                                       className="min-w-8 duration-200 ease-linear">
                                         {item.icon}
                                         <span>{item.label}</span>
-                                        <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                        <IconChevronRight
+                                            className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"/>
                                     </SidebarMenuButton>
                                 </CollapsibleTrigger>
                                 <CollapsibleContent>
@@ -77,7 +100,7 @@ export function AppSidebar() {
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
-                <AppHeaderContent />
+                <AppHeaderContent/>
             </SidebarHeader>
 
             <SidebarContent>
@@ -95,19 +118,25 @@ export function AppSidebar() {
 
             <SidebarFooter>
                 <SidebarMenu>
-                    <SidebarMenuItem>
+                    <SidebarMenuItem className="py-3 md:py-2">
+                        <DropdownMenu>
+                            <DropdownMenuContent
+                                className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
+                                side='bottom'
+                                align='end'
+                                sideOffset={4}
+                            >
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                         <SecureContentWrapper
                             fallback={
-                                <Button asChild variant="outline" size="sm" className="w-full justify-center">
-                                    <Link href={buildUrl("/login")}>
-                                        <IconBrandGoogleFilled className="mr-2 h-4 w-4" />
-                                        Login
-                                    </Link>
-                                </Button>
+                                <RegisterButton/>
                             }
                         >
-                            <UserAccountDisplay />
+                            <UserAccountDisplay/>
                         </SecureContentWrapper>
+                        <div className="h-3" />
+                        <SideBarToggle/>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>

@@ -139,7 +139,6 @@ export default function AccountContent() {
                 <MobileNavigationMenu selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
                 <Separator/>
 
-                {/* Tabbed Pane */}
                 <div className="flex flex-1 gap-6 mt-4">
                     {/* Vertical Tabs only on larger screens */}
                     <div className="hidden sm:flex flex-col w-40 border-r pr-4">

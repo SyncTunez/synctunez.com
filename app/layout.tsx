@@ -1,6 +1,6 @@
-import Providers from '@/components/layout/providers';
+import Providers from '@/components/layout/Providers';
 import {fontVariables} from '@/lib/font';
-import ThemeProvider from '@/components/layout/ThemeToggle/theme-provider';
+import ThemeProvider from '@/components/layout/theme-provider';
 import {cn} from '@/lib/utils';
 import type {Metadata, Viewport} from 'next';
 import {cookies} from 'next/headers';
@@ -10,8 +10,9 @@ import './globals.css';
 import './theme.css';
 import {Toaster} from "sonner";
 import {RegisterModal} from "@/components/RegisterModal";
-import {SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
+import {SidebarProvider} from "@/components/ui/sidebar";
 import {AppSidebar} from "@/components/sidebar/app-sidebar";
+import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
 
 const META_THEME_COLORS = {
     light: '#ffffff',
@@ -76,7 +77,7 @@ export default async function RootLayout({
                     <Toaster/>
                     <SidebarProvider defaultOpen={defaultOpen}>
                         <AppSidebar/>
-                        <SidebarTrigger/>
+                        <FloatingSidebarTrigger />
                         <div className="w-full m-[10px]">
                             {children}
                         </div>
