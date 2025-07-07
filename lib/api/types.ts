@@ -31,4 +31,11 @@ export class UserAccount {
     this.hasYoutube = hasYoutube
     this.hasTidal = hasTidal
   }
-} 
+}
+
+// Spotify account API response type
+export type SpotifyAccount = {
+  id: string;
+  display_name?: string;
+  images?: { url: string }[];
+}; 

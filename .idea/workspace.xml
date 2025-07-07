@@ -5,65 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9e2dc116-edfb-462b-b863-05ca80e0ae51" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/components/SecureContent.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/SecureContentWrapper.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/sidebar/app-header-content.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/sidebar/app-sidebar.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/theme-provider.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/ui/themetoggle.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/ui/user-avatar-profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.browserslistrc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.editorconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.eslintrc.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.prettierignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.prettierrc.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vite/deps_temp_8e0776bb/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/electron.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/global-error.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/not-found.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/theme.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/layout/Providers.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/layout/ThemeToggle/theme-provider.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/layout/ThemeToggle/theme-toggle.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/layout/page-container.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/ui/heading.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/font.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/theme-provider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/active-theme.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/api/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/api/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/favicon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/_nav.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/ModalProvider.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/UserContext.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/apiClient.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/data/MusicPlatforms.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/data/MusicTracks.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/data/UserAccount.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/brand/logo.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/brand/other/apple.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/brand/other/youtube.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/brand/sygnet.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/AppContent.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/SecureContent.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/index.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/modals/RegisterModal.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/structure/AppHeader.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/structure/AppSidebar.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/structure/AppSidebarNav.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/structure/LoggedInHeader.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/layout/DefaultLayout.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scss/_custom.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scss/_theme.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scss/_variables.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scss/examples.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scss/style.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scss/vendors/simplebar.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/store.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/Landing.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/PlaylistMergePage.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/RegisterPage.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/dash/Dashboard.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/dash/impl/FriendsCard.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/dash/impl/LikedSongsCard.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/dash/impl/UnlinkModal.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vite.config.mjs" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,30 +41,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "d",
-    "jsx.switch.disabled": "true",
-    "last_opened_file_path": "C:/Users/Home/Desktop/corona-react-free-admin-template-main/template/demo_1",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.standard": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.standard": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_interpreter_path": "node",
-    "nodejs_package_manager_path": "npm",
-    "npm.build.executor": "Run",
-    "npm.dev.executor": "Run",
-    "npm.lint.executor": "Run",
-    "npm.npm start.executor": "Run",
-    "npm.serve.executor": "Run",
-    "ts.external.directory.path": "E:\\Programming\\synctunez\\synctunez.com\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;d&quot;,
+    &quot;jsx.switch.disabled&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Home/Desktop/corona-react-free-admin-template-main/template/demo_1&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
+    &quot;npm.lint.executor&quot;: &quot;Run&quot;,
+    &quot;npm.npm start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.serve.executor&quot;: &quot;Run&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;E:\\Programming\\synctunez\\synctunez.com\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\Programming\synctunez\synctunez.com\src\api\data" />
