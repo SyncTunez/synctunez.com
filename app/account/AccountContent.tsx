@@ -1,67 +1,20 @@
 "use client";
 
-import React, {Suspense, useEffect, useState, useRef} from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { UserAvatarProfile } from "@/components/ui/user-avatar-profile";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import {
-    IconBrandSpotify,
-    IconBrandApple,
-    IconBrandYoutube,
-    IconBrandTidal,
-    IconEdit,
-    IconPlus,
-    IconUnlink
-} from "@tabler/icons-react";
-import {
-    Card,
-    CardAction,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
 import { UserContext, UserContextType } from "@/components/auth/UserContext";
 import { Heading } from '@/components/ui/heading';
 import PageContainer from "@/components/layout/page-container";
-import { buildUrl } from '@/lib/api/apiClient';
-import type { SpotifyAccount } from '@/lib/api/types';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { authorized } from '@/lib/api/apiClient';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { buildUrl, authorized } from '@/lib/api/apiClient';
+import type { SpotifyAccount, SpotifyTrack, SpotifyPlaylist } from '@/lib/api/types';
+import { useLiveResourceJson } from "@/hooks/useLiveResource";
+import { ServiceCard, serviceIcons } from "@/components/ui/service-card";
+import { MobileNavigationMenu } from "@/components/ui/mobile-navigation-menu";
+import { SpotifyPlaylistSection } from "@/components/ui/spotify-playlist-section";
+import { FriendsCard } from "@/components/ui/friends-card";
 import { useSearchParams } from 'next/navigation';
-import { Skeleton } from "@/components/ui/skeleton";
-import {useLiveResourceJson} from "@/hooks/useLiveResource";
-
-const serviceIcons = [
-    { key: "hasSpotify", label: "Spotify", icon: <IconBrandSpotify className="text-green-500" /> },
-    { key: "hasApple", label: "Apple Music", icon: <IconBrandApple className="text-gray-500" /> },
-    { key: "hasYoutube", label: "YouTube", icon: <IconBrandYoutube className="text-red-500" /> },
-    { key: "hasTidal", label: "Tidal", icon: <IconBrandTidal className="text-blue-500" /> },
-];
-
-// NavigationMenu for mobile
-function MobileNavigationMenu({ selectedTab, setSelectedTab }: { selectedTab: number, setSelectedTab: (tab: number) => void }) {
-    return (
-        <nav className="sm:hidden w-full flex justify-center mb-4">
-            <div className="flex rounded-lg border bg-card shadow-sm overflow-hidden">
-                <button
-                    className={`px-4 py-2 text-sm font-medium transition-colors ${selectedTab === 0 ? 'bg-accent text-accent-foreground' : 'hover:bg-muted text-muted-foreground'}`}
-                    onClick={() => setSelectedTab(0)}
-                >
-                    Overview
-                </button>
-                <button
-                    className={`px-4 py-2 text-sm font-medium transition-colors ${selectedTab === 1 ? 'bg-accent text-accent-foreground' : 'hover:bg-muted text-muted-foreground'}`}
-                    onClick={() => setSelectedTab(1)}
-                >
-                    Billing
-                </button>
-            </div>
-        </nav>
-    );
-}
+import {CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "cmdk";
 
 export default function AccountContent() {
     const userContext = React.useContext(UserContext) as UserContextType | null;
@@ -69,8 +22,10 @@ export default function AccountContent() {
     const searchParams = useSearchParams();
     const tabParam = searchParams.get('tab');
     const tabIndex = tabParam === 'billing' ? 1 : 0;
-    const [selectedTab, setSelectedTab] = React.useState(tabIndex);
-    const [cardsSwapped, setCardsSwapped] = React.useState(false);
+    const [selectedTab, setSelectedTab] = React.useState<number>(tabIndex);
+    const [playlists, setPlaylists] = useState<SpotifyPlaylist[]>([]);
+    const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
+    const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | undefined>(undefined);
 
     const {
         data: spotifyAccountData,
@@ -79,33 +34,54 @@ export default function AccountContent() {
         fetchUrl: buildUrl('spotify/account'),
         eventName: 'SpotifyAccount',
         reconnectIntervalMs: 5000
+    }) as { data: SpotifyAccount | null, error: any };
+
+    const {
+        data: spotifyPlayLists,
+        error: spotifyPlaylistError
+    } = useLiveResourceJson<SpotifyPlaylist>({
+        fetchUrl: buildUrl('spotify/playlists'),
+        eventName: 'SpotifyPlaylist',
+        reconnectIntervalMs: 5000,
+        onMessage: (data, event) => {
+            setPlaylists((prev: SpotifyPlaylist[]): SpotifyPlaylist[] => {
+                const exists = prev.some(p => p.id === data.id);
+                return exists ? prev : [...prev, data];
+            });
+        }
     });
 
-    const [showUnlinkDialog, setShowUnlinkDialog] = useState(false);
-    const [isUnlinking, setIsUnlinking] = useState(false);
-
-    async function handleUnlinkSpotify() {
-        setIsUnlinking(true);
-        try {
-            const endpoint = `spotify/unlink`;
-            await authorized.get(endpoint);
-        } catch {
-            // Optionally show error
-        } finally {
-            setShowUnlinkDialog(false);
-            setIsUnlinking(false);
-            window.location.reload();
+    const {
+        data: spotifyTracks,
+        error: spotifyTracksError
+    } = useLiveResourceJson<SpotifyTrack>({
+        fetchUrl: selectedPlaylistId ? buildUrl(`spotify/tracks?id=${selectedPlaylistId}`) : '',
+        eventName: 'SpotifyPlaylistTracks',
+        reconnectIntervalMs: 5000,
+        onMessage: (data, event) => {
+            setTracks((prev: SpotifyTrack[]): SpotifyTrack[] => {
+                const exists = prev.some(p => p.id === data.id);
+                return exists ? prev : [...prev, data.track];
+            });
         }
-    }
+    });
+
+    useEffect(() => {
+        setTracks([]);
+    }, [selectedPlaylistId]);
 
     // Keep selectedTab in sync with tab param
     React.useEffect(() => {
         setSelectedTab(tabIndex);
     }, [tabIndex]);
 
+    async function handleUnlinkSpotify() {
+        const endpoint = `spotify/unlink`;
+        await authorized.get(endpoint);
+    }
+
     return (
         <PageContainer scrollable={false}>
-
             <div className='flex flex-1 flex-col space-y-4'>
                 {/* Show header row only on larger screens */}
                 <div className="hidden sm:flex items-center gap-4 w-full">
@@ -118,7 +94,7 @@ export default function AccountContent() {
                         description='Account'
                     />
                 </div>
-                {/* Show mobile navigation menu only on small screens */}
+
                 <MobileNavigationMenu selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
                 <Separator/>
 
@@ -146,172 +122,40 @@ export default function AccountContent() {
                                 <div className="grid gap-4 mb-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[1fr] grid-flow-row min-w-0 overflow-x-auto">
                                     {serviceIcons.map(service => {
                                         const isConnected = userAccount ? (userAccount as any)[service.key] : false;
-                                        // For Spotify, use profileUrl as auth URL for Link button
-                                        const isSpotify = service.key === 'hasSpotify';
-                                        const spotifyAuthUrl = isSpotify && userAccount && (userAccount as any).profileUrl
-                                            ? (userAccount as any).profileUrl
-                                            : buildUrl('/link/spotify');
-                                        const spotifyProfileUrl = isSpotify && spotifyAccountData ? `https://open.spotify.com/user/${spotifyAccountData.id}` : undefined;
                                         return (
-                                            <Card key={service.key} className={`w-full min-w-[180px] min-h-[180px] h-full min-w-0 p-2 relative ${isSpotify ? 'flex flex-col items-center text-center gap-1' : (isConnected ? 'flex flex-row items-center gap-4' : 'flex flex-col items-center text-center gap-1')}`}>
-                                                {(isSpotify && isConnected && (spotifyAccountData === null || spotifyError)) ? (
-                                                    <div className="flex flex-col items-center w-full p-4">
-                                                        <Skeleton className="w-14 h-14 rounded-full mb-2" />
-                                                        <Skeleton className="w-24 h-4 mb-1" />
-                                                        <Skeleton className="w-16 h-3" />
-                                                    </div>
-                                                ) : (
-                                                <>
-                                                {isSpotify && isConnected && (
-                                                    <>
-                                                        <Tooltip>
-                                                            <TooltipTrigger asChild>
-                                                                <button className="absolute top-2 right-2 text-muted-foreground hover:text-destructive" onClick={() => setShowUnlinkDialog(true)}>
-                                                                    <IconUnlink size={20} />
-                                                                </button>
-                                                            </TooltipTrigger>
-                                                            <TooltipContent side="left" align="center">
-                                                                Unlink your Spotify account
-                                                            </TooltipContent>
-                                                        </Tooltip>
-                                                        <Dialog open={showUnlinkDialog} onOpenChange={setShowUnlinkDialog}>
-                                                            <DialogContent>
-                                                                <DialogHeader>
-                                                                    <DialogTitle>Unlink Spotify?</DialogTitle>
-                                                                    <DialogDescription>
-                                                                        Are you sure you want to unlink your Spotify account? This cannot be undone.
-                                                                    </DialogDescription>
-                                                                </DialogHeader>
-                                                                <div className="flex gap-4 mt-4">
-                                                                    <Button variant="outline" onClick={() => setShowUnlinkDialog(false)} disabled={isUnlinking}>Cancel</Button>
-                                                                    <Button variant="destructive" onClick={handleUnlinkSpotify} disabled={isUnlinking}>
-                                                                        {isUnlinking ? 'Unlinking...' : 'Unlink'}
-                                                                    </Button>
-                                                                </div>
-                                                            </DialogContent>
-                                                        </Dialog>
-                                                    </>
-                                                )}
-                                                <div className="flex flex-col items-center w-full">
-                                                    <div className="flex items-center justify-center h-10 w-10 mx-auto">
-                                                        {service.icon}
-                                                    </div>
-                                                    <CardHeader className="p-0 pb-1 w-full flex flex-col items-center">
-                                                        <CardTitle className="text-lg">{service.label}</CardTitle>
-                                                        {isConnected && (spotifyAccountData as SpotifyAccount)?.images?.[0]?.url ? (
-                                                            <img src={(spotifyAccountData as SpotifyAccount)?.images?.[0]?.url} alt="Spotify profile" className="rounded-full w-14 h-14 object-cover my-2 border" />
-                                                        ) : null}
-                                                        <CardDescription>
-                                                            {isConnected
-                                                                ? (spotifyAccountData as SpotifyAccount)?.display_name
-                                                                    ? <span>{(spotifyAccountData as SpotifyAccount)?.display_name}</span>
-                                                                    : 'Connected'
-                                                                : 'Not Connected'}
-                                                        </CardDescription>
-                                                    </CardHeader>
-                                                    <CardContent className={`p-0 pt-1 break-words w-full ${isSpotify && isConnected ? '' : (isConnected ? 'flex gap-2' : 'flex flex-col items-center w-full')}`}>
-                                                        {isSpotify ? (
-                                                            isConnected ? (
-                                                                spotifyProfileUrl ? (
-                                                                    <Button asChild size="sm" variant="secondary" className="w-full">
-                                                                        <a href={spotifyProfileUrl} target="_blank" rel="noopener noreferrer">View Profile</a>
-                                                                    </Button>
-                                                                ) : null
-                                                            ) : (
-                                                                <Button asChild size="sm" className="w-full">
-                                                                    <a href={spotifyAuthUrl}>Link</a>
-                                                                </Button>
-                                                            )
-                                                        ) : (
-                                                            isConnected ? (
-                                                                <>
-                                                                    <Button size="sm" variant="outline">Unlink</Button>
-                                                                    <Button size="sm" variant="secondary">View Profile</Button>
-                                                                </>
-                                                            ) : (
-                                                                <Button size="sm" className="w-full">Link</Button>
-                                                            )
-                                                        )}
-                                                    </CardContent>
-                                                </div>
-                                                </>) /* end else for skeleton */}
-                                            </Card>
+                                            <ServiceCard
+                                                key={service.key}
+                                                service={service}
+                                                isConnected={isConnected}
+                                                userAccount={userAccount}
+                                                spotifyAccountData={spotifyAccountData}
+                                                spotifyError={spotifyError}
+                                                onUnlink={handleUnlinkSpotify}
+                                            />
                                         );
                                     })}
                                 </div>
-                                {/* Friends/Playlists cards: stack on mobile, row on larger screens */}
-                                <div className="flex flex-col gap-4 w-full sm:flex-row">
-                                    <Card className="w-full sm:w-1/3 min-w-[180px] flex flex-col">
-                                        <CardHeader>
-                                            <CardTitle>Friends</CardTitle>
-                                            <CardDescription>Your friends on SyncTunez</CardDescription>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p>Friends list goes here.</p>
-                                        </CardContent>
-                                    </Card>
-                                    <Card className="w-full sm:w-2/3 min-w-[240px] flex flex-col">
-                                        <CardHeader>
-                                            <CardTitle>Playlists</CardTitle>
-                                            <CardDescription>Your playlists</CardDescription>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p>Playlist content goes here.</p>
-                                        </CardContent>
-                                    </Card>
+
+                                <div className="flex flex-col gap-4 w-full sm:flex-row h-[600px]">
+                                    <div className="w-full h-full sm:w-80">
+                                        <FriendsCard />
+                                    </div>
+                                    {userAccount?.hasSpotify && (
+                                        <div className="flex-1 h-full min-w-0">
+                                            <SpotifyPlaylistSection
+                                                playlists={playlists}
+                                                tracks={tracks}
+                                                selectedPlaylistId={selectedPlaylistId}
+                                                onPlaylistSelect={setSelectedPlaylistId}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             </>
                         )}
                         {selectedTab === 1 && (
-                            <div className="flex flex-col gap-4 w-full">
-                                <div className="flex justify-end mb-2">
-                                    <Button size="sm" variant="outline" onClick={() => setCardsSwapped(s => !s)}>Swap Cards</Button>
-                                </div>
-                                <div className="flex gap-4 w-full">
-                                    {cardsSwapped ? (
-                                        <>
-                                            <Card className="w-1/3 min-w-[180px] flex flex-col">
-                                                <CardHeader>
-                                                    <CardTitle>Friends</CardTitle>
-                                                    <CardDescription>Your friends on SyncTunez</CardDescription>
-                                                </CardHeader>
-                                                <CardContent>
-                                                    <p>Friends list goes here.</p>
-                                                </CardContent>
-                                            </Card>
-                                            <Card className="w-2/3 min-w-[240px] flex flex-col">
-                                                <CardHeader>
-                                                    <CardTitle>Playlists</CardTitle>
-                                                    <CardDescription>Your playlists</CardDescription>
-                                                </CardHeader>
-                                                <CardContent>
-                                                    <p>Playlist content goes here.</p>
-                                                </CardContent>
-                                            </Card>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Card className="w-2/3 min-w-[240px] flex flex-col">
-                                                <CardHeader>
-                                                    <CardTitle>Playlists</CardTitle>
-                                                    <CardDescription>Your playlists</CardDescription>
-                                                </CardHeader>
-                                                <CardContent>
-                                                    <p>Playlist content goes here.</p>
-                                                </CardContent>
-                                            </Card>
-                                            <Card className="w-1/3 min-w-[180px] flex flex-col">
-                                                <CardHeader>
-                                                    <CardTitle>Friends</CardTitle>
-                                                    <CardDescription>Your friends on SyncTunez</CardDescription>
-                                                </CardHeader>
-                                                <CardContent>
-                                                    <p>Friends list goes here.</p>
-                                                </CardContent>
-                                            </Card>
-                                        </>
-                                    )}
-                                </div>
+                            <div className="text-center text-muted-foreground">
+                                Billing features coming soon
                             </div>
                         )}
                     </div>

@@ -36,6 +36,46 @@ export class UserAccount {
 // Spotify account API response type
 export type SpotifyAccount = {
   id: string;
-  display_name?: string;
+  displayName?: string;
   images?: { url: string }[];
-}; 
+};
+
+export type SpotifyPlaylist = {
+  id: string;
+  name?: string;
+  description?: string;
+  images?: ApiImage[];
+  tracks: {
+    total: number;
+  };
+};
+
+export type SpotifyTrack = {
+  id: string;
+  album: SpotifyAlbum;
+  artists: SpotifyArtist[];
+  durationMs: number;
+  explicit: boolean;
+  name: string;
+  track_number: number;
+}
+
+export type SpotifyAlbum = {
+  id: string;
+  total_tracks: number;
+  images: ApiImage[];
+  name: string;
+  release_date: string; // releaseDate in Kotlin
+  artists: SpotifyArtist[];
+}
+
+export type SpotifyArtist = {
+  id: string;
+  name: string;
+}
+
+export type ApiImage = {
+  url?: string;
+  height?: number;
+  width?: number;
+};

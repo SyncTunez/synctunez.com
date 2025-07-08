@@ -63,7 +63,7 @@ export function useLiveResource<T = any>({
   }, [fetchUrl, onFail]);
 
   useSSE<any>(
-    'http://localhost:8080/spotify/queue/events',
+    `http://localhost:8080/spotify/queue/events/${eventName}`,
     eventName,
     (newData, event) => {
       if (responseType === 'raw') {
