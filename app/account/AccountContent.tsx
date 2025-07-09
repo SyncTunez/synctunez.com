@@ -81,8 +81,8 @@ export default function AccountContent() {
     }
 
     return (
-        <PageContainer scrollable={false}>
-            <div className='flex flex-1 flex-col space-y-4'>
+        <PageContainer>
+            <div className='flex flex-1 flex-col space-y-4 px-2 sm:px-4'>
                 {/* Show header row only on larger screens */}
                 <div className="hidden sm:flex items-center gap-4 w-full">
                     <UserAvatarProfile
@@ -98,9 +98,9 @@ export default function AccountContent() {
                 <MobileNavigationMenu selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
                 <Separator/>
 
-                <div className="flex flex-1 gap-6 mt-4">
+                <div className="flex flex-1 flex-col gap-4 mt-4 sm:flex-row sm:gap-6">
                     {/* Vertical Tabs only on larger screens */}
-                    <div className="hidden sm:flex flex-col w-40 border-r pr-4">
+                    <div className="hidden sm:flex flex-col w-40 border-r pr-4 flex-shrink-0">
                         <button
                             className={`py-2 px-4 text-left rounded-lg mb-2 transition-colors ${selectedTab === 0 ? 'bg-muted font-semibold' : 'hover:bg-accent'}`}
                             onClick={() => setSelectedTab(0)}
@@ -115,11 +115,11 @@ export default function AccountContent() {
                         </button>
                     </div>
                     {/* Tab Content */}
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                         {selectedTab === 0 && (
                             <>
                                 {/* Service cards: responsive grid */}
-                                <div className="grid gap-4 mb-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[1fr] grid-flow-row min-w-0 overflow-x-auto">
+                                <div className="grid gap-4 mb-6 grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 auto-rows-[1fr] grid-flow-row min-w-0 overflow-x-auto">
                                     {serviceIcons.map(service => {
                                         const isConnected = userAccount ? (userAccount as any)[service.key] : false;
                                         return (
@@ -136,12 +136,12 @@ export default function AccountContent() {
                                     })}
                                 </div>
 
-                                <div className="flex flex-col gap-4 w-full sm:flex-row h-[600px]">
-                                    <div className="w-full h-full sm:w-80">
-                                        <FriendsCard />
+                                <div className="flex flex-col gap-4 w-full sm:flex-row sm:gap-4 h-auto min-h-0">
+                                    <div className="w-full sm:w-80 flex flex-col mb-4 sm:mb-0 sm:h-auto sm:min-h-0">
+                                        <FriendsCard forceFullHeight />
                                     </div>
                                     {userAccount?.hasSpotify && (
-                                        <div className="flex-1 h-full min-w-0">
+                                        <div className="flex-1 h-auto min-w-0 flex flex-col overflow-x-auto">
                                             <SpotifyPlaylistSection
                                                 playlists={playlists}
                                                 tracks={tracks}

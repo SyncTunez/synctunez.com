@@ -1,4 +1,5 @@
 import Providers from '@/components/layout/Providers';
+import ClientToaster from '@/components/ClientToaster';
 import {fontVariables} from '@/lib/font';
 import ThemeProvider from '@/components/layout/theme-provider';
 import {cn} from '@/lib/utils';
@@ -75,7 +76,7 @@ export default async function RootLayout({
                 enableColorScheme
             >
                 <Providers activeThemeValue={activeThemeValue as string}>
-                    <Toaster/>
+                    <ClientToaster />
                     <SidebarProvider defaultOpen={defaultOpen}>
                         <AppSidebar/>
                         <FloatingSidebarTrigger />

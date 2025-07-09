@@ -5,20 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9e2dc116-edfb-462b-b863-05ca80e0ae51" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/global-error.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/not-found.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/theme.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/layout/Providers.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/layout/ThemeToggle/theme-provider.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/layout/ThemeToggle/theme-toggle.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/layout/page-container.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/ui/heading.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/font.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/account/AccountContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/account/AccountContent.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/theme-provider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/active-theme.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/api/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/api/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/layout/Providers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/layout/Providers.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/sidebar/app-header-content.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/sidebar/app-header-content.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/sidebar/app-sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/sidebar/app-sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/friends-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/friends-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/spotify-playlist-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/spotify-playlist-section.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/themetoggle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/themetoggle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/user-avatar-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/user-avatar-profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hooks/useLiveResource.ts" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useLiveResource.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
@@ -45,7 +42,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "d",
+    "git-widget-placeholder": "main",
     "jsx.switch.disabled": "true",
     "last_opened_file_path": "E:/Programming/synctunez/synctunez.com/components/sidebar",
     "node.js.detected.package.eslint": "true",
@@ -162,6 +159,7 @@
       <workItem from="1751662887557" duration="3769000" />
       <workItem from="1751763532153" duration="56000" />
       <workItem from="1751766918941" duration="21376000" />
+      <workItem from="1751992488277" duration="4205000" />
     </task>
     <servers />
   </component>

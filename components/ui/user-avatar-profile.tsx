@@ -1,4 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
+import React, { useState } from 'react';
 
 export interface UserAccountProps {
   className?: string;
@@ -18,13 +20,27 @@ export function UserAvatarProfile({
                                        username,
                                        profilePicture,
                                    }: UserAccountProps) {
+    const [isLoading, setIsLoading] = useState(!!profilePicture);
+    const showSkeleton = isLoading && !!profilePicture;
+    const showFallback = !profilePicture && !isLoading;
     return (
         <div className='flex items-center gap-2'>
             <Avatar className={className}>
-                <AvatarImage src={profilePicture || ''} alt={username || ''} />
-                <AvatarFallback className='rounded-lg'>
-                    {username?.slice(0, 2)?.toUpperCase() || 'CN'}
-                </AvatarFallback>
+                <AvatarImage
+                    src={profilePicture || ''}
+                    alt={username || ''}
+                    style={showSkeleton ? { display: 'none' } : {}}
+                    onLoad={() => setIsLoading(false)}
+                    onError={() => setIsLoading(false)}
+                />
+                {showSkeleton && (
+                    <Skeleton className="h-full w-full rounded-lg absolute" />
+                )}
+                {showFallback && (
+                    <AvatarFallback className='rounded-lg'>
+                        {username?.slice(0, 2)?.toUpperCase() || 'CN'}
+                    </AvatarFallback>
+                )}
             </Avatar>
 
             {showInfo && (

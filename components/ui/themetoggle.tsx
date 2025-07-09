@@ -1,6 +1,6 @@
 'use client';
 
-import { IconBrightness } from '@tabler/icons-react';
+import { IconBrightness, IconSun, IconMoon } from '@tabler/icons-react';
 import { useTheme } from 'next-themes';
 import * as React from 'react';
 
@@ -90,7 +90,7 @@ export function ModeToggle() {
                     className='group/toggle size-8'
                     onClick={handleThemeToggle}
                 >
-                    <IconBrightness />
+                    {resolvedTheme === 'dark' ? <IconSun /> : <IconMoon />}
                     <span className='sr-only'>Toggle theme</span>
                 </Button>
             </ContextMenuTrigger>
