@@ -15,6 +15,12 @@ interface UseLiveResourceOptions<T = any> {
   onFail?: (errorMessage: string) => void;
   onMessage?: (data: T, event: MessageEvent) => void;
   responseType?: 'json' | 'raw';
+  /**
+   * If false, the hook will skip the initial fetch and SSE subscription.
+   * Useful when you always want to pass the same URLs but only sometimes
+   * activate the live resource logic.
+   */
+  shouldProcess?: boolean;
 }
 
 export function useLiveResourceJson<T>(options: Omit<Parameters<typeof useLiveResource<T>>[0], 'responseType'>) {
@@ -32,16 +38,24 @@ export function useLiveResource<T = any>({
   onFail,
   onMessage,
   responseType = 'json',
+  shouldProcess = true,
 }: UseLiveResourceOptions<T>) {
   const [data, setData] = useState<T | RawSSEEvent | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch initial data
+  // Fetch initial data (only if a fetchUrl is provided)
   React.useEffect(() => {
+    if (!shouldProcess || !fetchUrl) {
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
     setLoading(true);
     setError(null);
+    console.log(fetchUrl);
+
     fetch(fetchUrl)
       .then(async (res) => {
         if (!res.ok) {
@@ -57,14 +71,18 @@ export function useLiveResource<T = any>({
           if (onFail) onFail(errorMsg);
         }
       });
+
     return () => {
       cancelled = true;
     };
-  }, [fetchUrl, onFail]);
+  }, [fetchUrl, onFail, shouldProcess]);
+
+  // Construct SSE URL only when eventName is provided
+  const eventUrl = shouldProcess && eventName ? `http://localhost:8080/events/${eventName}` : '';
 
   useSSE<any>(
-    `http://localhost:8080/events/${eventName}`,
-    eventName,
+    eventUrl,
+    shouldProcess ? eventName : null,
     (newData, event) => {
       if (responseType === 'raw') {
         // Try to extract id/event/data from the event

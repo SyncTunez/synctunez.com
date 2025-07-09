@@ -11,7 +11,7 @@ import type { SpotifyAccount, SpotifyTrack, SpotifyPlaylist } from '@/lib/api/ty
 import { useLiveResourceJson } from "@/hooks/useLiveResource";
 import { ServiceCard, serviceIcons } from "@/components/ui/service-card";
 import { MobileNavigationMenu } from "@/components/ui/mobile-navigation-menu";
-import { SpotifyPlaylistSection } from "@/components/ui/spotify-playlist-section";
+import { PlaylistSection } from "@/components/ui/playlist/playlist-section";
 import { FriendsCard } from "@/components/ui/friends-card";
 import { useSearchParams } from 'next/navigation';
 import {CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "cmdk";
@@ -23,9 +23,9 @@ export default function AccountContent() {
     const tabParam = searchParams.get('tab');
     const tabIndex = tabParam === 'billing' ? 1 : 0;
     const [selectedTab, setSelectedTab] = React.useState<number>(tabIndex);
-    const [playlists, setPlaylists] = useState<SpotifyPlaylist[]>([]);
-    const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
-    const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | undefined>(undefined);
+    const [selectedPlaylistId, setSelectedPlaylistId] = useState<number | undefined>(undefined);
+
+    const hasSpotify = !!userAccount?.hasSpotify;
 
     const {
         data: spotifyAccountData,
@@ -33,44 +33,42 @@ export default function AccountContent() {
     } = useLiveResourceJson<SpotifyAccount>({
         fetchUrl: buildUrl('spotify/account'),
         eventName: 'SpotifyAccount',
-        reconnectIntervalMs: 5000
+        reconnectIntervalMs: 5000,
+        shouldProcess: hasSpotify,
     }) as { data: SpotifyAccount | null, error: any };
 
     const {
-        data: spotifyPlayLists,
-        error: spotifyPlaylistError
+        data: rawPlaylists,
+        error: musicPlaylistError
     } = useLiveResourceJson<SpotifyPlaylist>({
-        fetchUrl: buildUrl('spotify/playlists'),
-        eventName: 'SpotifyPlaylist',
+        fetchUrl: buildUrl('music/playlists'),
+        eventName: 'ImportedPlaylists',
         reconnectIntervalMs: 5000,
-        onMessage: (data, event) => {
-            setPlaylists((prev: SpotifyPlaylist[]): SpotifyPlaylist[] => {
-                const exists = prev.some(p => p.id === data.id);
-                return exists ? prev : [...prev, data];
-            });
-        }
+        shouldProcess: hasSpotify,
     });
+
+    const playlistsLoading = rawPlaylists === undefined;
+
+    const playlists: SpotifyPlaylist[] = Array.isArray(rawPlaylists)
+        ? rawPlaylists
+        : rawPlaylists && typeof rawPlaylists === 'object' && 'id' in rawPlaylists
+            ? [rawPlaylists as SpotifyPlaylist]
+            : [];
 
     const {
-        data: spotifyTracks,
+        data: rawSpotifyTracks,
         error: spotifyTracksError
     } = useLiveResourceJson<SpotifyTrack>({
-        fetchUrl: selectedPlaylistId ? buildUrl(`spotify/tracks?id=${selectedPlaylistId}`) : '',
-        eventName: 'SpotifyPlaylistTracks',
+        fetchUrl: selectedPlaylistId !== undefined ? buildUrl(`music/playlists/tracks?id=${selectedPlaylistId}`) : '',
+        eventName: 'ImportedPlaylistTracks',
         reconnectIntervalMs: 5000,
-        onMessage: (data, event) => {
-            setTracks((prev: SpotifyTrack[]): SpotifyTrack[] => {
-                const exists = prev.some(p => p.id === data.id);
-                return exists ? prev : [...prev, data.track];
-            });
-        }
+        shouldProcess: selectedPlaylistId !== undefined,
     });
 
-    useEffect(() => {
-        setTracks([]);
-    }, [selectedPlaylistId]);
+    const tracks: SpotifyTrack[] = Array.isArray(rawSpotifyTracks)
+        ? rawSpotifyTracks.map((entry: any) => entry.track || entry)
+        : [];
 
-    // Keep selectedTab in sync with tab param
     React.useEffect(() => {
         setSelectedTab(tabIndex);
     }, [tabIndex]);
@@ -142,11 +140,12 @@ export default function AccountContent() {
                                     </div>
                                     {userAccount?.hasSpotify && (
                                         <div className="flex-1 h-auto min-w-0 flex flex-col overflow-x-auto">
-                                            <SpotifyPlaylistSection
-                                                playlists={playlists}
-                                                tracks={tracks}
-                                                selectedPlaylistId={selectedPlaylistId}
-                                                onPlaylistSelect={setSelectedPlaylistId}
+                                           <PlaylistSection
+                                                mainPlaylists={playlists}
+                                                mainTracks={tracks}
+                                                mainPlaylistsLoading={playlistsLoading}
+                                                selectedMainPlaylistId={selectedPlaylistId}
+                                                onMainPlaylistSelect={setSelectedPlaylistId}
                                             />
                                         </div>
                                     )}

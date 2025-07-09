@@ -13,6 +13,11 @@ export function useSSE<T = any>(
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    // Do not attempt to connect if no url was provided
+    if (!url) {
+      return;
+    }
+
     let isMounted = true;
     function connect() {
       if (!isMounted) return;
@@ -32,9 +37,10 @@ export function useSSE<T = any>(
       };
 
       if (eventName) {
-        eventSource.addEventListener(eventName, handler as EventListener);
+        // Cast to any to satisfy EventSource typings for custom event names
+        eventSource.addEventListener(eventName as any, handler as any);
       } else {
-        eventSource.onmessage = handler;
+        eventSource.onmessage = handler as any;
       }
 
       eventSource.onerror = (err) => {

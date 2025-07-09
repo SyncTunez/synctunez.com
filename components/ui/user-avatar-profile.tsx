@@ -23,6 +23,17 @@ export function UserAvatarProfile({
     const [isLoading, setIsLoading] = useState(!!profilePicture);
     const showSkeleton = isLoading && !!profilePicture;
     const showFallback = !profilePicture && !isLoading;
+
+    // Add timeout fallback for loading profile picture
+    React.useEffect(() => {
+        if (!profilePicture) return;
+        setIsLoading(true);
+        const timeout = setTimeout(() => {
+            setIsLoading(false);
+        }, 3000); // 3 seconds
+        return () => clearTimeout(timeout);
+    }, [profilePicture]);
+
     return (
         <div className='flex items-center gap-2'>
             <Avatar className={className}>
@@ -36,7 +47,7 @@ export function UserAvatarProfile({
                 {showSkeleton && (
                     <Skeleton className="h-full w-full rounded-lg absolute" />
                 )}
-                {showFallback && (
+                {(!profilePicture || !isLoading) && (
                     <AvatarFallback className='rounded-lg'>
                         {username?.slice(0, 2)?.toUpperCase() || 'CN'}
                     </AvatarFallback>
