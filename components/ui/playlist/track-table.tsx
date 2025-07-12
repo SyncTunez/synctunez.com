@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Table,
     TableBody,
@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { IconBrandSpotify } from "@tabler/icons-react";
 
-// Shared helper to format the duration in mm:ss
+// Helper to format ms → mm:ss
 function formatDuration(ms: number): string {
     const totalSeconds = Math.round(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -20,25 +20,37 @@ function formatDuration(ms: number): string {
 }
 
 export interface TrackTableProps {
-    /**
-     * Array of track objects coming from either the "main" playlist endpoint or the Spotify API.
-     */
     tracks: any[];
-    /**
-     * Pass true when the track objects are in Spotify format (SpotifyTrack).
-     * When false, the objects are assumed to be main playlist tracks (custom format)
-     */
     isSpotify: boolean;
-    /** Optional additional className for the wrapping Table */
     className?: string;
-    /** Message to display when no tracks are provided */
     emptyLabel?: string;
 }
 
-/**
- * Reusable table for displaying tracks. Accepts mixed formats via the `isSpotify` prop.
- */
-export const TrackTable: React.FC<TrackTableProps> = ({ tracks, isSpotify, className, emptyLabel = 'No tracks found' }) => {
+export const TrackTable: React.FC<TrackTableProps> = ({
+                                                          tracks,
+                                                          isSpotify,
+                                                          className,
+                                                          emptyLabel = 'No tracks found',
+                                                      }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [containerWidth, setContainerWidth] = useState<number>(0);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        const updateWidth = () => setContainerWidth(containerRef.current?.offsetWidth || 0);
+        updateWidth();
+
+        window.addEventListener('resize', updateWidth);
+        const resizeObserver = new ResizeObserver(() => updateWidth());
+        resizeObserver.observe(containerRef.current);
+
+        return () => {
+            window.removeEventListener('resize', updateWidth);
+            resizeObserver.disconnect();
+        };
+    }, []);
+
     if (!Array.isArray(tracks) || tracks.length === 0) {
         return (
             <div className="flex items-center justify-center h-32 text-muted-foreground w-full">
@@ -47,83 +59,144 @@ export const TrackTable: React.FC<TrackTableProps> = ({ tracks, isSpotify, class
         );
     }
 
-    return (
-        <Table className={className}>
-            <TableHeader className="sticky top-0">
-                <TableRow>
-                    <TableHead className="w-[100px]">Cover</TableHead>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Artist</TableHead>
-                    <TableHead className="w-[100px]">Duration</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {tracks.map((track: any, idx: number) => {
-                    // Normalise the track properties depending on the source format
-                    const coverUrl = isSpotify
-                        ? track.album?.images?.[0]?.url
-                        : track.images?.[0]?.url;
-                    const title = isSpotify ? track.name : track.title;
-                    const albumName = isSpotify ? track.album?.name : track.album;
-                    const artistsArr = isSpotify
-                        ? (track.artists || []).map((a: any) => a.name)
-                        : track.artists || [];
-                    const durationMs = isSpotify ? track.durationMs : track.duration;
+    function truncateWords(text: string, count: number) {
+        const words = text.split(" ");
+        return words.length > count ? words.slice(0, count).join(" ") + "..." : text;
+    }
 
-                    return (
-                        <TableRow key={track.id || track.hash || idx} className="group">
-                            <TableCell>
-                                {coverUrl ? (
-                                    <div className="relative w-12 h-12 group-hover:scale-105 transition-transform">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
-                                            src={coverUrl}
-                                            alt={title}
-                                            className="w-full h-full rounded-md object-cover shadow-sm"
-                                        />
-                                    </div>
-                                ) : (
-                                    <div className="w-12 h-12 rounded-md bg-muted flex items-center justify-center">
-                                        <IconBrandSpotify className="w-6 h-6 text-muted-foreground" />
-                                    </div>
-                                )}
-                            </TableCell>
-                            <TableCell>
-                                <div className="font-medium">{title}</div>
-                                {albumName && (
-                                    <div className="text-xs text-muted-foreground mt-0.5">{albumName}</div>
-                                )}
-                            </TableCell>
-                            <TableCell className="text-muted-foreground">
-                                <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
-                                    {artistsArr.map((artist: string, aidx: number) => (
-                                        <Tooltip key={artist + aidx}>
-                                            <TooltipTrigger asChild>
-                                                <span className="focus:outline-none">
-                                                    <Avatar>
-                                                        <AvatarFallback>
-                                                            {artist
-                                                                .split(' ')
-                                                                .map((word: string) => word[0])
-                                                                .join('')
-                                                                .slice(0, 2)
-                                                                .toUpperCase()}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                            </span>
-                                        </TooltipTrigger>
-                                        <TooltipContent>{artist}</TooltipContent>
-                                        </Tooltip>
-                                    ))}
-                                </div>
-                            </TableCell>
-                            <TableCell className="text-muted-foreground">
-                                {formatDuration(durationMs)}
-                            </TableCell>
-                        </TableRow>
-                    );
-                })}
-            </TableBody>
-        </Table>
+    // Responsive visibility breakpoints
+    const showAlbum = containerWidth > 600;
+    const showDuration = containerWidth > 500;
+    const showArtist = containerWidth > 450;  // Hide artist column below 450px
+    const showCover = true; // Cover always shown
+
+    // Table layout fixed for consistent column widths
+    const tableStyle: React.CSSProperties = {
+        width: '100%',
+    };
+
+    // Define column widths depending on visible columns, must total <= 100%
+    const colGroup = (
+        <colgroup>
+            {showCover && <col style={{ width: '55px' }} />}
+            <col
+                style={{
+                    width: showAlbum
+                        ? showArtist ? '30%' : '40%'
+                        : showArtist ? '35%' : '90%',
+                }}
+            />
+            {showArtist && <col style={{ width: showAlbum ? '25%' : '30%' }} />}
+            {showAlbum && <col style={{ width: '25%' }} />}
+            {showDuration && <col style={{ width: 'auto' }} />}
+        </colgroup>
     );
-}; 
+
+    return (
+        <div ref={containerRef} className={`relative ${className || ''}`}>
+            {/* Sticky header table */}
+            <Table
+                style={{ position: 'sticky', top: 0, zIndex: 20, ...tableStyle }}
+            >
+                {colGroup}
+                <TableHeader>
+                    <TableRow>
+                        {showCover && <TableHead className="p-2">Cover</TableHead>}
+                        <TableHead className="p-2">Title</TableHead>
+                        {showArtist && <TableHead className="p-2">Artist</TableHead>}
+                        {showAlbum && <TableHead className="p-2">Album</TableHead>}
+                        {showDuration && <TableHead className="p-2 text-right">Duration</TableHead>}
+                    </TableRow>
+                </TableHeader>
+            </Table>
+
+            {/* Scrollable body */}
+            <div className="overflow-y-auto max-h-[440px]">
+                <Table style={tableStyle}>
+                    {colGroup}
+                    <TableBody>
+                        {tracks.map((track: any, idx: number) => {
+                            const coverUrl = isSpotify
+                                ? track.album?.images?.[0]?.url
+                                : track.images?.[0]?.url;
+                            const title = isSpotify ? track.name : track.title;
+                            const albumName = isSpotify ? track.album?.name : track.album;
+                            const artistsArr = isSpotify
+                                ? (track.artists || []).map((a: any) => a.name)
+                                : track.artists || [];
+                            const durationMs = isSpotify ? track.durationMs : track.duration;
+
+                            return (
+                                <TableRow key={track.id || track.hash || idx} className="group">
+                                    {showCover && (
+                                        <TableCell className="p-2">
+                                            {coverUrl ? (
+                                                <div className="relative w-12 h-12 group-hover:scale-105 transition-transform">
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    <img
+                                                        src={coverUrl}
+                                                        alt={title}
+                                                        className="w-full h-full rounded-md object-cover shadow-sm"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="w-12 h-12 rounded-md bg-muted flex items-center justify-center">
+                                                    <IconBrandSpotify className="w-6 h-6 text-muted-foreground" />
+                                                </div>
+                                            )}
+                                        </TableCell>
+                                    )}
+                                    <TableCell className="p-2 truncate max-w-full">
+                                        <div className="font-medium">{truncateWords(title, 6)}</div>
+                                    </TableCell>
+                                    {showArtist && (
+                                        <TableCell className="p-2 text-muted-foreground">
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <div className="flex -space-x-2 cursor-pointer">
+                                                        {artistsArr.slice(0, 2).map((artist: string, aidx: number) => (
+                                                            <Avatar key={artist + aidx}>
+                                                                <AvatarFallback>
+                                                                    {artist
+                                                                        .split(' ')
+                                                                        .map((word) => word[0])
+                                                                        .join('')
+                                                                        .slice(0, 2)
+                                                                        .toUpperCase()}
+                                                                </AvatarFallback>
+                                                            </Avatar>
+                                                        ))}
+                                                        {artistsArr.length > 2 && (
+                                                            <Avatar>
+                                                                <AvatarFallback>+{artistsArr.length - 2}</AvatarFallback>
+                                                            </Avatar>
+                                                        )}
+                                                    </div>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    {artistsArr.map((artist, i) => (
+                                                        <div key={i}>{artist}</div>
+                                                    ))}
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TableCell>
+                                    )}
+                                    {showAlbum && (
+                                        <TableCell className="p-2 text-muted-foreground truncate max-w-xs">
+                                            {truncateWords(albumName, 4)}
+                                        </TableCell>
+                                    )}
+                                    {showDuration && (
+                                        <TableCell className="p-2 text-muted-foreground text-right whitespace-nowrap">
+                                            {formatDuration(durationMs)}
+                                        </TableCell>
+                                    )}
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+            </div>
+        </div>
+    );
+};

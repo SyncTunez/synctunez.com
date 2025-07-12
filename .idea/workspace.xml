@@ -5,11 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9e2dc116-edfb-462b-b863-05ca80e0ae51" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/components/ui/playlist/playlist-section.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/account/AccountContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/account/AccountContent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/ui/spotify-playlist-section.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/ui/user-avatar-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/user-avatar-profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/friends-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/friends-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/playlist/playlist-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/playlist/playlist-section.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/playlist/track-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/playlist/track-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/table.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hooks/useLiveResource.ts" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useLiveResource.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hooks/useSSE.ts" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useSSE.ts" afterDir="false" />
     </list>
@@ -32,30 +34,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "jsx.switch.disabled": "true",
-    "last_opened_file_path": "E:/Programming/synctunez/synctunez.com/components/sidebar",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.standard": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.standard": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_interpreter_path": "node",
-    "nodejs_package_manager_path": "npm",
-    "npm.build.executor": "Run",
-    "npm.dev.executor": "Run",
-    "npm.lint.executor": "Run",
-    "npm.npm start.executor": "Run",
-    "npm.serve.executor": "Run",
-    "ts.external.directory.path": "E:\\Programming\\synctunez\\synctunez.com\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;jsx.switch.disabled&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/RSPS/OpenRune/openrune.dev&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
+    &quot;npm.lint.executor&quot;: &quot;Run&quot;,
+    &quot;npm.npm start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.serve.executor&quot;: &quot;Run&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;E:\\Programming\\synctunez\\synctunez.com\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\Programming\synctunez\synctunez.com\components\sidebar" />
@@ -153,7 +155,11 @@
       <workItem from="1751662887557" duration="3769000" />
       <workItem from="1751763532153" duration="56000" />
       <workItem from="1751766918941" duration="21376000" />
-      <workItem from="1751992488277" duration="17500000" />
+      <workItem from="1751992488277" duration="18299000" />
+      <workItem from="1752120274951" duration="18803000" />
+      <workItem from="1752239542354" duration="97000" />
+      <workItem from="1752342757709" duration="60000" />
+      <workItem from="1752355735061" duration="1667000" />
     </task>
     <servers />
   </component>

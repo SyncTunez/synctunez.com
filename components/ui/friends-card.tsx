@@ -242,255 +242,312 @@ export function FriendsCard({ forceFullHeight = false }: { forceFullHeight?: boo
     }
   };
 
-  const cardClassName = forceFullHeight ? 'flex flex-col sm:h-[600px] sm:min-h-0' : '';
+  // Define class for container height constraints
+  const cardClassName = forceFullHeight
+      ? 'flex flex-col sm:h-[600px] sm:min-h-0'
+      : 'flex flex-col';
+
   return (
-    <Card className={cardClassName}>
-      <CardHeader className="space-y-2 flex-none">
-        <div className="flex justify-between items-center">
-          <CardTitle>Friends</CardTitle>
-          <div className="flex gap-2">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={openAddFriendCommand}
-                >
-                  <IconUserPlus className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Add Friend</TooltipContent>
-            </Tooltip>
+      <Card className={cardClassName}>
+        <CardHeader className="space-y-2 flex-none px-4 py-3 sm:py-4">
+          {/* Header and controls */}
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-lg sm:text-xl">Friends</CardTitle>
+            <div className="flex gap-2">
+              {/* Add Friend Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={openAddFriendCommand}
+                      aria-label="Add Friend"
+                  >
+                    <IconUserPlus className="h-4 w-4 sm:h-5 sm:w-5"/>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Add Friend</TooltipContent>
+              </Tooltip>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => openModal('share')}
-                >
-                  <IconShare className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Share Profile</TooltipContent>
-            </Tooltip>
+              {/* Share Profile Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => openModal('share')}
+                      aria-label="Share Profile"
+                  >
+                    <IconShare className="h-4 w-4 sm:h-5 sm:w-5"/>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Share Profile</TooltipContent>
+              </Tooltip>
+            </div>
           </div>
-        </div>
 
-        <div className="flex gap-2">
-          <div className="w-[170px]">
-            <Input
-              placeholder="Search friends..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full"
-            />
+          {/* Search and Filter */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2">
+            <div className="flex-grow max-w-full sm:max-w-xs">
+              <Input
+                  placeholder="Search friends..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full"
+                  aria-label="Search friends"
+              />
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full sm:w-[110px] justify-between">
+                  {filterMode === FILTER_MODES.ALL && "All"}
+                  {filterMode === FILTER_MODES.RECENT && "Recent"}
+                  {filterMode === FILTER_MODES.FAVORITES && "Favorites"}
+                  {filterMode === FILTER_MODES.ALPHABETICAL && "A-Z"}
+                  <IconChevronDown className="h-4 w-4 ml-2"/>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {Object.values(FILTER_MODES).map(mode => (
+                    <DropdownMenuItem
+                        key={mode}
+                        onClick={() => setFilterMode(mode)}
+                    >
+                      {mode.charAt(0).toUpperCase() + mode.slice(1)}
+                    </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-[110px] justify-between">
-                {filterMode === FILTER_MODES.ALL && "All"}
-                {filterMode === FILTER_MODES.RECENT && "Recent"}
-                {filterMode === FILTER_MODES.FAVORITES && "Favorites"}
-                {filterMode === FILTER_MODES.ALPHABETICAL && "A-Z"}
-                <IconChevronDown className="h-4 w-4 ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setFilterMode(FILTER_MODES.ALL)}>
-                All
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterMode(FILTER_MODES.RECENT)}>
-                Recent
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterMode(FILTER_MODES.FAVORITES)}>
-                Favorites
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterMode(FILTER_MODES.ALPHABETICAL)}>
-                A-Z
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </CardHeader>
+        </CardHeader>
 
-      <CardContent className="flex-1 overflow-hidden p-0">
-        {loading ? (
-          <div className="h-full flex flex-col gap-2 p-4" data-testid="friends-skeleton-list">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex items-center gap-3 py-2">
-                <Skeleton className="h-10 w-10 rounded-full" />
-                <div className="flex-1">
-                  <Skeleton className="h-4 w-1/3 mb-2" />
-                  <Skeleton className="h-3 w-1/4" />
-                </div>
-                <Skeleton className="h-6 w-6 rounded-md ml-auto" />
+        {/* Content area: scroll with max height */}
+        <CardContent className="flex-1 p-0 min-h-0 overflow-hidden">
+          {loading ? (
+              <div className="h-full flex flex-col gap-2 p-4" data-testid="friends-skeleton-list">
+                {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex items-center gap-3 py-2">
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                      <div className="flex-1 min-w-0">
+                        <Skeleton className="h-4 w-1/3 mb-2" />
+                        <Skeleton className="h-3 w-1/4" />
+                      </div>
+                      <Skeleton className="h-6 w-6 rounded-md ml-auto" />
+                    </div>
+                ))}
               </div>
-            ))}
-          </div>
-        ) : filteredFriends.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center gap-2">
-            <p className="text-muted-foreground">No friends found</p>
-            <Button variant="outline" size="sm" onClick={openAddFriendCommand}>
-              Add Friend
-            </Button>
-          </div>
-        ) : (
-          <ScrollArea className="h-full">
-            <div className="divide-y">
-              {filteredFriends.map(([name, { profileUrl }]) => (
-                <ContextMenu key={name}>
-                  <ContextMenuTrigger asChild>
-                    <div className="flex items-center justify-between p-4 hover:bg-accent/50 cursor-pointer">
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          {profileUrl ? (
-                            <AvatarImage src={profileUrl} alt={name} referrerPolicy="no-referrer" />
-                          ) : null}
-                          <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <span className="font-medium">
+          ) : filteredFriends.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center gap-2 p-4">
+                <p className="text-muted-foreground">No friends found</p>
+                <Button variant="outline" size="sm" onClick={openAddFriendCommand}>
+                  Add Friend
+                </Button>
+              </div>
+          ) : (
+              <ScrollArea className="h-full min-h-0 max-h-[450px] sm:max-h-[550px]">
+                <div className="divide-y min-w-0">
+                  {filteredFriends.map(([name, { profileUrl }]) => (
+                      <ContextMenu key={name}>
+                        <ContextMenuTrigger asChild>
+                          <div className="flex items-center justify-between p-4 hover:bg-accent/50 cursor-pointer min-w-0">
+                            <div className="flex items-center gap-3 min-w-0 overflow-hidden">
+                              <Avatar>
+                                {profileUrl ? (
+                                    <AvatarImage src={profileUrl} alt={name} referrerPolicy="no-referrer" />
+                                ) : null}
+                                <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                              </Avatar>
+                              <span className="font-medium truncate">
                           {name.charAt(0).toUpperCase() + name.slice(1)}
                         </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => toggleFavorite(name)}
-                            >
-                              <IconHeart
-                                className={`h-4 w-4 ${
-                                  favorites.includes(name)
-                                    ? 'fill-current text-red-500'
-                                    : 'text-muted-foreground'
-                                }`}
-                              />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {favorites.includes(name)
-                              ? 'Remove from Favorites'
-                              : 'Add to Favorites'}
-                          </TooltipContent>
-                        </Tooltip>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {/* TODO: Implement view profile navigation */}}
-                        >
-                          <Tooltip>
-                            <TooltipTrigger asChild>
+                            </div>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => toggleFavorite(name)}
+                                      aria-label={favorites.includes(name) ? 'Remove from Favorites' : 'Add to Favorites'}
+                                  >
+                                    <IconHeart
+                                        className={`h-4 w-4 ${
+                                            favorites.includes(name)
+                                                ? 'fill-current text-red-500'
+                                                : 'text-muted-foreground'
+                                        }`}
+                                    />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {favorites.includes(name)
+                                      ? 'Remove from Favorites'
+                                      : 'Add to Favorites'}
+                                </TooltipContent>
+                              </Tooltip>
+                              <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => {/* TODO: Implement view profile navigation */}}
+                                  aria-label="View Profile"
+                              >
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
                               <span>
                                 <IconUser className="h-4 w-4" />
                               </span>
-                            </TooltipTrigger>
-                            <TooltipContent>View Profile</TooltipContent>
-                          </Tooltip>
-                        </Button>
-                      </div>
-                    </div>
-                  </ContextMenuTrigger>
-                  <ContextMenuContent>
-                    <ContextMenuItem variant="destructive" onClick={() => openModal('remove', name)}>
-                      Remove Friend
-                    </ContextMenuItem>
-                  </ContextMenuContent>
-                </ContextMenu>
-              ))}
-            </div>
-          </ScrollArea>
-        )}
-      </CardContent>
+                                  </TooltipTrigger>
+                                  <TooltipContent>View Profile</TooltipContent>
+                                </Tooltip>
+                              </Button>
+                            </div>
+                          </div>
+                        </ContextMenuTrigger>
+                        <ContextMenuContent>
+                          <ContextMenuItem variant="destructive" onClick={() => openModal('remove', name)}>
+                            Remove Friend
+                          </ContextMenuItem>
+                        </ContextMenuContent>
+                      </ContextMenu>
+                  ))}
+                </div>
+              </ScrollArea>
+          )}
+        </CardContent>
 
-      {/* Add Friend CommandDialog */}
-      <CommandDialog open={showAddCommand} onOpenChange={(open) => { setShowAddCommand(open); if (!open) { setAddFriendSearch(""); setSelectedFriend(null); } }} title="Add Friend">
-        <CommandInput
-          placeholder="Type a username..."
-          disabled={processing}
-          value={addFriendSearch}
-          onValueChange={setAddFriendSearch}
-        />
-        <CommandList>
-          <CommandGroup heading="Suggested">
-            {addFriendSearch
-              ? (() => {
-                  const suggestions = MOCK_USERNAMES.filter(
-                    (name) =>
-                      name !== userContext?.userAccount?.username &&
-                      name.toLowerCase().includes(addFriendSearch.toLowerCase())
-                  ).slice(0, 5);
-                  return suggestions.length > 0
-                    ? suggestions.map((name) => (
-                        <CommandItem
-                          key={name}
-                          onSelect={() => setSelectedFriend(name)}
-                          disabled={processing}
-                          className={`flex items-center gap-3 px-4 py-2 rounded-md transition-colors hover:bg-accent/70 cursor-pointer ${selectedFriend === name ? 'bg-accent' : ''}`}
-                        >
-                          <Avatar className="h-7 w-7">
-                            <AvatarImage src={''} alt={name} />
-                            <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
-                          </Avatar>
-                          <span className="font-medium text-base">
+        {/* Add Friend CommandDialog */}
+        <CommandDialog
+            open={showAddCommand}
+            onOpenChange={(open) => {
+              setShowAddCommand(open);
+              if (!open) {
+                setAddFriendSearch('');
+                setSelectedFriend(null);
+              }
+            }}
+            title="Add Friend"
+        >
+          <CommandInput
+              placeholder="Type a username..."
+              disabled={processing}
+              value={addFriendSearch}
+              onValueChange={setAddFriendSearch}
+              aria-label="Add friend username"
+          />
+          <CommandList>
+            <CommandGroup heading="Suggested">
+              {addFriendSearch
+                  ? (() => {
+                    const suggestions = MOCK_USERNAMES.filter(
+                        (name) =>
+                            name !== userContext?.userAccount?.username &&
+                            name.toLowerCase().includes(addFriendSearch.toLowerCase())
+                    ).slice(0, 5);
+                    return suggestions.length > 0
+                        ? suggestions.map((name) => (
+                            <CommandItem
+                                key={name}
+                                onSelect={() => setSelectedFriend(name)}
+                                disabled={processing}
+                                className={`flex items-center gap-3 px-4 py-2 rounded-md transition-colors hover:bg-accent/70 cursor-pointer ${
+                                    selectedFriend === name ? 'bg-accent' : ''
+                                }`}
+                            >
+                              <Avatar className="h-7 w-7">
+                                <AvatarImage src={''} alt={name} />
+                                <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                              </Avatar>
+                              <span className="font-medium text-base truncate">
                             {name.charAt(0).toUpperCase() + name.slice(1)}
                           </span>
-                        </CommandItem>
-                      ))
-                    : null;
-                })()
-              : <div className="px-4 py-2 text-muted-foreground text-sm">Start typing to find friends...</div>}
-          </CommandGroup>
-        </CommandList>
-        {selectedFriend && (
-          <div className="flex flex-col items-center gap-2 p-4 border-t">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={''} alt={selectedFriend} />
-                <AvatarFallback>{selectedFriend.slice(0, 2).toUpperCase()}</AvatarFallback>
-              </Avatar>
-              <span className="font-medium text-base">
+                            </CommandItem>
+                        ))
+                        : null;
+                  })()
+                  : (
+                      <div className="px-4 py-2 text-muted-foreground text-sm">
+                        Start typing to find friends...
+                      </div>
+                  )}
+            </CommandGroup>
+          </CommandList>
+          {selectedFriend && (
+              <div className="flex flex-col items-center gap-2 p-4 border-t">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={''} alt={selectedFriend} />
+                    <AvatarFallback>{selectedFriend.slice(0, 2).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium text-base truncate">
                 {selectedFriend.charAt(0).toUpperCase() + selectedFriend.slice(1)}
               </span>
-            </div>
-            <Button
-              className="w-full mt-2"
-              disabled={processing}
-              onClick={async () => {
-                await handleAddFriend(selectedFriend);
-                setSelectedFriend(null);
-              }}
-            >
-              {processing ? 'Adding...' : 'Confirm Add Friend'}
-            </Button>
-          </div>
-        )}
-      </CommandDialog>
+                </div>
+                <Button
+                    className="w-full mt-2"
+                    disabled={processing}
+                    onClick={async () => {
+                      await handleAddFriend(selectedFriend);
+                      setSelectedFriend(null);
+                    }}
+                >
+                  {processing ? 'Adding...' : 'Confirm Add Friend'}
+                </Button>
+              </div>
+          )}
+        </CommandDialog>
 
-      <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Remove Friend</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to remove this friend? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end gap-2 mt-4">
-            <Button variant="outline" onClick={() => setShowModal(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              disabled={processing}
-              onClick={form.handleSubmit(handleFriendAction)}
-            >
-              {processing ? 'Removing...' : 'Remove'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </Card>
+        {/* Remove Friend Modal */}
+        <Dialog open={showModal} onOpenChange={setShowModal}>
+          <DialogContent className="max-w-sm w-full mx-2">
+            <DialogHeader>
+              <DialogTitle>Remove Friend</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to remove this friend? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="outline" onClick={() => setShowModal(false)}>
+                Cancel
+              </Button>
+              <Button
+                  variant="destructive"
+                  disabled={processing}
+                  onClick={form.handleSubmit(handleFriendAction)}
+              >
+                {processing ? 'Removing...' : 'Remove'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Share Profile Modal */}
+        <Dialog open={showModal} onOpenChange={setShowModal}>
+          <DialogContent className="max-w-sm w-full mx-2">
+            <DialogHeader>
+              <DialogTitle>Share Profile</DialogTitle>
+              <DialogDescription>
+                Share your profile link with friends!
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col gap-2 mt-2">
+              <Input
+                  readOnly
+                  value={`https://yoursite.com/profile/${userContext?.userAccount?.username}`}
+                  className="select-all"
+              />
+              <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                        `https://yoursite.com/profile/${userContext?.userAccount?.username}`
+                    );
+                  }}
+              >
+                Copy Link
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </Card>
   );
-} 
+}

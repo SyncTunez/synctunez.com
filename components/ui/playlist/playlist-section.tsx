@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import React, { useState, type ReactNode } from 'react';
 import {
     Card,
     CardHeader,
@@ -12,12 +12,12 @@ import { PlaylistRow } from "@/components/ui/playlist/playlist-row";
 import { Button } from "@/components/ui/button";
 import {
     IconMusic,
-    IconBrandSpotify, 
+    IconBrandSpotify,
     IconBrandApple,
     IconBrandYoutube,
     IconBrandTidal,
     IconPlus,
-    IconArrowLeft
+    IconArrowLeft, IconList
 } from "@tabler/icons-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
@@ -32,6 +32,10 @@ import { useLiveResourceJson } from '@/hooks/useLiveResource';
 import {ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger} from "@/components/ui/context-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from 'next/navigation';
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useRef, useEffect } from 'react';
+import {Table, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 
 interface PlaylistSectionProps {
     mainPlaylists: any[];
@@ -53,13 +57,236 @@ const services: { id: Service; key: string; label: string; icon: ReactNode }[] =
 // Mark which services are coming soon
 const comingSoonServices: Service[] = ['apple', 'youtube', 'tidal'];
 
+function PlaylistSectionHeaderCompact({
+                                          importedView,
+                                          setImportedView,
+                                          selectedService,
+                                          setSelectedService,
+                                          services,
+                                          comingSoonServices,
+                                      }: {
+    importedView: boolean;
+    setImportedView: React.Dispatch<React.SetStateAction<boolean>>;
+    selectedService: Service;
+    setSelectedService: (v: Service) => void;
+    services: { id: Service; key: string; label: string; icon: ReactNode }[];
+    comingSoonServices: Service[];
+}) {
+    return (
+        <CardHeader className="flex flex-col items-start gap-2">
+            <div className="flex items-center gap-2 w-full justify-between">
+                <CardTitle>{importedView ? 'Import' : 'Playlists'}</CardTitle>
+                <div className="flex items-center gap-2">
+                    {importedView && (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">
+                                    {services.find(s => s.id === selectedService)?.label || 'Select Service'}
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                {services.map(service => (
+                                    <DropdownMenuItem
+                                        key={service.id}
+                                        onClick={() => setSelectedService(service.id)}
+                                        disabled={comingSoonServices.includes(service.id)}
+                                    >
+                                        <span className="flex items-center gap-1">
+                                            {service.icon}
+                                            {service.label}
+                                            {comingSoonServices.includes(service.id) && (
+                                                <span className="ml-1 text-xs text-muted-foreground">(coming soon)</span>
+                                            )}
+                                        </span>
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    )}
+                    <Button
+                        variant="outline"
+                        onClick={() => setImportedView(prev => !prev)}
+                        size="icon"
+                        aria-label={!importedView ? "Import more playlists" : "Back to your playlists"}
+                    >
+                        {!importedView ? (
+                            <IconPlus className="w-4 h-4" />
+                        ) : (
+                            <IconArrowLeft className="w-4 h-4" />
+                        )}
+                    </Button>
+                </div>
+            </div>
+        </CardHeader>
+    );
+}
+
+function PlaylistSectionHeaderRegular({
+                                          importedView,
+                                          setImportedView,
+                                          selectedService,
+                                          setSelectedService,
+                                          services,
+                                          comingSoonServices,
+                                      }: {
+    importedView: boolean;
+    setImportedView: React.Dispatch<React.SetStateAction<boolean>>;
+    selectedService: Service;
+    setSelectedService: (v: Service) => void;
+    services: { id: Service; key: string; label: string; icon: React.ReactNode }[];
+    comingSoonServices: Service[];
+}) {
+    const tabsListRef = useRef<HTMLDivElement>(null);
+
+    const [hideServiceLabel, setHideServiceLabel] = useState(false);
+    const [useDropdown, setUseDropdown] = useState(false);
+    const [hideComingSoon, setHideComingSoon] = useState(false);
+
+    useEffect(() => {
+        function updateVisibility() {
+            if (!tabsListRef.current) return;
+
+            const width = tabsListRef.current.scrollWidth;
+
+            setHideComingSoon(width <= 965);
+            setHideServiceLabel(width <= 703);
+            setUseDropdown(width <= 483);
+        }
+
+        updateVisibility();
+        window.addEventListener("resize", updateVisibility);
+        return () => window.removeEventListener("resize", updateVisibility);
+    }, []);
+
+    return (
+        <CardHeader
+            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-2"
+            ref={tabsListRef}
+        >
+            <CardTitle className="text-xl">{importedView ? "Import" : "Playlists"}</CardTitle>
+
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                {importedView && (
+                    <>
+                        {useDropdown ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" className="w-full sm:w-auto">
+                                        {services.find((s) => s.id === selectedService)?.label || "Select Service"}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    {services.map((service) => {
+                                        const isComingSoon = comingSoonServices.includes(service.id);
+                                        return (
+                                            <DropdownMenuItem
+                                                key={service.id}
+                                                onClick={() => setSelectedService(service.id)}
+                                                disabled={isComingSoon}
+                                            >
+                        <span className="flex items-center gap-1">
+                          {service.icon}
+                            {service.label}
+                            {isComingSoon && (
+                                <span className="ml-1 text-xs text-muted-foreground">(coming soon)</span>
+                            )}
+                        </span>
+                                            </DropdownMenuItem>
+                                        );
+                                    })}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <Tabs
+                                value={selectedService}
+                                onValueChange={(v) => setSelectedService(v as Service)}
+                                className="w-full sm:w-auto"
+                            >
+                                <TabsList className="flex flex-wrap">
+                                    {services.map((service) => {
+                                        const isComingSoon = comingSoonServices.includes(service.id);
+                                        return (
+                                            <TabsTrigger
+                                                key={service.id}
+                                                value={service.id}
+                                                className={`flex items-center gap-1 whitespace-nowrap ${
+                                                    isComingSoon ? "opacity-50 cursor-not-allowed" : ""
+                                                }`}
+                                                disabled={isComingSoon}
+                                            >
+                                                {service.icon}
+                                                {!hideServiceLabel && service.label}
+                                                {!hideComingSoon && isComingSoon && (
+                                                    <span className="ml-1 text-xs text-muted-foreground">(coming soon)</span>
+                                                )}
+                                            </TabsTrigger>
+                                        );
+                                    })}
+                                </TabsList>
+                            </Tabs>
+                        )}
+                    </>
+                )}
+
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="outline"
+                        onClick={() => setImportedView((prev) => !prev)}
+                        className="hidden sm:inline-flex"
+                    >
+                        {!importedView ? (
+                            <>
+                                <IconPlus className="w-4 h-4" />
+                                Import more playlists
+                            </>
+                        ) : (
+                            <>
+                                <IconArrowLeft className="w-4 h-4" />
+                                Back to your playlists
+                            </>
+                        )}
+                    </Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => setImportedView((prev) => !prev)}
+                        className="sm:hidden"
+                        size="icon"
+                        aria-label={!importedView ? "Import more playlists" : "Back to your playlists"}
+                    >
+                        {!importedView ? <IconPlus className="w-4 h-4" /> : <IconArrowLeft className="w-4 h-4" />}
+                    </Button>
+                </div>
+            </div>
+        </CardHeader>
+    );
+}
+
+// Hook to detect if an element is overflowing horizontally
+function useElementOverflow<T extends HTMLElement>() {
+    const ref = useRef<T | null>(null);
+    const [isOverflowing, setIsOverflowing] = useState(false);
+
+    useEffect(() => {
+        function checkOverflow() {
+            if (ref.current) {
+                setIsOverflowing(ref.current.scrollWidth > ref.current.clientWidth);
+            }
+        }
+        checkOverflow();
+        window.addEventListener('resize', checkOverflow);
+        return () => window.removeEventListener('resize', checkOverflow);
+    }, []);
+
+    return [ref, isOverflowing] as const;
+}
+
 export function PlaylistSection({
-    mainPlaylists,
-    mainTracks,
-    mainPlaylistsLoading = false,
-    selectedMainPlaylistId,
-    onMainPlaylistSelect
-}: PlaylistSectionProps) {
+                                    mainPlaylists,
+                                    mainTracks,
+                                    mainPlaylistsLoading = false,
+                                    selectedMainPlaylistId,
+                                    onMainPlaylistSelect
+                                }: PlaylistSectionProps) {
 
     const router = useRouter();
     const [selectedService, setSelectedService] = useState<Service>('spotify');
@@ -80,7 +307,7 @@ export function PlaylistSection({
     const {
         data: rawSpotifyTracks
     } = useLiveResourceJson<SpotifyTrack>({
-        fetchUrl: selectedSpotifyPlaylistId ? buildUrl(`spotify/tracks?id=${selectedSpotifyPlaylistId}`) : '',
+        fetchUrl: selectedSpotifyPlaylistId ? buildUrl(`spotify/tracks?id=${selectedSpotifyPlaylistId}`) : "",
         eventName: 'SpotifyPlaylistTracks',
         reconnectIntervalMs: 5000,
         shouldProcess: importedView && !!selectedSpotifyPlaylistId,
@@ -102,48 +329,35 @@ export function PlaylistSection({
         return processedSpotifyTracks.length === 0;
     })();
 
+    const isMobile = useIsMobile();
+
+    // Overflow detection for CardHeader
+    const [headerRef, isHeaderOverflowing] = useElementOverflow<HTMLDivElement>();
+    const forceCompactHeader = isHeaderOverflowing;
+
     return (
         <Card className="h-[600px] min-h-0">
-            <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                    <CardTitle>{importedView ? 'Import from other services' : 'Playlists'}</CardTitle>
-                    <CardDescription>
-                        <span className="block min-h-[2.5em]">
-                            {!importedView
-                                ? (<>
-                                    These are your main playlists.<br/>
-                                    Any playlists you import will appear here and be visible publicly.
-                                </>)
-                                : 'Import playlists from a platform. Once imported, they will appear in your main playlists and be visible publicly.'}
-                        </span>
-                    </CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                    {importedView && (
-                        <div className="ml-6 mt-2">
-                            <Tabs value={selectedService} onValueChange={v => setSelectedService(v as Service)}
-                                  className="w-auto">
-                                <TabsList>
-                                    {services.map(service => (
-                                        <TabsTrigger
-                                            key={service.id}
-                                            value={service.id}
-                                            className={`flex items-center gap-1 ${comingSoonServices.includes(service.id) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                            disabled={comingSoonServices.includes(service.id)}
-                                        >
-                                            {service.icon}
-                                            {service.label}
-                                            {comingSoonServices.includes(service.id) && (
-                                                <span className="ml-1 text-xs text-muted-foreground">(coming soon)</span>
-                                            )}
-                                        </TabsTrigger>
-                                    ))}
-                                </TabsList>
-                            </Tabs>
-                        </div>
-                    )}
-                </div>
-            </CardHeader>
+            <div ref={headerRef}>
+                {(isMobile) ? (
+                    <PlaylistSectionHeaderCompact
+                        importedView={importedView}
+                        setImportedView={setImportedView}
+                        selectedService={selectedService}
+                        setSelectedService={setSelectedService}
+                        services={services}
+                        comingSoonServices={comingSoonServices}
+                    />
+                ) : (
+                    <PlaylistSectionHeaderRegular
+                        importedView={importedView}
+                        setImportedView={setImportedView}
+                        selectedService={selectedService}
+                        setSelectedService={setSelectedService}
+                        services={services}
+                        comingSoonServices={comingSoonServices}
+                    />
+                )}
+            </div>
             <CardContent>
                 <div className="flex gap-4">
                     <div
@@ -151,19 +365,20 @@ export function PlaylistSection({
                         <div className="flex flex-col gap-2">
                             {!importedView && mainPlaylists.length === 0 && mainPlaylistsLoading ? (
                                 // skeleton while main playlists loading
-                                Array.from({ length: 6 }).map((_, idx) => (
-                                    <Skeleton key={idx} className="h-12 w-full" />
+                                Array.from({length: 6}).map((_, idx) => (
+                                    <Skeleton key={idx} className="h-12 w-full"/>
                                 ))
                             ) : null}
                             {!importedView && mainPlaylists.length === 0 && !mainPlaylistsLoading && (
-                                <div className="flex items-center justify-center py-2 text-muted-foreground text-center">
+                                <div
+                                    className="flex items-center justify-center py-2 text-muted-foreground text-center">
                                     No playlists found. Press Import to add.
                                 </div>
                             )}
                             {isSpotifyPlaylistsLoading ? (
                                 // Skeletons while importing spotify playlists list loads
-                                Array.from({ length: 6 }).map((_, idx) => (
-                                    <Skeleton key={idx} className="h-12 w-full" />
+                                Array.from({length: 6}).map((_, idx) => (
+                                    <Skeleton key={idx} className="h-12 w-full"/>
                                 ))
                             ) : !importedView ? (
                                 mainPlaylists.map(playlist => (
@@ -251,23 +466,6 @@ export function PlaylistSection({
                                 ))
                             )}
                         </div>
-                        <Button
-                            variant="outline"
-                            className="w-full mt-4 flex items-center justify-center gap-2"
-                            onClick={() => setImportedView(prev => !prev)}
-                        >
-                            {!importedView ? (
-                                <>
-                                    <IconPlus className="w-4 h-4" />
-                                    Import more playlists
-                                </>
-                            ) : (
-                                <>
-                                    <IconArrowLeft className="w-4 h-4" />
-                                    Back to your playlists
-                                </>
-                            )}
-                        </Button>
                     </div>
 
                     <div className="flex-1 pl-4">
@@ -278,6 +476,7 @@ export function PlaylistSection({
                                 const tracksToShow = isPlaylistMode ? (hasSelection ? mainTracks : [])
                                     : (hasSelection ? processedSpotifyTracks : []);
                                 const emptyLabel = hasSelection ? 'No tracks found' : 'Select a playlist to view tracks';
+
                                 if (isTracksLoading) {
                                     return (
                                         <div className="space-y-2">
@@ -301,4 +500,4 @@ export function PlaylistSection({
             </CardContent>
         </Card>
     );
-} 
+}

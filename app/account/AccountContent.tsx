@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UserAvatarProfile } from "@/components/ui/user-avatar-profile";
 import { Separator } from "@/components/ui/separator";
 import { UserContext, UserContextType } from "@/components/auth/UserContext";
@@ -14,7 +14,6 @@ import { MobileNavigationMenu } from "@/components/ui/mobile-navigation-menu";
 import { PlaylistSection } from "@/components/ui/playlist/playlist-section";
 import { FriendsCard } from "@/components/ui/friends-card";
 import { useSearchParams } from 'next/navigation';
-import {CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "cmdk";
 
 export default function AccountContent() {
     const userContext = React.useContext(UserContext) as UserContextType | null;
@@ -80,9 +79,9 @@ export default function AccountContent() {
 
     return (
         <PageContainer>
-            <div className='flex flex-1 flex-col space-y-4 px-2 sm:px-4'>
-                {/* Show header row only on larger screens */}
-                <div className="hidden sm:flex items-center gap-4 w-full">
+            <div className="flex flex-1 flex-col min-w-0 space-y-4 px-2 sm:px-4">
+                {/* Header row only on larger screens */}
+                <div className="hidden sm:flex items-center gap-4 w-full min-w-0">
                     <UserAvatarProfile
                         username={userAccount?.username}
                         profilePicture={userAccount?.profilePicture}
@@ -94,11 +93,11 @@ export default function AccountContent() {
                 </div>
 
                 <MobileNavigationMenu selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-                <Separator/>
+                <Separator />
 
-                <div className="flex flex-1 flex-col gap-4 mt-4 sm:flex-row sm:gap-6">
+                <div className="flex flex-1 flex-col gap-4 mt-4 sm:flex-row sm:gap-6 min-w-0">
                     {/* Vertical Tabs only on larger screens */}
-                    <div className="hidden sm:flex flex-col w-40 border-r pr-4 flex-shrink-0">
+                    <div className="hidden sm:flex flex-col w-40 border-r pr-4 flex-shrink-0 min-w-0">
                         <button
                             className={`py-2 px-4 text-left rounded-lg mb-2 transition-colors ${selectedTab === 0 ? 'bg-muted font-semibold' : 'hover:bg-accent'}`}
                             onClick={() => setSelectedTab(0)}
@@ -117,7 +116,9 @@ export default function AccountContent() {
                         {selectedTab === 0 && (
                             <>
                                 {/* Service cards: responsive grid */}
-                                <div className="grid gap-4 mb-6 grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 auto-rows-[1fr] grid-flow-row min-w-0 overflow-x-auto">
+                                <div
+                                    className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  gap-4  mb-6 min-w-0 auto-rows-[1fr] "
+                                >
                                     {serviceIcons.map(service => {
                                         const isConnected = userAccount ? (userAccount as any)[service.key] : false;
                                         return (
@@ -134,13 +135,15 @@ export default function AccountContent() {
                                     })}
                                 </div>
 
-                                <div className="flex flex-col gap-4 w-full sm:flex-row sm:gap-4 h-auto min-h-0">
-                                    <div className="w-full sm:w-80 flex flex-col mb-4 sm:mb-0 sm:h-auto sm:min-h-0">
-                                        <FriendsCard forceFullHeight />
+
+                                <div className="flex flex-wrap gap-4 w-full h-auto min-h-0 min-w-0">
+                                    <div className="flex-shrink min-w-[280px] flex-grow flex flex-col overflow-x-auto w-full max-w-full sm:max-w-[345px]">
+                                        <FriendsCard forceFullHeight/>
                                     </div>
                                     {userAccount?.hasSpotify && (
-                                        <div className="flex-1 h-auto min-w-0 flex flex-col overflow-x-auto">
-                                           <PlaylistSection
+                                        <div
+                                            className="flex-shrink min-w-[280px] flex-grow flex flex-col overflow-x-auto">
+                                            <PlaylistSection
                                                 mainPlaylists={playlists}
                                                 mainTracks={tracks}
                                                 mainPlaylistsLoading={playlistsLoading}
@@ -159,6 +162,7 @@ export default function AccountContent() {
                         )}
                     </div>
                 </div>
+
             </div>
         </PageContainer>
     );
