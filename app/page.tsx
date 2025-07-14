@@ -442,8 +442,8 @@ export default function Home() {
                   <Card className="bg-card/50 py-2 lg:mr-auto lg:ml-0 lg:max-w-[85%] transform lg:-translate-x-8">
                     <CardContent className="py-2">
                       <div className="flex gap-4">
-                        <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
-                          <Quote className="h-4 w-4 text-[#134e4a]" />
+                        <div className="w-8 h-8 rounded-full bg-[#134e4a] flex items-center justify-center flex-shrink-0">
+                          <Quote className="h-4 w-4 text-white" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground italic mb-2">
@@ -474,8 +474,8 @@ export default function Home() {
                   <Card className="bg-card/50 py-2 lg:mx-auto lg:max-w-[85%]">
                     <CardContent className="py-2">
                       <div className="flex gap-4">
-                        <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
-                          <Quote className="h-4 w-4 text-[#134e4a]" />
+                        <div className="w-8 h-8 rounded-full bg-[#134e4a] flex items-center justify-center flex-shrink-0">
+                          <Quote className="h-4 w-4 text-white" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground italic mb-2">
@@ -506,8 +506,8 @@ export default function Home() {
                   <Card className="bg-card/50 py-2 lg:ml-auto lg:mr-0 lg:max-w-[85%] transform lg:translate-x-8">
                     <CardContent className="py-2">
                       <div className="flex gap-4">
-                        <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
-                          <Quote className="h-4 w-4 text-[#134e4a]" />
+                        <div className="w-8 h-8 rounded-full bg-[#134e4a] flex items-center justify-center flex-shrink-0">
+                          <Quote className="h-4 w-4 text-white" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground italic mb-2">

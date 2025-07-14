@@ -142,7 +142,7 @@ export default function AccountContent() {
                                     </div>
                                     {userAccount?.hasSpotify && (
                                         <div
-                                            className="flex-shrink min-w-[280px] flex-grow flex flex-col overflow-x-auto">
+                                            className="flex-shrink min-w-[280px] flex-grow-0 flex flex-col overflow-x-auto w-full sm:w-[calc(100%-365px)]">
                                             <PlaylistSection
                                                 mainPlaylists={playlists}
                                                 mainTracks={tracks}

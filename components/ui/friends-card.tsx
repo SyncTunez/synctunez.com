@@ -249,7 +249,7 @@ export function FriendsCard({ forceFullHeight = false }: { forceFullHeight?: boo
 
   return (
       <Card className={cardClassName}>
-        <CardHeader className="space-y-2 flex-none px-4 py-3 sm:py-4">
+        <CardHeader className="space-y-2 flex-none px-4 py-2 sm:py-3">
           {/* Header and controls */}
           <div className="flex justify-between items-center">
             <CardTitle className="text-lg sm:text-xl">Friends</CardTitle>

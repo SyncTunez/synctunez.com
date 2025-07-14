@@ -358,8 +358,8 @@ export function PlaylistSection({
                     />
                 )}
             </div>
-            <CardContent>
-                <div className="flex gap-4">
+            <CardContent className="p-0">
+                <div className="flex gap-2">
                     <div
                         className="w-72 min-w-[220px] h-[45vh] overflow-y-auto border-r pr-1 flex flex-col justify-between">
                         <div className="flex flex-col gap-0">
@@ -468,8 +468,8 @@ export function PlaylistSection({
                         </div>
                     </div>
 
-                    <div className="flex-1 pl-4">
-                        <div className="h-[50vh] overflow-y-auto">
+                    <div className="flex-1 pl-0">
+                        <div>
                             {(() => {
                                 const isPlaylistMode = !importedView;
                                 const hasSelection = isPlaylistMode ? !!selectedMainPlaylistId : !!selectedSpotifyPlaylistId;

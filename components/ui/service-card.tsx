@@ -74,7 +74,7 @@ export function ServiceCard({
     }
 
     return (
-        <Card className="w-full min-w-[180px] min-h-[150px] h-full min-w-0 p-2 relative">
+        <Card className="w-full min-w-[180px] min-h-[150px] h-full min-w-0 p-1 relative">
             {(isSpotify && isConnected && (spotifyAccountData === null || spotifyError)) ? (
                 <div className="flex flex-col items-center w-full p-4">
                     <Skeleton className="w-14 h-14 rounded-full mb-2" />
