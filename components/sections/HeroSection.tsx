@@ -94,8 +94,8 @@ export function HeroSection() {
                     <div className="space-y-1">
                       <div 
                         ref={playlistItem1.ref}
-                        className={`transition-all duration-500 transform ${
-                          playlistItem1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInLeft_0.5s_ease-out_forwards]'
+                        className={`transition-all duration-500 ${
+                          playlistItem1.isInView ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
                         }`}
                       >
                         <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
@@ -111,8 +111,8 @@ export function HeroSection() {
 
                       <div 
                         ref={playlistItem2.ref}
-                        className={`transition-all duration-500 transform ${
-                          playlistItem2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInLeft_0.5s_ease-out_0.2s_forwards]'
+                        className={`transition-all duration-500 delay-[200ms] ${
+                          playlistItem2.isInView ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
                         }`}
                       >
                         <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
@@ -128,8 +128,8 @@ export function HeroSection() {
 
                       <div 
                         ref={playlistItem3.ref}
-                        className={`transition-all duration-500 transform ${
-                          playlistItem3.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInLeft_0.5s_ease-out_0.4s_forwards]'
+                        className={`transition-all duration-500 delay-[400ms] ${
+                          playlistItem3.isInView ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
                         }`}
                       >
                         <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
@@ -145,8 +145,8 @@ export function HeroSection() {
 
                       <div 
                         ref={playlistItem4.ref}
-                        className={`transition-all duration-500 transform ${
-                          playlistItem4.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInLeft_0.5s_ease-out_0.6s_forwards]'
+                        className={`transition-all duration-500 delay-[600ms] ${
+                          playlistItem4.isInView ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
                         }`}
                       >
                         <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
@@ -162,8 +162,8 @@ export function HeroSection() {
 
                       <div 
                         ref={playlistItem5.ref}
-                        className={`transition-all duration-500 transform ${
-                          playlistItem5.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInLeft_0.5s_ease-out_0.8s_forwards]'
+                        className={`transition-all duration-500 delay-[800ms] ${
+                          playlistItem5.isInView ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
                         }`}
                       >
                         <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
@@ -180,8 +180,8 @@ export function HeroSection() {
                       <div className="mt-0">
                         <div 
                           ref={matchBadge.ref}
-                          className={`p-1.5 rounded-md text-center bg-[#1DB954]/30 border border-[#1DB954]/50 shadow-lg relative transition-all duration-500 transform ${
-                            matchBadge.isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 lg:opacity-100 lg:translate-y-0 lg:animate-[slideUpHigher_0.5s_ease-out_1.3s_forwards]'
+                          className={`p-1.5 rounded-md text-center bg-[#1DB954]/30 border border-[#1DB954]/50 shadow-lg relative transition-all duration-500 delay-[1000ms] ${
+                            matchBadge.isInView ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
                           }`}
                         >
                           <p className="text-sm font-medium text-[#1DB954] relative z-10">
@@ -198,8 +198,8 @@ export function HeroSection() {
                   <div className="grid grid-cols-2 gap-4">
                     <div 
                       ref={matchScore.ref}
-                      className={`bg-muted rounded-lg p-4 text-center shadow-lg flex flex-col justify-center transition-all duration-500 transform ${
-                        matchScore.isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 lg:opacity-100 lg:translate-y-0 lg:animate-[slideUp_0.5s_ease-out_1s_forwards]'
+                      className={`bg-muted rounded-lg p-4 text-center shadow-lg flex flex-col justify-center transition-all duration-500 delay-[1200ms] ${
+                        matchScore.isInView ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
                       }`}
                     >
                       <p className="text-4xl font-bold text-primary leading-none mb-1">85%</p>
@@ -207,8 +207,8 @@ export function HeroSection() {
                     </div>
                     <div 
                       ref={genreChart.ref}
-                      className={`bg-muted rounded-lg p-4 text-center shadow-lg transition-all duration-500 transform ${
-                        genreChart.isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 lg:opacity-100 lg:translate-y-0 lg:animate-[slideUp_0.5s_ease-out_1.2s_forwards]'
+                      className={`bg-muted rounded-lg p-4 text-center shadow-lg transition-all duration-500 delay-[1400ms] ${
+                        genreChart.isInView ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
                       }`}
                     >
                       <div className="h-[100px]">
