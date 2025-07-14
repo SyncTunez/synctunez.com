@@ -31,21 +31,21 @@ export const PlaylistRow: React.FC<PlaylistRowProps> = ({
     return (
         <div
             className={cn(
-                'flex items-center gap-2 p-2 rounded cursor-pointer transition-colors',
+                'flex items-center gap-2 px-3 py-1.5 rounded-none cursor-pointer transition-colors',
                 selected ? 'bg-accent' : 'hover:bg-muted',
                 className,
             )}
             onClick={onClick}
         >
+            {/* Image or Default Icon */}
             {imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                     src={imageUrl}
                     alt={title}
-                    className="w-10 h-10 rounded object-cover border"
+                    className="w-10 h-10 rounded-sm object-cover border"
                 />
             ) : (
-                <div className="w-10 h-10 rounded border bg-muted flex items-center justify-center">
+                <div className="w-10 h-10 rounded-sm border bg-muted flex items-center justify-center">
                     {defaultIcon}
                 </div>
             )}

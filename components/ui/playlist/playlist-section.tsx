@@ -361,8 +361,8 @@ export function PlaylistSection({
             <CardContent>
                 <div className="flex gap-4">
                     <div
-                        className="w-56 min-w-[180px] h-[50vh] overflow-y-auto border-r pr-2 flex flex-col justify-between">
-                        <div className="flex flex-col gap-2">
+                        className="w-72 min-w-[220px] h-[45vh] overflow-y-auto border-r pr-1 flex flex-col justify-between">
+                        <div className="flex flex-col gap-0">
                             {!importedView && mainPlaylists.length === 0 && mainPlaylistsLoading ? (
                                 // skeleton while main playlists loading
                                 Array.from({length: 6}).map((_, idx) => (
