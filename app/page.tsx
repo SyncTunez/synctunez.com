@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <div className="overflow-x-hidden">
       {/* Hero Section */}
-      <section id="hero" className="relative min-h-screen flex items-center bg-[#134e4a]/5">
+      <section id="hero" className="relative min-h-[100vh] lg:min-h-screen flex items-center bg-[#134e4a]/5 pb-24 lg:pb-0">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px]">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 items-center">
             {/* Left Content */}
@@ -80,11 +80,11 @@ export default function Home() {
                 {/* Main Demo Image */}
                 <div className="bg-card rounded-2xl p-8 shadow-2xl relative">
                   {/* Star icon in top right */}
-                  <div className="absolute -top-8 -right-8 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl">
+                  <div className="absolute -top-8 -right-8 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl hidden lg:flex">
                     <Sparkles className="h-8 w-8 text-primary-foreground" />
                   </div>
                   {/* Heart icon in bottom left */}
-                  <div className="absolute -bottom-8 -left-8 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl">
+                  <div className="absolute -bottom-8 -left-8 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl hidden lg:flex">
                     <Heart className="h-8 w-8 text-primary-foreground" />
                   </div>
                   <div className="space-y-6">
@@ -195,8 +195,8 @@ export default function Home() {
       </section>
 
       {/* Problem-Solution Section */}
-      <section id="problems-solutions" className="h-screen bg-background flex flex-col justify-center overflow-hidden relative">
-        <div className="absolute right-12 bottom-12">
+      <section id="problems-solutions" className="min-h-screen py-24 lg:h-screen bg-background flex flex-col justify-center overflow-hidden relative">
+        <div className="absolute right-12 bottom-12 hidden lg:block">
           <FloatingDownArrow />
         </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-32 xl:px-48 max-w-[1400px]">
@@ -216,10 +216,10 @@ export default function Home() {
                 <div 
                   ref={row1Card1.ref}
                   className={`flex justify-end transition-all duration-[1500ms] ease-out transform ${
-                    row1Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'
+                    row1Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12 sm:-translate-x-full'
                   }`}
                 >
-                  <Card className="bg-card/80 relative overflow-hidden w-full min-w-[400px] h-[200px]">
+                  <Card className="bg-card/80 relative overflow-hidden w-full md:min-w-[300px] lg:min-w-[400px] h-[200px]">
                     <CardContent className="pt-4 pb-3 h-full flex flex-col items-center justify-center">
                       <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
                         <List className="h-6 w-6 text-destructive" />
@@ -235,10 +235,10 @@ export default function Home() {
                 <div 
                   ref={row1Card2.ref}
                   className={`flex justify-start transition-all duration-[1500ms] delay-[185ms] ease-out transform ${
-                    row1Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'
+                    row1Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
                   }`}
                 >
-                  <div className="relative w-full min-w-[400px]">
+                  <div className="relative w-full md:min-w-[300px] lg:min-w-[400px]">
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#042f2e] text-white px-3 py-1 rounded-full text-sm font-medium border border-white/20 z-10">
                       SyncTunez
                     </div>
@@ -262,10 +262,10 @@ export default function Home() {
                 <div 
                   ref={row2Card1.ref}
                   className={`flex justify-end transition-all duration-[1500ms] delay-[375ms] ease-out transform ${
-                    row2Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'
+                    row2Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12 sm:-translate-x-full'
                   }`}
                 >
-                  <Card className="bg-card/80 relative overflow-hidden w-full min-w-[400px] h-[200px]">
+                  <Card className="bg-card/80 relative overflow-hidden w-full md:min-w-[300px] lg:min-w-[400px] h-[200px]">
                     <CardContent className="pt-4 pb-3 h-full flex flex-col items-center justify-center">
                       <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
                         <SkipForward className="h-6 w-6 text-destructive fill-destructive/10" />
@@ -281,10 +281,10 @@ export default function Home() {
                 <div 
                   ref={row2Card2.ref}
                   className={`flex justify-start transition-all duration-[1500ms] delay-[560ms] ease-out transform ${
-                    row2Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'
+                    row2Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
                   }`}
                 >
-                  <div className="relative w-full min-w-[400px]">
+                  <div className="relative w-full md:min-w-[300px] lg:min-w-[400px]">
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#042f2e] text-white px-3 py-1 rounded-full text-sm font-medium border border-white/20 z-10">
                       SyncTunez
                     </div>
@@ -308,10 +308,10 @@ export default function Home() {
                 <div 
                   ref={row3Card1.ref}
                   className={`flex justify-end transition-all duration-[1500ms] delay-[750ms] ease-out transform ${
-                    row3Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'
+                    row3Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12 sm:-translate-x-full'
                   }`}
                 >
-                  <Card className="bg-card/80 relative overflow-hidden w-full min-w-[400px] h-[200px]">
+                  <Card className="bg-card/80 relative overflow-hidden w-full md:min-w-[300px] lg:min-w-[400px] h-[200px]">
                     <CardContent className="pt-4 pb-3 h-full flex flex-col items-center justify-center">
                       <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
                         <div className="relative w-10 h-6">
@@ -330,10 +330,10 @@ export default function Home() {
                 <div 
                   ref={row3Card2.ref}
                   className={`flex justify-start transition-all duration-[1500ms] delay-[935ms] ease-out transform ${
-                    row3Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'
+                    row3Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
                   }`}
                 >
-                  <div className="relative w-full min-w-[400px]">
+                  <div className="relative w-full md:min-w-[300px] lg:min-w-[400px]">
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#042f2e] text-white px-3 py-1 rounded-full text-sm font-medium border border-white/20 z-10">
                       SyncTunez
                     </div>
@@ -362,7 +362,7 @@ export default function Home() {
 
       {/* Benefits Section */}
       <section id="benefits" className="min-h-screen bg-[#134e4a]/5 flex items-center relative">
-        <div className="absolute left-12 top-12">
+        <div className="absolute left-12 top-12 hidden lg:block">
           <FloatingUpArrow />
         </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px] py-24">
@@ -446,7 +446,7 @@ export default function Home() {
                 <div 
                   ref={testimonial1.ref}
                   className={`transition-all duration-[1500ms] transform ${
-                    testimonial1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
+                    testimonial1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
                   }`}
                 >
                   <Card className="bg-card/50 py-2 lg:mr-auto lg:ml-0 lg:max-w-[85%] transform lg:-translate-x-8">
@@ -478,7 +478,7 @@ export default function Home() {
                 <div 
                   ref={testimonial2.ref}
                   className={`transition-all duration-[1500ms] delay-[185ms] transform ${
-                    testimonial2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
+                    testimonial2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
                   }`}
                 >
                   <Card className="bg-card/50 py-2 lg:mx-auto lg:max-w-[85%]">
@@ -510,7 +510,7 @@ export default function Home() {
                 <div 
                   ref={testimonial3.ref}
                   className={`transition-all duration-[1500ms] delay-[375ms] transform ${
-                    testimonial3.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
+                    testimonial3.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
                   }`}
                 >
                   <Card className="bg-card/50 py-2 lg:ml-auto lg:mr-0 lg:max-w-[85%] transform lg:translate-x-8">
