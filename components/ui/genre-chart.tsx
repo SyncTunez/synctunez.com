@@ -50,6 +50,7 @@ export function GenreChart() {
             dataKey="value"
             label={renderCustomizedLabel}
             labelLine={false}
+            animationDuration={600}
           >
             {genreData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
