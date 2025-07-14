@@ -32,7 +32,7 @@ export const PlaylistRow: React.FC<PlaylistRowProps> = ({
         <div
             className={cn(
                 'flex items-center gap-2 px-3 py-1.5 rounded-none cursor-pointer transition-colors',
-                selected ? 'bg-accent' : 'hover:bg-muted',
+                selected ? 'bg-muted' : 'hover:bg-muted/50',
                 className,
             )}
             onClick={onClick}

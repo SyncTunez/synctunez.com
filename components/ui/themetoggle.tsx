@@ -87,7 +87,7 @@ export function ModeToggle() {
                 <Button
                     variant='ghost'
                     size='sm'
-                    className='flex items-center justify-center p-1.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                    className='flex items-center justify-center p-1.5 hover:bg-muted/50'
                     onClick={handleThemeToggle}
                 >
                     {resolvedTheme === 'dark' ? <IconSun className="w-5 h-5" /> : <IconMoon className="w-5 h-5" />}

@@ -88,8 +88,8 @@ export const TrackTable: React.FC<TrackTableProps> = ({
     );
 
     return (
-        <div ref={containerRef} className="relative">
-            <div className="h-[450px] overflow-y-auto">
+        <div ref={containerRef} className="w-full">
+            <div className="h-[450px] overflow-y-auto pr-2">
                 <Table style={tableStyle}>
                     {colGroup}
                     <TableHeader className="sticky top-0 z-20">
@@ -114,7 +114,7 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                             const durationMs = isSpotify ? track.durationMs : track.duration;
 
                             return (
-                                <TableRow key={track.id || track.hash || idx} className="group">
+                                <TableRow key={track.hash} className="group">
                                     {showCover && (
                                         <TableCell className="p-2 text-center">
                                             {coverUrl ? (

@@ -10,10 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {SidebarMenuButton} from "@/components/ui/sidebar";
 import {UserContext} from "@/components/auth/UserContext";
-import {IconBell, IconChevronsDown, IconCreditCard, IconLogout, IconLogout2, IconUserCircle} from "@tabler/icons-react";
+import {IconBell, IconCreditCard, IconLogout, IconLogout2, IconUserCircle} from "@tabler/icons-react";
 import {UserAvatarProfile} from "@/components/ui/user-avatar-profile";
 import {buildUrl} from "@/lib/api/apiClient";
 import Link from "next/link";
+import { ChevronsUpDown } from "lucide-react";
 
 export function UserAccountDisplay() {
     const userContext = useContext(UserContext);
@@ -32,7 +33,7 @@ export function UserAccountDisplay() {
                             username={userContext?.userAccount.username}
                             profilePicture={userContext?.userAccount.profilePicture}
                         />
-                        <IconChevronsDown className='ml-auto size-4' />
+                        <ChevronsUpDown className='ml-auto size-4' />
                     </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
