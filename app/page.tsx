@@ -164,9 +164,9 @@ export default async function Home() {
       </section>
 
       {/* Problem-Solution Section */}
-      <section id="problems-solutions" className="h-[50vh] bg-background flex flex-col justify-center overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col justify-center">
-          <div className="text-center mb-8">
+      <section id="problems-solutions" className="h-screen bg-background flex flex-col justify-center overflow-hidden py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1000px]">
+          <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-2">
               Discover Your Shared Sound
             </h2>
@@ -175,139 +175,136 @@ export default async function Home() {
             </p>
           </div>
           
-          <div className="flex flex-col gap-6 max-w-[1200px] mx-auto">
-            {/* Single Row */}
-            <div className="flex flex-col md:flex-row gap-6 items-stretch justify-center">
-              <Card className="text-center bg-card/80 w-full md:w-[350px] group [perspective:1000px] relative">
-                <div className="absolute top-2 right-2 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors flex items-center gap-1 text-[10px]">
-                  <span>hover</span>
-                  <RotateCw className="w-3 h-3" />
-                </div>
-                <div className="relative w-full h-full transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-                  <div className="w-full h-full [backface-visibility:hidden]">
-                    <CardContent className="pt-4 pb-4">
-                      <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <div className="relative w-6 h-6">
-                          <List className="h-6 w-6 text-destructive" />
-                        </div>
-                      </div>
-                      <CardTitle className="text-xl mb-2 text-destructive">The Endless Scroll</CardTitle>
-                      <CardDescription className="text-base">
-                        That familiar, frustrating cycle of searching for the 'perfect' song, only to be met with blank stares.
-                      </CardDescription>
-                    </CardContent>
+          <div className="flex flex-col gap-12 max-w-[1000px] mx-auto">
+            {/* Row 1: Endless Scroll vs Perfect Match */}
+            <div className="grid md:grid-cols-2 gap-20 items-stretch justify-center">
+              <div className="flex justify-center">
+                <Card className="bg-card/80 relative overflow-hidden w-full max-w-[400px] h-[250px]">
+                  <CardContent className="pt-4 pb-3 h-full flex flex-col items-center justify-center">
+                    <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <List className="h-6 w-6 text-destructive" />
+                    </div>
+                    <CardTitle className="text-xl mb-2 text-destructive text-center">The Endless Scroll</CardTitle>
+                    <CardDescription className="text-base text-center">
+                      That familiar, frustrating cycle of searching for the 'perfect' song, only to be met with blank stares.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="flex justify-center">
+                <div className="relative w-full max-w-[400px]">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#042f2e] text-white px-3 py-1 rounded-full text-sm font-medium border border-white/20 z-10">
+                    SyncTunez
                   </div>
-                  <div className="absolute inset-0 h-full w-full [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[#134e4a] rounded-xl">
-                    <CardContent className="pt-6 pb-4">
+                  <Card className="bg-[#134e4a] text-white relative overflow-hidden w-full h-[250px]">
+                    <CardContent className="pt-4 pb-3 h-full flex flex-col items-center justify-center">
                       <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
                         <div className="relative">
                           <Users className="h-6 w-6 text-white" />
                           <Music className="h-3 w-3 text-white absolute -top-1 -right-1" />
                         </div>
                       </div>
-                      <CardTitle className="text-xl mb-2 text-white">Perfect Match</CardTitle>
-                      <CardDescription className="text-base text-white/80">
+                      <CardTitle className="text-xl mb-2 text-white text-center">Perfect Match</CardTitle>
+                      <CardDescription className="text-base text-white/80 text-center">
                         Simply import and play. The right music is always ready, no endless searching required.
                       </CardDescription>
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#042f2e] text-white px-3 py-1 rounded-full text-sm font-medium border border-white/20">
-                        SyncTunez
-                      </div>
                     </CardContent>
-                  </div>
+                  </Card>
                 </div>
-              </Card>
+              </div>
+            </div>
 
-              <Card className="text-center bg-card/80 w-full md:w-[350px] group [perspective:1000px] relative">
-                <div className="absolute top-2 right-2 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors flex items-center gap-1 text-[10px]">
-                  <span>hover</span>
-                  <RotateCw className="w-3 h-3" />
-                </div>
-                <div className="relative w-full h-full transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-                  <div className="w-full h-full [backface-visibility:hidden]">
-                    <CardContent className="pt-4 pb-4">
-                      <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <div className="relative w-6 h-6">
-                          <SkipForward className="h-6 w-6 text-destructive fill-destructive/10" />
-                        </div>
-                      </div>
-                      <CardTitle className="text-xl mb-2 text-destructive">The Skip Battle</CardTitle>
-                      <CardDescription className="text-base">
-                        The dreaded 'skip that!' chorus. When everyone's got an opinion, and no one's really enjoying the music.
-                      </CardDescription>
-                    </CardContent>
+            {/* Row 2: Skip Battle vs Perfect Flow */}
+            <div className="grid md:grid-cols-2 gap-20 items-stretch justify-center">
+              <div className="flex justify-center">
+                <Card className="bg-card/80 relative overflow-hidden w-full max-w-[400px] h-[250px]">
+                  <CardContent className="pt-4 pb-3 h-full flex flex-col items-center justify-center">
+                    <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <SkipForward className="h-6 w-6 text-destructive fill-destructive/10" />
+                    </div>
+                    <CardTitle className="text-xl mb-2 text-destructive text-center">The Skip Battle</CardTitle>
+                    <CardDescription className="text-base text-center">
+                      The dreaded 'skip that!' chorus. When everyone's got an opinion, and no one's really enjoying the music.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="flex justify-center">
+                <div className="relative w-full max-w-[400px]">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#042f2e] text-white px-3 py-1 rounded-full text-sm font-medium border border-white/20 z-10">
+                    SyncTunez
                   </div>
-                  <div className="absolute inset-0 h-full w-full [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[#134e4a] rounded-xl">
-                    <CardContent className="pt-6 pb-4">
+                  <Card className="bg-[#134e4a] text-white relative overflow-hidden w-full h-[250px]">
+                    <CardContent className="pt-4 pb-3 h-full flex flex-col items-center justify-center">
                       <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <div className="relative w-6 h-6">
-                          <Play className="h-6 w-6 text-white fill-white" />
-                        </div>
+                        <Play className="h-6 w-6 text-white fill-white" />
                       </div>
-                      <CardTitle className="text-xl mb-2 text-white">Perfect Flow</CardTitle>
-                      <CardDescription className="text-base text-white/80">
+                      <CardTitle className="text-xl mb-2 text-white text-center">Perfect Flow</CardTitle>
+                      <CardDescription className="text-base text-white/80 text-center">
                         Zero skips. Every track is a pre-approved hit, ensuring everyone's enjoying the music.
                       </CardDescription>
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#042f2e] text-white px-3 py-1 rounded-full text-sm font-medium border border-white/20">
-                        SyncTunez
-                      </div>
                     </CardContent>
-                  </div>
+                  </Card>
                 </div>
-              </Card>
+              </div>
+            </div>
 
-              <Card className="text-center bg-card/80 w-full md:w-[350px] group [perspective:1000px] relative">
-                <div className="absolute top-2 right-2 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors flex items-center gap-1 text-[10px]">
-                  <span>hover</span>
-                  <RotateCw className="w-3 h-3" />
-                </div>
-                <div className="relative w-full h-full transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-                  <div className="w-full h-full [backface-visibility:hidden]">
-                    <CardContent className="pt-4 pb-4">
-                      <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <div className="relative w-10 h-6">
-                          <User className="h-6 w-6 text-destructive absolute -left-1" />
-                          <User className="h-6 w-6 text-destructive absolute -right-1" />
-                        </div>
+            {/* Row 3: Connection Gap vs Music Community */}
+            <div className="grid md:grid-cols-2 gap-20 items-stretch justify-center">
+              <div className="flex justify-center">
+                <Card className="bg-card/80 relative overflow-hidden w-full max-w-[400px] h-[250px]">
+                  <CardContent className="pt-4 pb-3 h-full flex flex-col items-center justify-center">
+                    <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <div className="relative w-10 h-6">
+                        <User className="h-6 w-6 text-destructive absolute -left-1" />
+                        <User className="h-6 w-6 text-destructive absolute -right-1" />
                       </div>
-                      <CardTitle className="text-xl mb-2 text-destructive">The Connection Gap</CardTitle>
-                      <CardDescription className="text-base">
-                        Beyond small talk: Wish you could instantly bond over a shared love for that niche band or obscure genre?
-                      </CardDescription>
-                    </CardContent>
+                    </div>
+                    <CardTitle className="text-xl mb-2 text-destructive text-center">The Connection Gap</CardTitle>
+                    <CardDescription className="text-base text-center">
+                      Beyond small talk: Wish you could instantly bond over a shared love for that niche band or obscure genre?
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="flex justify-center">
+                <div className="relative w-full max-w-[400px]">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#042f2e] text-white px-3 py-1 rounded-full text-sm font-medium border border-white/20 z-10">
+                    SyncTunez
                   </div>
-                  <div className="absolute inset-0 h-full w-full [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[#134e4a] rounded-xl">
-                    <CardContent className="pt-6 pb-4">
+                  <Card className="bg-[#134e4a] text-white relative overflow-hidden w-full h-[250px]">
+                    <CardContent className="pt-4 pb-3 h-full flex flex-col items-center justify-center">
                       <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
                         <div className="relative">
                           <Users className="h-6 w-6 text-white" />
                           <Heart className="h-3 w-3 text-white absolute -top-1 -right-1" />
                         </div>
                       </div>
-                      <CardTitle className="text-xl mb-2 text-white">Your Music Community</CardTitle>
-                      <CardDescription className="text-base text-white/80">
+                      <CardTitle className="text-xl mb-2 text-white text-center">Your Music Community</CardTitle>
+                      <CardDescription className="text-base text-white/80 text-center">
                         Share playlists, swap recommendations, and experience the joy of discovering new sounds together.
                       </CardDescription>
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#042f2e] text-white px-3 py-1 rounded-full text-sm font-medium border border-white/20">
-                        SyncTunez
-                      </div>
                     </CardContent>
-                  </div>
+                  </Card>
                 </div>
-              </Card>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Benefits Section */}
-      <section className="h-[50vh] bg-[#134e4a]/5">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px] h-full flex items-center">
-          <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center max-w-6xl mx-auto w-full">
-            <div className="lg:order-2">
+      <section className="min-h-screen bg-[#134e4a]/5 flex items-center">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px] py-24">
+          <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center w-full">
+            <div className="lg:order-1">
               <h2 className="text-3xl font-bold mb-6">
                 Why SyncTunez?
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 rounded-full bg-[#134e4a]/10 flex items-center justify-center mt-1">
                     <CheckCircle className="h-4 w-4 text-[#134e4a]" />
@@ -366,10 +363,10 @@ export default async function Home() {
               </Button>
             </div>
 
-            <div className="lg:order-1">
-              <div className="space-y-4">
+            <div className="lg:order-2">
+              <div className="space-y-6">
                 {/* Testimonial 1 */}
-                <Card className="bg-card/50 py-2">
+                <Card className="bg-card/50 py-2 lg:mr-auto lg:ml-0 lg:max-w-[85%] transform lg:-translate-x-8">
                   <CardContent className="py-2">
                     <div className="flex gap-4">
                       <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
@@ -394,7 +391,7 @@ export default async function Home() {
                 </Card>
 
                 {/* Testimonial 2 */}
-                <Card className="bg-card/50 py-2">
+                <Card className="bg-card/50 py-2 lg:mx-auto lg:max-w-[85%]">
                   <CardContent className="py-2">
                     <div className="flex gap-4">
                       <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
@@ -419,7 +416,7 @@ export default async function Home() {
                 </Card>
 
                 {/* Testimonial 3 */}
-                <Card className="bg-card/50 py-2">
+                <Card className="bg-card/50 py-2 lg:ml-auto lg:mr-0 lg:max-w-[85%] transform lg:translate-x-8">
                   <CardContent className="py-2">
                     <div className="flex gap-4">
                       <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
