@@ -65,10 +65,10 @@ export function HeroSection() {
           </div>
 
           {/* Right Image */}
-          <div className="relative xl:order-2 xl:pl-4 xl:pl-8 pb-24 xl:pb-0">
-            <div className="relative max-w-2xl lg:max-w-none mx-auto">
+          <div className="relative flex justify-center xl:order-2 xl:pl-4 xl:pl-8 pb-24 xl:pb-0">
+            <div className="w-full max-w-[320px] sm:max-w-[400px] md:max-w-[480px] lg:max-w-[600px] xl:w-full xl:max-w-none">
               {/* Main Demo Image */}
-              <div className="bg-card rounded-2xl p-8 shadow-2xl relative">
+              <div className="bg-card rounded-2xl p-4 sm:p-6 lg:p-8 shadow-2xl relative">
                 {/* Star icon in top right */}
                 <div className="absolute -top-8 -right-8 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl hidden lg:flex">
                   <Sparkles className="h-8 w-8 text-primary-foreground" />
