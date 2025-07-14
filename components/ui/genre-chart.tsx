@@ -17,7 +17,7 @@ const genreData: GenreData[] = [
 const renderCustomizedLabel = (props: any) => {
   const { cx, cy, midAngle, outerRadius, name, payload } = props;
   const RADIAN = Math.PI / 180;
-  const radius = outerRadius * 1.3; // Increased from 1.1 to move labels further out
+  const radius = outerRadius * 1.3;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
@@ -25,10 +25,10 @@ const renderCustomizedLabel = (props: any) => {
     <text
       x={x}
       y={y}
-      fill={payload.color} // Using the segment's color for the label
+      fill={payload.color}
       textAnchor={x > cx ? 'start' : 'end'}
       dominantBaseline="central"
-      className="text-sm font-medium"
+      className="text-sm font-medium opacity-0 animate-[fadeIn_0.5s_ease-in_forwards]"
     >
       {name}
     </text>
