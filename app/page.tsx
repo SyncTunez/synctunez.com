@@ -14,6 +14,11 @@ export default function Home() {
   const row2Card2 = useInView<HTMLDivElement>();
   const row3Card1 = useInView<HTMLDivElement>();
   const row3Card2 = useInView<HTMLDivElement>();
+  
+  // Add hooks for testimonials
+  const testimonial1 = useInView<HTMLDivElement>();
+  const testimonial2 = useInView<HTMLDivElement>();
+  const testimonial3 = useInView<HTMLDivElement>();
 
   return (
     <div className="overflow-x-hidden">
@@ -26,7 +31,9 @@ export default function Home() {
               {/* Hero Title */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-8">
                 Stop Skipping, <br />
-                <span className="text-[#0f766e]">Start Syncing</span>
+                <span className="inline-block bg-gradient-to-r from-[#0f766e] via-[#2dd4bf] to-[#14b8a6] text-transparent bg-clip-text transform rotate-[0.1deg] [text-shadow:_1px_1px_0_rgb(13_148_136/_30%),_0_1px_8px_rgb(15_118_110_/_15%)]">
+                  Start Syncing
+                </span>
               </h1>
               
               {/* Hero Description */}
@@ -43,9 +50,11 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-5 mb-10">
                 <Button 
                   size="lg" 
-                  className="relative text-lg px-8 py-6 h-auto bg-[#134e4a] hover:bg-[#0d9488] text-white border-0 shadow-lg hover:shadow-xl hover:shadow-[#134e4a]/25 hover:scale-[1.02] transition-all duration-200 font-semibold overflow-hidden
+                  className="relative text-lg px-8 py-6 h-auto bg-gradient-to-r from-[#0f766e] via-[#0d9488] to-[#14b8a6] hover:from-[#0d9488] hover:via-[#14b8a6] hover:to-[#0f766e] text-white border-0 shadow-lg hover:shadow-xl hover:shadow-[#134e4a]/25 hover:scale-[1.02] transition-all duration-200 font-semibold overflow-hidden
+                    [background-size:200%_200%]
+                    animate-[gradientMove_3s_ease-in-out_infinite]
                     before:absolute before:inset-0
-                    before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent
+                    before:bg-gradient-to-r before:from-white/0 before:via-white/25 before:to-white/0
                     before:translate-x-[-200%]
                     before:animate-[shimmer_2s_ease-in-out_infinite]
                     before:skew-x-[-20deg]
@@ -175,7 +184,7 @@ export default function Home() {
 
       {/* Problem-Solution Section */}
       <section id="problems-solutions" className="min-h-screen bg-background flex flex-col justify-center overflow-hidden py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-32 xl:px-48 max-w-[1400px]">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-2">
               Discover Your Shared Sound
@@ -210,7 +219,7 @@ export default function Home() {
 
                 <div 
                   ref={row1Card2.ref}
-                  className={`flex justify-start transition-all duration-[1500ms] delay-[375ms] ease-out transform ${
+                  className={`flex justify-start transition-all duration-[1500ms] delay-[185ms] ease-out transform ${
                     row1Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'
                   }`}
                 >
@@ -234,10 +243,10 @@ export default function Home() {
               </div>
 
               {/* Row 2: Skip Battle vs Perfect Flow */}
-              <div className="grid md:grid-cols-2 items-stretch gap-12 mt-12 lg:translate-x-96">
+              <div className="grid md:grid-cols-2 items-stretch gap-12 mt-12 lg:translate-x-64">
                 <div 
                   ref={row2Card1.ref}
-                  className={`flex justify-end transition-all duration-[1500ms] delay-[750ms] ease-out transform ${
+                  className={`flex justify-end transition-all duration-[1500ms] delay-[375ms] ease-out transform ${
                     row2Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'
                   }`}
                 >
@@ -256,7 +265,7 @@ export default function Home() {
 
                 <div 
                   ref={row2Card2.ref}
-                  className={`flex justify-start transition-all duration-[1500ms] delay-[1125ms] ease-out transform ${
+                  className={`flex justify-start transition-all duration-[1500ms] delay-[560ms] ease-out transform ${
                     row2Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'
                   }`}
                 >
@@ -280,10 +289,10 @@ export default function Home() {
               </div>
 
               {/* Row 3: Connection Gap vs Music Community */}
-              <div className="grid md:grid-cols-2 items-stretch gap-12 mt-12 lg:translate-x-[44rem]">
+              <div className="grid md:grid-cols-2 items-stretch gap-12 mt-12 lg:translate-x-[32rem]">
                 <div 
                   ref={row3Card1.ref}
-                  className={`flex justify-end transition-all duration-[1500ms] delay-[1500ms] ease-out transform ${
+                  className={`flex justify-end transition-all duration-[1500ms] delay-[750ms] ease-out transform ${
                     row3Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'
                   }`}
                 >
@@ -305,7 +314,7 @@ export default function Home() {
 
                 <div 
                   ref={row3Card2.ref}
-                  className={`flex justify-start transition-all duration-[1500ms] delay-[1875ms] ease-out transform ${
+                  className={`flex justify-start transition-all duration-[1500ms] delay-[935ms] ease-out transform ${
                     row3Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'
                   }`}
                 >
@@ -341,7 +350,7 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px] py-24">
           <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center w-full">
             <div className="lg:order-1">
-              <h2 className="text-3xl font-bold mb-6">
+              <h2 className="text-3xl font-bold mb-6 inline-block transform rotate-[0.1deg] [text-shadow:_1px_1px_0_rgb(0_0_0/_10%),_0_1px_8px_rgb(0_0_0/_10%)]">
                 Why SyncTunez?
               </h2>
               <div className="space-y-6">
@@ -406,79 +415,100 @@ export default function Home() {
             <div className="lg:order-2">
               <div className="space-y-6">
                 {/* Testimonial 1 */}
-                <Card className="bg-card/50 py-2 lg:mr-auto lg:ml-0 lg:max-w-[85%] transform lg:-translate-x-8">
-                  <CardContent className="py-2">
-                    <div className="flex gap-4">
-                      <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
-                        <Quote className="h-4 w-4 text-[#134e4a]" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground italic mb-2">
-                          "SyncTunez helped me discover so much amazing music through my friends. Our group hangouts have never been better!"
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-[#134e4a]/5 flex items-center justify-center">
-                            <User className="h-3 w-3 text-[#134e4a]" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">Sarah Chen</p>
-                            <p className="text-xs text-muted-foreground">Music Enthusiast</p>
+                <div 
+                  ref={testimonial1.ref}
+                  className={`transition-all duration-[1500ms] transform ${
+                    testimonial1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
+                  }`}
+                >
+                  <Card className="bg-card/50 py-2 lg:mr-auto lg:ml-0 lg:max-w-[85%] transform lg:-translate-x-8">
+                    <CardContent className="py-2">
+                      <div className="flex gap-4">
+                        <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
+                          <Quote className="h-4 w-4 text-[#134e4a]" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground italic mb-2">
+                            "SyncTunez helped me discover so much amazing music through my friends. Our group hangouts have never been better!"
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-[#134e4a]/5 flex items-center justify-center">
+                              <User className="h-3 w-3 text-[#134e4a]" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">Sarah Chen</p>
+                              <p className="text-xs text-muted-foreground">Music Enthusiast</p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </div>
 
                 {/* Testimonial 2 */}
-                <Card className="bg-card/50 py-2 lg:mx-auto lg:max-w-[85%]">
-                  <CardContent className="py-2">
-                    <div className="flex gap-4">
-                      <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
-                        <Quote className="h-4 w-4 text-[#134e4a]" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground italic mb-2">
-                          "The playlist matching is incredible! It's like having a DJ that knows everyone's taste perfectly."
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-[#134e4a]/5 flex items-center justify-center">
-                            <User className="h-3 w-3 text-[#134e4a]" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">Alex Rivera</p>
-                            <p className="text-xs text-muted-foreground">Party Host</p>
+                <div 
+                  ref={testimonial2.ref}
+                  className={`transition-all duration-[1500ms] delay-[185ms] transform ${
+                    testimonial2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
+                  }`}
+                >
+                  <Card className="bg-card/50 py-2 lg:mx-auto lg:max-w-[85%]">
+                    <CardContent className="py-2">
+                      <div className="flex gap-4">
+                        <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
+                          <Quote className="h-4 w-4 text-[#134e4a]" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground italic mb-2">
+                            "The playlist matching is incredible! It's like having a DJ that knows everyone's taste perfectly."
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-[#134e4a]/5 flex items-center justify-center">
+                              <User className="h-3 w-3 text-[#134e4a]" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">Alex Rivera</p>
+                              <p className="text-xs text-muted-foreground">Party Host</p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </div>
 
                 {/* Testimonial 3 */}
-                <Card className="bg-card/50 py-2 lg:ml-auto lg:mr-0 lg:max-w-[85%] transform lg:translate-x-8">
-                  <CardContent className="py-2">
-                    <div className="flex gap-4">
-                      <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
-                        <Quote className="h-4 w-4 text-[#134e4a]" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground italic mb-2">
-                          "Finally, road trips without the music drama! Everyone's favorites get played and we all discover new songs."
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-[#134e4a]/5 flex items-center justify-center">
-                            <User className="h-3 w-3 text-[#134e4a]" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">Marcus Johnson</p>
-                            <p className="text-xs text-muted-foreground">Road Trip Enthusiast</p>
+                <div 
+                  ref={testimonial3.ref}
+                  className={`transition-all duration-[1500ms] delay-[375ms] transform ${
+                    testimonial3.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
+                  }`}
+                >
+                  <Card className="bg-card/50 py-2 lg:ml-auto lg:mr-0 lg:max-w-[85%] transform lg:translate-x-8">
+                    <CardContent className="py-2">
+                      <div className="flex gap-4">
+                        <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
+                          <Quote className="h-4 w-4 text-[#134e4a]" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground italic mb-2">
+                            "Finally, road trips without the music drama! Everyone's favorites get played and we all discover new songs."
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-[#134e4a]/5 flex items-center justify-center">
+                              <User className="h-3 w-3 text-[#134e4a]" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">Marcus Johnson</p>
+                              <p className="text-xs text-muted-foreground">Road Trip Enthusiast</p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
             </div>
           </div>
