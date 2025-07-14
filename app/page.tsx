@@ -61,77 +61,77 @@ export default async function Home() {
             <div className="relative lg:order-2 lg:pl-4 xl:pl-8">
               <div className="relative max-w-2xl lg:max-w-none mx-auto">
                 {/* Main Demo Image */}
-                <div className="bg-[#18181b] rounded-2xl p-8 shadow-2xl relative">
+                <div className="bg-card rounded-2xl p-8 shadow-2xl relative">
                   {/* Star icon in top right */}
-                  <div className="absolute -top-8 -right-8 w-16 h-16 bg-[#134e4a] rounded-full flex items-center justify-center shadow-xl">
-                    <Sparkles className="h-8 w-8 text-white" />
+                  <div className="absolute -top-8 -right-8 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl">
+                    <Sparkles className="h-8 w-8 text-primary-foreground" />
                   </div>
                   {/* Heart icon in bottom left */}
-                  <div className="absolute -bottom-8 -left-8 w-16 h-16 bg-[#134e4a] rounded-full flex items-center justify-center shadow-xl">
-                    <Heart className="h-8 w-8 text-white" />
+                  <div className="absolute -bottom-8 -left-8 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl">
+                    <Heart className="h-8 w-8 text-primary-foreground" />
                   </div>
                   <div className="space-y-6">
                     {/* Mock App Interface */}
-                    <div className="bg-[#1a1f2b] rounded-lg p-4 pb-6 shadow-lg">
+                    <div className="bg-muted rounded-lg p-4 pb-6 shadow-lg">
                       <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 bg-[#134e4a] rounded-full flex items-center justify-center">
-                          <Users className="h-5 w-5 text-gray-100" />
+                        <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                          <Users className="h-5 w-5 text-primary-foreground" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-gray-100">Playlist Match</h3>
-                          <p className="text-sm text-gray-400">Sarah & Alex</p>
+                          <h3 className="font-semibold text-foreground">Playlist Match</h3>
+                          <p className="text-sm text-muted-foreground">Sarah & Alex</p>
                         </div>
                       </div>
                       
                       {/* Mock playlist items */}
                       <div className="space-y-1">
-                          <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_forwards] opacity-0">
-                            <div className="w-8 h-8 rounded-md bg-[#1e2330] flex items-center justify-center">
-                              <Music className="h-4 w-4 text-[#134e4a]" />
+                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md hover:bg-card/60 transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_forwards] opacity-0">
+                            <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                              <Music className="h-4 w-4 text-primary" />
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-gray-100">Blinding Lights</p>
-                              <p className="text-xs text-gray-400">The Weeknd</p>
+                              <p className="text-sm font-medium text-foreground">Blinding Lights</p>
+                              <p className="text-xs text-muted-foreground">The Weeknd</p>
                             </div>
                           </div>
                           
-                          <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInRight_0.5s_ease-out_0.2s_forwards] opacity-0">
-                            <div className="w-8 h-8 rounded-md bg-[#1e2330] flex items-center justify-center">
-                              <Music className="h-4 w-4 text-[#134e4a]" />
+                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md hover:bg-card/60 transition-colors cursor-pointer group animate-[slideInRight_0.5s_ease-out_0.2s_forwards] opacity-0">
+                            <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                              <Music className="h-4 w-4 text-primary" />
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-gray-100">Good 4 U</p>
-                              <p className="text-xs text-gray-400">Olivia Rodrigo</p>
+                              <p className="text-sm font-medium text-foreground">Good 4 U</p>
+                              <p className="text-xs text-muted-foreground">Olivia Rodrigo</p>
                             </div>
                           </div>
                           
-                          <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_0.4s_forwards] opacity-0">
-                            <div className="w-8 h-8 rounded-md bg-[#1e2330] flex items-center justify-center">
-                              <Music className="h-4 w-4 text-[#134e4a]" />
+                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md hover:bg-card/60 transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_0.4s_forwards] opacity-0">
+                            <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                              <Music className="h-4 w-4 text-primary" />
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-gray-100">Levitating</p>
-                              <p className="text-xs text-gray-400">Dua Lipa</p>
+                              <p className="text-sm font-medium text-foreground">Levitating</p>
+                              <p className="text-xs text-muted-foreground">Dua Lipa</p>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInRight_0.5s_ease-out_0.6s_forwards] opacity-0">
-                            <div className="w-8 h-8 rounded-md bg-[#1e2330] flex items-center justify-center">
-                              <Music className="h-4 w-4 text-[#134e4a]" />
+                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md hover:bg-card/60 transition-colors cursor-pointer group animate-[slideInRight_0.5s_ease-out_0.6s_forwards] opacity-0">
+                            <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                              <Music className="h-4 w-4 text-primary" />
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-gray-100">As It Was</p>
-                              <p className="text-xs text-gray-400">Harry Styles</p>
+                              <p className="text-sm font-medium text-foreground">As It Was</p>
+                              <p className="text-xs text-muted-foreground">Harry Styles</p>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_0.8s_forwards] opacity-0 mb-1.5">
-                            <div className="w-8 h-8 rounded-md bg-[#1e2330] flex items-center justify-center">
-                              <Music className="h-4 w-4 text-[#134e4a]" />
+                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md hover:bg-card/60 transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_0.8s_forwards] opacity-0 mb-1.5">
+                            <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                              <Music className="h-4 w-4 text-primary" />
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-gray-100">Anti-Hero</p>
-                              <p className="text-xs text-gray-400">Taylor Swift</p>
+                              <p className="text-sm font-medium text-foreground">Anti-Hero</p>
+                              <p className="text-xs text-muted-foreground">Taylor Swift</p>
                             </div>
                           </div>
                       </div>
@@ -141,7 +141,7 @@ export default async function Home() {
                           <p className="text-sm font-medium text-[#1DB954] relative z-10">
                             <span className="mr-1">✨</span>
                             15 songs matched!
-                            <span className="ml-1">✨</span>
+                            <span className="ml-1">🎉</span>
                           </p>
                         </div>
                       </div>
@@ -149,11 +149,11 @@ export default async function Home() {
                     
                     {/* Stats */}
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-[#1a1f2b] rounded-lg p-4 text-center shadow-lg flex flex-col justify-center opacity-0 animate-[slideUp_0.5s_ease-out_1s_forwards]">
-                          <p className="text-4xl font-bold text-[#0f766e] leading-none mb-1">85%</p>
-                          <p className="text-xs text-gray-400">Match Score</p>
+                        <div className="bg-muted rounded-lg p-4 text-center shadow-lg flex flex-col justify-center opacity-0 animate-[slideUp_0.5s_ease-out_1s_forwards]">
+                          <p className="text-4xl font-bold text-primary leading-none mb-1">85%</p>
+                          <p className="text-xs text-muted-foreground">Match Score</p>
                         </div>
-                        <div className="bg-[#1a1f2b] rounded-lg p-4 text-center shadow-lg opacity-0 animate-[slideUp_0.5s_ease-out_1.2s_forwards]">
+                        <div className="bg-muted rounded-lg p-4 text-center shadow-lg opacity-0 animate-[slideUp_0.5s_ease-out_1.2s_forwards]">
                           <div className="h-[100px]">
                             <GenreChart />
                           </div>

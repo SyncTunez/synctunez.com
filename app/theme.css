@@ -5,6 +5,19 @@ body {
 :root {
     --font-sans: var(--font-inter);
     --header-height: calc(var(--spacing) * 12 + 1px);
+
+    /* Teal color palette */
+    --teal-50: #f0fdfa;
+    --teal-100: #ccfbf1;
+    --teal-200: #99f6e4;
+    --teal-300: #5eead4;
+    --teal-400: #2dd4bf;
+    --teal-500: #14b8a6;
+    --teal-600: #0d9488;
+    --teal-700: #0f766e;
+    --teal-800: #115e59;
+    --teal-900: #134e4a;
+    --teal-950: #042f2e;
 }
 
 .theme-scaled {
@@ -28,12 +41,16 @@ body {
 
 .theme-default,
 .theme-default-scaled {
-    --primary: var(--color-neutral-600);
-    --primary-foreground: var(--color-neutral-50);
+    --primary: var(--teal-700);
+    --primary-foreground: var(--teal-50);
+    --accent: var(--teal-600);
+    --accent-foreground: var(--teal-50);
 
     @variant dark {
-        --primary: var(--color-neutral-500);
-        --primary-foreground: var(--color-neutral-50);
+        --primary: var(--teal-600);
+        --primary-foreground: var(--teal-50);
+        --accent: var(--teal-700);
+        --accent-foreground: var(--teal-50);
     }
 }
 
