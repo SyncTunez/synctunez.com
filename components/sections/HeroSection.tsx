@@ -86,7 +86,7 @@ export function HeroSection() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-foreground">Playlist Match</h3>
-                        <p className="text-sm text-muted-foreground">Sarah & Alex</p>
+                        <p className="text-sm text-muted-foreground">Jack & Talisha</p>
                       </div>
                     </div>
                     
@@ -103,8 +103,8 @@ export function HeroSection() {
                             <Music className="h-4 w-4 text-primary" />
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-foreground">Blinding Lights</p>
-                            <p className="text-xs text-muted-foreground">The Weeknd</p>
+                            <p className="text-sm font-medium text-foreground">Miss Me Too</p>
+                            <p className="text-xs text-muted-foreground">Griff</p>
                           </div>
                         </div>
                       </div>
@@ -120,8 +120,8 @@ export function HeroSection() {
                             <Music className="h-4 w-4 text-primary" />
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-foreground">As It Was</p>
-                            <p className="text-xs text-muted-foreground">Harry Styles</p>
+                            <p className="text-sm font-medium text-foreground">Betty</p>
+                            <p className="text-xs text-muted-foreground">Taylor Swift</p>
                           </div>
                         </div>
                       </div>
@@ -137,8 +137,8 @@ export function HeroSection() {
                             <Music className="h-4 w-4 text-primary" />
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-foreground">Anti-Hero</p>
-                            <p className="text-xs text-muted-foreground">Taylor Swift</p>
+                            <p className="text-sm font-medium text-foreground">Islands in the Stream</p>
+                            <p className="text-xs text-muted-foreground">Dolly Parton</p>
                           </div>
                         </div>
                       </div>
@@ -154,8 +154,8 @@ export function HeroSection() {
                             <Music className="h-4 w-4 text-primary" />
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-foreground">Flowers</p>
-                            <p className="text-xs text-muted-foreground">Miley Cyrus</p>
+                            <p className="text-sm font-medium text-foreground">Girlfriend</p>
+                            <p className="text-xs text-muted-foreground">Hemlocke Springs</p>
                           </div>
                         </div>
                       </div>
@@ -171,8 +171,8 @@ export function HeroSection() {
                             <Music className="h-4 w-4 text-primary" />
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-foreground">About Damn Time</p>
-                            <p className="text-xs text-muted-foreground">Lizzo</p>
+                            <p className="text-sm font-medium text-foreground">Chaise Longue</p>
+                            <p className="text-xs text-muted-foreground">Wet Leg</p>
                           </div>
                         </div>
                       </div>

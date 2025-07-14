@@ -14,12 +14,9 @@ export function ProblemSolutionSection() {
   const row3Card2 = useInView<HTMLDivElement>();
 
   return (
-    <section id="problems-solutions" className="h-screen bg-background flex flex-col justify-between overflow-hidden relative">
-      <div className="absolute right-12 bottom-12 hidden lg:block">
-        <FloatingDownArrow />
-      </div>
-      <div className="container mx-auto px-4 h-full flex flex-col">
-        <div className="text-center pt-16 lg:pt-24">
+    <section id="problems-solutions" className="min-h-screen bg-background flex flex-col overflow-hidden relative py-16 lg:py-24">
+      <div className="container mx-auto px-4 flex flex-col">
+        <div className="text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-2">
             Discover Your Shared Sound
           </h2>
@@ -28,7 +25,7 @@ export function ProblemSolutionSection() {
           </p>
         </div>
         
-        <div className="max-w-7xl mx-auto flex flex-col gap-8 flex-1 justify-center pb-16 lg:pb-24">
+        <div className="max-w-7xl mx-auto flex flex-col gap-8 flex-1 justify-center mt-16 lg:mt-24">
           {/* Row 1: Endless Scroll vs Perfect Match */}
           <div className="flex flex-col lg:flex-row gap-8 justify-center xl:translate-x-[-15%] transition-transform duration-500">
             <div 
@@ -173,6 +170,9 @@ export function ProblemSolutionSection() {
             </div>
           </div>
         </div>
+      </div>
+      <div className="absolute right-12 bottom-12 hidden lg:block">
+        <FloatingDownArrow />
       </div>
     </section>
   );
