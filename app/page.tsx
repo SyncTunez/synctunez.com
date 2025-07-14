@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Music, Users, Heart, Sparkles, ArrowRight, CheckCircle, Search, List, SkipForward, User, Play } from "lucide-react";
+import { Music, Users, Heart, Sparkles, ArrowRight, CheckCircle, Search, List, SkipForward, User, Play, RotateCw, Quote } from "lucide-react";
 import { GenreChart } from "@/components/ui/genre-chart";
 import { LearnMoreButton } from "@/components/ui/learn-more-button";
 
@@ -164,7 +164,7 @@ export default async function Home() {
       </section>
 
       {/* Problem-Solution Section */}
-      <section id="problems-solutions" className="h-screen bg-background flex flex-col justify-center overflow-hidden">
+      <section id="problems-solutions" className="h-[50vh] bg-background flex flex-col justify-center overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col justify-center">
           <div className="text-center mb-8">
             <h2 className="text-3xl sm:text-4xl font-bold mb-2">
@@ -175,121 +175,124 @@ export default async function Home() {
             </p>
           </div>
           
-          <div className="flex flex-col gap-6 max-w-[800px] mx-auto">
-            {/* Row 1 */}
-            <div className="flex flex-col md:flex-row gap-6 items-stretch">
-              <Card className="text-center bg-card/80 transition-all duration-300 hover:bg-card/90 w-full md:w-[350px] flex flex-col">
-                <CardContent className="pt-4 pb-4 flex-1 flex flex-col">
-                  <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <div className="relative w-6 h-6">
-                      <List className="h-6 w-6 text-destructive" />
-                    </div>
-                  </div>
-                  <CardTitle className="text-xl mb-2 text-destructive">The Endless Scroll</CardTitle>
-                  <CardDescription className="text-base flex-1 flex items-center justify-center">
-                    That familiar, frustrating cycle of searching for the 'perfect' song, only to be met with blank stares.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-
-              <div className="hidden md:flex items-center justify-center w-12">
-                <ArrowRight className="h-6 w-6 text-[#134e4a]" />
-              </div>
-
-              <Card className="text-center relative bg-card transition-all duration-300 hover:bg-card/90 hover:scale-[1.02] hover:shadow-lg w-full md:w-[350px] flex flex-col">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#134e4a] text-white px-3 py-1 rounded-full text-sm">
-                SyncTunez
+          <div className="flex flex-col gap-6 max-w-[1200px] mx-auto">
+            {/* Single Row */}
+            <div className="flex flex-col md:flex-row gap-6 items-stretch justify-center">
+              <Card className="text-center bg-card/80 w-full md:w-[350px] group [perspective:1000px] relative">
+                <div className="absolute top-2 right-2 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors flex items-center gap-1 text-[10px]">
+                  <span>hover</span>
+                  <RotateCw className="w-3 h-3" />
                 </div>
-                <CardContent className="pt-6 pb-4 flex-1 flex flex-col">
-                  <div className="w-12 h-12 bg-[#134e4a]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <div className="relative">
-                      <Users className="h-6 w-6 text-[#134e4a]" />
-                      <Music className="h-3 w-3 text-[#134e4a] absolute -top-1 -right-1" />
-                    </div>
+                <div className="relative w-full h-full transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                  <div className="w-full h-full [backface-visibility:hidden]">
+                    <CardContent className="pt-4 pb-4">
+                      <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div className="relative w-6 h-6">
+                          <List className="h-6 w-6 text-destructive" />
+                        </div>
+                      </div>
+                      <CardTitle className="text-xl mb-2 text-destructive">The Endless Scroll</CardTitle>
+                      <CardDescription className="text-base">
+                        That familiar, frustrating cycle of searching for the 'perfect' song, only to be met with blank stares.
+                      </CardDescription>
+                    </CardContent>
                   </div>
-                  <CardTitle className="text-xl mb-2">Perfect Match</CardTitle>
-                  <CardDescription className="text-base flex-1 flex items-center justify-center">
-                    Simply import and play. The right music is always ready, no endless searching required.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Row 2 */}
-            <div className="flex flex-col md:flex-row gap-6 items-stretch">
-              <Card className="text-center bg-card/80 transition-all duration-300 hover:bg-card/90 w-full md:w-[350px] flex flex-col">
-                <CardContent className="pt-4 pb-4 flex-1 flex flex-col">
-                  <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <div className="relative w-6 h-6">
-                      <SkipForward className="h-6 w-6 text-destructive fill-destructive/10" />
-                    </div>
+                  <div className="absolute inset-0 h-full w-full [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[#134e4a] rounded-xl">
+                    <CardContent className="pt-6 pb-4">
+                      <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div className="relative">
+                          <Users className="h-6 w-6 text-white" />
+                          <Music className="h-3 w-3 text-white absolute -top-1 -right-1" />
+                        </div>
+                      </div>
+                      <CardTitle className="text-xl mb-2 text-white">Perfect Match</CardTitle>
+                      <CardDescription className="text-base text-white/80">
+                        Simply import and play. The right music is always ready, no endless searching required.
+                      </CardDescription>
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#042f2e] text-white px-3 py-1 rounded-full text-sm font-medium border border-white/20">
+                        SyncTunez
+                      </div>
+                    </CardContent>
                   </div>
-                  <CardTitle className="text-xl mb-2 text-destructive">The Skip Battle</CardTitle>
-                  <CardDescription className="text-base flex-1 flex items-center justify-center">
-                    The dreaded 'skip that!' chorus. When everyone's got an opinion, and no one's really enjoying the music.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-
-              <div className="hidden md:flex items-center justify-center w-12">
-                <ArrowRight className="h-6 w-6 text-[#134e4a]" />
-              </div>
-
-              <Card className="text-center relative bg-card transition-all duration-300 hover:bg-card/90 hover:scale-[1.02] hover:shadow-lg w-full md:w-[350px] flex flex-col">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#134e4a] text-white px-3 py-1 rounded-full text-sm">
-                SyncTunez
                 </div>
-                <CardContent className="pt-6 pb-4 flex-1 flex flex-col">
-                  <div className="w-12 h-12 bg-[#134e4a]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <div className="relative w-6 h-6">
-                      <Play className="h-6 w-6 text-[#134e4a] fill-[#134e4a]" />
-                    </div>
-                  </div>
-                  <CardTitle className="text-xl mb-2">Perfect Flow</CardTitle>
-                  <CardDescription className="text-base flex-1 flex items-center justify-center">
-                    Zero skips. Every track is a pre-approved hit, ensuring everyone's enjoying the music.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Row 3 */}
-            <div className="flex flex-col md:flex-row gap-6 items-stretch">
-              <Card className="text-center bg-card/80 transition-all duration-300 hover:bg-card/90 w-full md:w-[350px] flex flex-col">
-                <CardContent className="pt-4 pb-4 flex-1 flex flex-col">
-                  <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <div className="relative w-10 h-6">
-                      <User className="h-6 w-6 text-destructive absolute -left-1" />
-                      <User className="h-6 w-6 text-destructive absolute -right-1" />
-                    </div>
-                  </div>
-                  <CardTitle className="text-xl mb-2 text-destructive">The Connection Gap</CardTitle>
-                  <CardDescription className="text-base flex-1 flex items-center justify-center">
-                    Beyond small talk: Wish you could instantly bond over a shared love for that niche band or obscure genre?
-                  </CardDescription>
-                </CardContent>
               </Card>
 
-              <div className="hidden md:flex items-center justify-center w-12">
-                <ArrowRight className="h-6 w-6 text-[#134e4a]" />
-              </div>
-
-              <Card className="text-center relative bg-card transition-all duration-300 hover:bg-card/90 hover:scale-[1.02] hover:shadow-lg w-full md:w-[350px] flex flex-col">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#134e4a] text-white px-3 py-1 rounded-full text-sm">
-                  SyncTunez
+              <Card className="text-center bg-card/80 w-full md:w-[350px] group [perspective:1000px] relative">
+                <div className="absolute top-2 right-2 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors flex items-center gap-1 text-[10px]">
+                  <span>hover</span>
+                  <RotateCw className="w-3 h-3" />
                 </div>
-                <CardContent className="pt-6 pb-4 flex-1 flex flex-col">
-                  <div className="w-12 h-12 bg-[#134e4a]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <div className="relative">
-                      <Users className="h-6 w-6 text-[#134e4a]" />
-                      <Heart className="h-3 w-3 text-[#134e4a] absolute -top-1 -right-1" />
-                    </div>
+                <div className="relative w-full h-full transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                  <div className="w-full h-full [backface-visibility:hidden]">
+                    <CardContent className="pt-4 pb-4">
+                      <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div className="relative w-6 h-6">
+                          <SkipForward className="h-6 w-6 text-destructive fill-destructive/10" />
+                        </div>
+                      </div>
+                      <CardTitle className="text-xl mb-2 text-destructive">The Skip Battle</CardTitle>
+                      <CardDescription className="text-base">
+                        The dreaded 'skip that!' chorus. When everyone's got an opinion, and no one's really enjoying the music.
+                      </CardDescription>
+                    </CardContent>
                   </div>
-                  <CardTitle className="text-xl mb-2">Your Music Community</CardTitle>
-                  <CardDescription className="text-base flex-1 flex items-center justify-center">
-                    Build your ultimate music community. Share playlists, swap recommendations, and experience the joy of discovering new sounds together.
-                  </CardDescription>
-                </CardContent>
+                  <div className="absolute inset-0 h-full w-full [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[#134e4a] rounded-xl">
+                    <CardContent className="pt-6 pb-4">
+                      <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div className="relative w-6 h-6">
+                          <Play className="h-6 w-6 text-white fill-white" />
+                        </div>
+                      </div>
+                      <CardTitle className="text-xl mb-2 text-white">Perfect Flow</CardTitle>
+                      <CardDescription className="text-base text-white/80">
+                        Zero skips. Every track is a pre-approved hit, ensuring everyone's enjoying the music.
+                      </CardDescription>
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#042f2e] text-white px-3 py-1 rounded-full text-sm font-medium border border-white/20">
+                        SyncTunez
+                      </div>
+                    </CardContent>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="text-center bg-card/80 w-full md:w-[350px] group [perspective:1000px] relative">
+                <div className="absolute top-2 right-2 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors flex items-center gap-1 text-[10px]">
+                  <span>hover</span>
+                  <RotateCw className="w-3 h-3" />
+                </div>
+                <div className="relative w-full h-full transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                  <div className="w-full h-full [backface-visibility:hidden]">
+                    <CardContent className="pt-4 pb-4">
+                      <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div className="relative w-10 h-6">
+                          <User className="h-6 w-6 text-destructive absolute -left-1" />
+                          <User className="h-6 w-6 text-destructive absolute -right-1" />
+                        </div>
+                      </div>
+                      <CardTitle className="text-xl mb-2 text-destructive">The Connection Gap</CardTitle>
+                      <CardDescription className="text-base">
+                        Beyond small talk: Wish you could instantly bond over a shared love for that niche band or obscure genre?
+                      </CardDescription>
+                    </CardContent>
+                  </div>
+                  <div className="absolute inset-0 h-full w-full [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[#134e4a] rounded-xl">
+                    <CardContent className="pt-6 pb-4">
+                      <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div className="relative">
+                          <Users className="h-6 w-6 text-white" />
+                          <Heart className="h-3 w-3 text-white absolute -top-1 -right-1" />
+                        </div>
+                      </div>
+                      <CardTitle className="text-xl mb-2 text-white">Your Music Community</CardTitle>
+                      <CardDescription className="text-base text-white/80">
+                        Share playlists, swap recommendations, and experience the joy of discovering new sounds together.
+                      </CardDescription>
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#042f2e] text-white px-3 py-1 rounded-full text-sm font-medium border border-white/20">
+                        SyncTunez
+                      </div>
+                    </CardContent>
+                  </div>
+                </div>
               </Card>
             </div>
           </div>
@@ -297,10 +300,10 @@ export default async function Home() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-[#134e4a]/5">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px]">
-          <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center max-w-6xl mx-auto">
-            <div>
+      <section className="h-[50vh] bg-[#134e4a]/5">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px] h-full flex items-center">
+          <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center max-w-6xl mx-auto w-full">
+            <div className="lg:order-2">
               <h2 className="text-3xl font-bold mb-6">
                 Why SyncTunez?
               </h2>
@@ -312,7 +315,7 @@ export default async function Home() {
                   <div>
                     <h3 className="font-semibold mb-1">Instant Matching</h3>
                     <p className="text-muted-foreground">
-                      Compare playlists instantly and see your music compatibility score
+                      Merge playlists and take shared tracks from each
                     </p>
                   </div>
                 </div>
@@ -322,9 +325,9 @@ export default async function Home() {
                     <CheckCircle className="h-4 w-4 text-[#134e4a]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Smart Recommendations</h3>
+                    <h3 className="font-semibold mb-1">Measure Compatibility</h3>
                     <p className="text-muted-foreground">
-                      Get personalized suggestions based on shared music interests
+                    Discover your music compatibility score with friends 
                     </p>
                   </div>
                 </div>
@@ -363,40 +366,83 @@ export default async function Home() {
               </Button>
             </div>
 
-            <div className="lg:order-2">
-              <Card className="bg-[#18181b] border-0">
-                <CardContent className="p-8">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-[#134e4a]/10 rounded-full flex items-center justify-center">
-                          <Users className="h-6 w-6 text-[#134e4a]" />
+            <div className="lg:order-1">
+              <div className="space-y-4">
+                {/* Testimonial 1 */}
+                <Card className="bg-card/50 py-2">
+                  <CardContent className="py-2">
+                    <div className="flex gap-4">
+                      <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
+                        <Quote className="h-4 w-4 text-[#134e4a]" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground italic mb-2">
+                          "SyncTunez helped me discover so much amazing music through my friends. Our group hangouts have never been better!"
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-[#134e4a]/5 flex items-center justify-center">
+                            <User className="h-3 w-3 text-[#134e4a]" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">Sarah Chen</p>
+                            <p className="text-xs text-muted-foreground">Music Enthusiast</p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-xl">Your Match</h3>
-                          <p className="text-muted-foreground">with Sarah</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Testimonial 2 */}
+                <Card className="bg-card/50 py-2">
+                  <CardContent className="py-2">
+                    <div className="flex gap-4">
+                      <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
+                        <Quote className="h-4 w-4 text-[#134e4a]" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground italic mb-2">
+                          "The playlist matching is incredible! It's like having a DJ that knows everyone's taste perfectly."
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-[#134e4a]/5 flex items-center justify-center">
+                            <User className="h-3 w-3 text-[#134e4a]" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">Alex Rivera</p>
+                            <p className="text-xs text-muted-foreground">Party Host</p>
+                          </div>
                         </div>
                       </div>
-                      <div className="text-4xl font-bold text-[#0f766e]">85%</div>
                     </div>
+                  </CardContent>
+                </Card>
 
-                    <div className="h-[200px]">
-                      <GenreChart />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 text-center">
-                      <div className="bg-[#1a1f2b] p-4 rounded-lg">
-                        <p className="text-2xl font-bold text-[#0f766e] mb-1">127</p>
-                        <p className="text-sm text-muted-foreground">Shared Songs</p>
+                {/* Testimonial 3 */}
+                <Card className="bg-card/50 py-2">
+                  <CardContent className="py-2">
+                    <div className="flex gap-4">
+                      <div className="w-8 h-8 rounded-full bg-[#134e4a]/10 flex items-center justify-center flex-shrink-0">
+                        <Quote className="h-4 w-4 text-[#134e4a]" />
                       </div>
-                      <div className="bg-[#1a1f2b] p-4 rounded-lg">
-                        <p className="text-2xl font-bold text-[#0f766e] mb-1">8</p>
-                        <p className="text-sm text-muted-foreground">Shared Artists</p>
+                      <div>
+                        <p className="text-sm text-muted-foreground italic mb-2">
+                          "Finally, road trips without the music drama! Everyone's favorites get played and we all discover new songs."
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-[#134e4a]/5 flex items-center justify-center">
+                            <User className="h-3 w-3 text-[#134e4a]" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">Marcus Johnson</p>
+                            <p className="text-xs text-muted-foreground">Road Trip Enthusiast</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </div>
