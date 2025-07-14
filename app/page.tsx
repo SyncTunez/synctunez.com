@@ -7,7 +7,7 @@ export default async function Home() {
   return (
     <div className="bg-gradient-to-br from-background via-background to-muted/20 overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center">
+      <section className="relative min-h-screen flex items-center bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px]">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 items-center">
             {/* Left Content */}
@@ -86,7 +86,7 @@ export default async function Home() {
                       {/* Mock playlist items */}
                       <div className="space-y-1">
                           <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_forwards] opacity-0">
-                            <div className="w-8 h-8 rounded flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-md bg-[#1e2330] flex items-center justify-center">
                               <Music className="h-4 w-4 text-[#134e4a]" />
                             </div>
                             <div>
@@ -96,7 +96,7 @@ export default async function Home() {
                           </div>
                           
                           <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInRight_0.5s_ease-out_0.2s_forwards] opacity-0">
-                            <div className="w-8 h-8 rounded flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-md bg-[#1e2330] flex items-center justify-center">
                               <Music className="h-4 w-4 text-[#134e4a]" />
                             </div>
                             <div>
@@ -106,7 +106,7 @@ export default async function Home() {
                           </div>
                           
                           <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_0.4s_forwards] opacity-0">
-                            <div className="w-8 h-8 rounded flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-md bg-[#1e2330] flex items-center justify-center">
                               <Music className="h-4 w-4 text-[#134e4a]" />
                             </div>
                             <div>
@@ -116,7 +116,7 @@ export default async function Home() {
                           </div>
 
                           <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInRight_0.5s_ease-out_0.6s_forwards] opacity-0">
-                            <div className="w-8 h-8 rounded flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-md bg-[#1e2330] flex items-center justify-center">
                               <Music className="h-4 w-4 text-[#134e4a]" />
                             </div>
                             <div>
@@ -126,7 +126,7 @@ export default async function Home() {
                           </div>
 
                           <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_0.8s_forwards] opacity-0 mb-1.5">
-                            <div className="w-8 h-8 rounded flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-md bg-[#1e2330] flex items-center justify-center">
                               <Music className="h-4 w-4 text-[#134e4a]" />
                             </div>
                             <div>
@@ -168,7 +168,7 @@ export default async function Home() {
       </section>
 
       {/* Problem Section */}
-      <section className="py-12 bg-muted/30">
+      <section className="py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px]">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">
@@ -220,7 +220,7 @@ export default async function Home() {
       </section>
 
       {/* Solution Section */}
-      <section className="py-20">
+      <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px]">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">
@@ -272,7 +272,7 @@ export default async function Home() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px]">
           <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center max-w-6xl mx-auto">
             <div>
