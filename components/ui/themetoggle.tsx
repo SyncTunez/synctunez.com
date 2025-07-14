@@ -85,12 +85,12 @@ export function ModeToggle() {
         <ContextMenu>
             <ContextMenuTrigger asChild>
                 <Button
-                    variant='secondary'
-                    size='icon'
-                    className='group/toggle size-8'
+                    variant='ghost'
+                    size='sm'
+                    className='flex items-center justify-center p-1.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                     onClick={handleThemeToggle}
                 >
-                    {resolvedTheme === 'dark' ? <IconSun /> : <IconMoon />}
+                    {resolvedTheme === 'dark' ? <IconSun className="w-5 h-5" /> : <IconMoon className="w-5 h-5" />}
                     <span className='sr-only'>Toggle theme</span>
                 </Button>
             </ContextMenuTrigger>

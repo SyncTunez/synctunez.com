@@ -34,7 +34,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {UserAvatarProfile} from "@/components/ui/user-avatar-profile";
 import React from "react";
-import {SideBarToggle} from "@/components/sidebar/SideBarToggle";
 
 export function AppSidebar() {
 
@@ -52,18 +51,18 @@ export function AppSidebar() {
                     return (
                         <Collapsible
                             key={item.label}
-                            defaultOpen
+                            defaultOpen={false}
                             asChild
                             className="group/collapsible"
                         >
                             <SidebarMenuItem>
                                 <CollapsibleTrigger asChild>
                                     <button
-                                        className="peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0 h-10 text-base font-medium min-w-8 duration-200 ease-linear"
+                                        className="peer/menu-button flex w-full items-center gap-4 overflow-hidden rounded-md p-4 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0 h-12 text-base font-medium min-w-8 duration-200 ease-linear"
                                         aria-label={item.label}
                                     >
                                         {item.icon}
-                                        <span>{item.label}</span>
+                                        <span className="ml-1">{item.label}</span>
                                         <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 h-5 w-5"/>
                                     </button>
                                 </CollapsibleTrigger>
@@ -72,11 +71,11 @@ export function AppSidebar() {
                                         <SidebarMenuItem key={child.label}>
                                             <Link
                                                 href={child.path}
-                                                className="peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0 h-10 text-base font-medium min-w-8 duration-200 ease-linear"
+                                                className="peer/menu-button flex w-full items-center gap-4 overflow-hidden rounded-md p-4 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0 h-12 text-base font-medium min-w-8 duration-200 ease-linear"
                                                 aria-label={child.label}
                                             >
                                                 {child.icon}
-                                                <span>{child.label}</span>
+                                                <span className="ml-1">{child.label}</span>
                                             </Link>
                                         </SidebarMenuItem>
                                     ))}
@@ -90,11 +89,11 @@ export function AppSidebar() {
                     <SidebarMenuItem key={item.label}>
                         <Link
                             href={item.path}
-                            className={"peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0 h-10 text-base font-medium min-w-8 duration-200 ease-linear"}
+                            className={"peer/menu-button flex w-full items-center gap-4 overflow-hidden rounded-md p-4 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0 h-12 text-base font-medium min-w-8 duration-200 ease-linear"}
                             aria-label={item.label}
                         >
                             {item.icon}
-                            <span>{item.label}</span>
+                            <span className="ml-1">{item.label}</span>
                         </Link>
                     </SidebarMenuItem>
                 );
@@ -108,8 +107,8 @@ export function AppSidebar() {
                     <AppHeaderContent/>
                 </SidebarHeader>
 
-                <div className="px-4 py-2">
-                    <SidebarSeparator />
+                <div className="flex justify-center py-1 px-4 mt-2">
+                    <SidebarSeparator className="w-2/3 mx-4" />
                 </div>
 
                 <SidebarContent className="flex-1">
@@ -125,8 +124,8 @@ export function AppSidebar() {
                 </SidebarContent>
 
                 <SidebarFooter className="mt-auto">
-                    <div className="px-4 py-2">
-                        <SidebarSeparator />
+                    <div className="flex justify-center py-1 px-4">
+                        <SidebarSeparator className="w-2/3 mx-4" />
                     </div>
                     <SidebarMenu>
                         <SidebarMenuItem className="py-3 md:py-2">
@@ -146,8 +145,6 @@ export function AppSidebar() {
                             >
                                 <UserAccountDisplay/>
                             </SecureContentWrapper>
-                            <div className="h-3" />
-                            <SideBarToggle/>
                         </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarFooter>

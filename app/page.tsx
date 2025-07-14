@@ -405,10 +405,20 @@ export default function Home() {
 
               <Button 
                 size="lg"
-                className="mt-8 text-lg px-8 py-6 h-auto bg-[#134e4a] hover:bg-[#0d9488] text-white border-0"
+                className="mt-8 text-lg px-8 py-6 h-auto bg-gradient-to-r from-[#0f766e] via-[#0d9488] to-[#14b8a6] hover:from-[#0d9488] hover:via-[#14b8a6] hover:to-[#0f766e] text-white border-0 shadow-lg hover:shadow-xl hover:shadow-[#134e4a]/25 hover:scale-[1.02] transition-all duration-200 font-semibold overflow-hidden w-full sm:w-auto min-w-[250px]
+                  [background-size:200%_200%]
+                  animate-[gradientMove_3s_ease-in-out_infinite]
+                  before:absolute before:inset-0
+                  before:bg-gradient-to-r before:from-white/0 before:via-white/25 before:to-white/0
+                  before:translate-x-[-200%]
+                  before:animate-[shimmer_2s_ease-in-out_infinite]
+                  before:skew-x-[-20deg]
+                  before:w-[75%]"
               >
-                Get Started
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <span className="relative flex items-center">
+                  <span className="ml-2">Get Started</span>
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </span>
               </Button>
             </div>
 
