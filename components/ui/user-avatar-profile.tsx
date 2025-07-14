@@ -55,8 +55,8 @@ export function UserAvatarProfile({
             </Avatar>
 
             {showInfo && (
-                <div className='grid flex-1 text-left text-sm leading-tight'>
-                    <span className='truncate font-semibold'>{username || ''}</span>
+                <div className='grid flex-1 text-left text-base leading-tight'>
+                    <span className='truncate font-semibold ml-2'>{username || ''}</span>
                 </div>
             )}
         </div>

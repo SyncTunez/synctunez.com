@@ -6,6 +6,8 @@ import { Music, Users, Heart, Sparkles, ArrowRight, CheckCircle, Search, List, S
 import { GenreChart } from "@/components/ui/genre-chart";
 import { LearnMoreButton } from "@/components/ui/learn-more-button";
 import { useInView } from "@/hooks/useInView";
+import { FloatingUpArrow } from "@/components/ui/floating-up-arrow";
+import { FloatingDownArrow } from "@/components/ui/floating-down-arrow";
 
 export default function Home() {
   const row1Card1 = useInView<HTMLDivElement>();
@@ -23,7 +25,7 @@ export default function Home() {
   return (
     <div className="overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center bg-[#134e4a]/5">
+      <section id="hero" className="relative min-h-screen flex items-center bg-[#134e4a]/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px]">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 items-center">
             {/* Left Content */}
@@ -183,9 +185,12 @@ export default function Home() {
       </section>
 
       {/* Problem-Solution Section */}
-      <section id="problems-solutions" className="min-h-screen bg-background flex flex-col justify-center overflow-hidden py-24">
+      <section id="problems-solutions" className="h-screen bg-background flex flex-col justify-center overflow-hidden relative">
+        <div className="absolute right-12 bottom-12">
+          <FloatingDownArrow />
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-32 xl:px-48 max-w-[1400px]">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-2">
               Discover Your Shared Sound
             </h2>
@@ -197,7 +202,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 items-center">
             <div className="lg:pr-8">
               {/* Row 1: Endless Scroll vs Perfect Match */}
-              <div className="grid md:grid-cols-2 items-stretch gap-12">
+              <div className="grid md:grid-cols-2 items-stretch gap-8">
                 <div 
                   ref={row1Card1.ref}
                   className={`flex justify-end transition-all duration-[1500ms] ease-out transform ${
@@ -243,7 +248,7 @@ export default function Home() {
               </div>
 
               {/* Row 2: Skip Battle vs Perfect Flow */}
-              <div className="grid md:grid-cols-2 items-stretch gap-12 mt-12 lg:translate-x-64">
+              <div className="grid md:grid-cols-2 items-stretch gap-8 mt-8 lg:translate-x-64">
                 <div 
                   ref={row2Card1.ref}
                   className={`flex justify-end transition-all duration-[1500ms] delay-[375ms] ease-out transform ${
@@ -289,7 +294,7 @@ export default function Home() {
               </div>
 
               {/* Row 3: Connection Gap vs Music Community */}
-              <div className="grid md:grid-cols-2 items-stretch gap-12 mt-12 lg:translate-x-[32rem]">
+              <div className="grid md:grid-cols-2 items-stretch gap-8 mt-8 lg:translate-x-[32rem]">
                 <div 
                   ref={row3Card1.ref}
                   className={`flex justify-end transition-all duration-[1500ms] delay-[750ms] ease-out transform ${
@@ -346,7 +351,10 @@ export default function Home() {
       </section>
 
       {/* Benefits Section */}
-      <section className="min-h-screen bg-[#134e4a]/5 flex items-center">
+      <section id="benefits" className="min-h-screen bg-[#134e4a]/5 flex items-center relative">
+        <div className="absolute left-12 top-12">
+          <FloatingUpArrow />
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px] py-24">
           <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center w-full">
             <div className="lg:order-1">
