@@ -308,7 +308,7 @@ export default function Home() {
               </div>
 
               {/* Row 2: Skip Battle vs Perfect Flow */}
-              <div className="grid md:grid-cols-2 items-stretch gap-8 mt-8 xl:translate-x-64">
+              <div className="grid md:grid-cols-2 items-stretch gap-8 mt-8 xl:translate-x-32">
                 <div 
                   ref={row2Card1.ref}
                   className={`flex justify-end transition-all duration-[1500ms] delay-[375ms] ease-out transform ${
@@ -354,7 +354,7 @@ export default function Home() {
               </div>
 
               {/* Row 3: Connection Gap vs Music Community */}
-              <div className="grid md:grid-cols-2 items-stretch gap-8 mt-8 xl:translate-x-96">
+              <div className="grid md:grid-cols-2 items-stretch gap-8 mt-8 xl:translate-x-64">
                 <div 
                   ref={row3Card1.ref}
                   className={`flex justify-end transition-all duration-[1500ms] delay-[750ms] ease-out transform ${
