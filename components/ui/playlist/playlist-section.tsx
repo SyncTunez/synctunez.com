@@ -433,7 +433,7 @@ export function PlaylistSection({
                                                     <Button
                                                         size="icon"
                                                         variant="ghost"
-                                                        className="hover:bg-accent"
+                                                        className="hover:bg-accent hover:[&>svg]:text-white"
                                                         tabIndex={-1}
                                                         type="button"
                                                         onClick={async e => {
