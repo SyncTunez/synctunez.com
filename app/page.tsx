@@ -12,16 +12,12 @@ export default async function Home() {
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 items-center">
             {/* Left Content */}
             <div className="text-left py-8 lg:pr-8">
-              {/* Hero Badge */}
-              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary mb-10">
-                <Sparkles className="h-4 w-4" />
-                <span>Discover Your Musical Match</span>
-              </div>
+             
               
               {/* Hero Title */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-8">
-                Connect Through <br />
-                <span className="text-[#0f766e]">Music</span>
+                Stop Skipping, <br />
+                <span className="text-[#0f766e]">Start Syncing</span>
               </h1>
               
               {/* Hero Description */}
@@ -40,9 +36,11 @@ export default async function Home() {
                   size="lg" 
                   className="relative text-lg px-8 py-6 h-auto bg-[#134e4a] hover:bg-[#0d9488] text-white border-0 shadow-lg hover:shadow-xl hover:shadow-[#134e4a]/25 hover:scale-[1.02] transition-all duration-200 font-semibold overflow-hidden
                     before:absolute before:inset-0
-                    before:bg-gradient-to-r before:from-[#0f766e]/0 before:via-[#0f766e]/20 before:to-[#0f766e]/0
-                    before:animate-[shimmer_4s_ease-in-out_infinite]
-                    animate-[pulse_6s_ease-in-out_infinite]"
+                    before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent
+                    before:translate-x-[-200%]
+                    before:animate-[shimmer_2s_ease-in-out_infinite]
+                    before:skew-x-[-20deg]
+                    before:w-[75%]"
                 >
                   <span className="relative flex items-center">
                     <span>🎧</span>
@@ -56,17 +54,22 @@ export default async function Home() {
               </div>
               
               {/* Stats */}
-              <div className="flex items-center gap-8 text-sm text-muted-foreground">
-                <span>🎵 10k+ Songs Matched</span>
-                <span>💚 5k+ Happy Users</span>
-              </div>
+              
             </div>
 
             {/* Right Image */}
             <div className="relative lg:order-2 lg:pl-4 xl:pl-8">
               <div className="relative max-w-2xl lg:max-w-none mx-auto">
                 {/* Main Demo Image */}
-                <div className="bg-[#18181b] rounded-2xl p-8 shadow-2xl">
+                <div className="bg-[#18181b] rounded-2xl p-8 shadow-2xl relative">
+                  {/* Star icon in top right */}
+                  <div className="absolute -top-8 -right-8 w-16 h-16 bg-[#134e4a] rounded-full flex items-center justify-center shadow-xl">
+                    <Sparkles className="h-8 w-8 text-white" />
+                  </div>
+                  {/* Heart icon in bottom left */}
+                  <div className="absolute -bottom-8 -left-8 w-16 h-16 bg-[#134e4a] rounded-full flex items-center justify-center shadow-xl">
+                    <Heart className="h-8 w-8 text-white" />
+                  </div>
                   <div className="space-y-6">
                     {/* Mock App Interface */}
                     <div className="bg-[#1a1f2b] rounded-lg p-4 pb-6 shadow-lg">
@@ -84,7 +87,7 @@ export default async function Home() {
                       <div className="space-y-1">
                           <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_forwards] opacity-0">
                             <div className="w-8 h-8 rounded flex items-center justify-center">
-                              <Music className="h-4 w-4 text-[#0f766e]" />
+                              <Music className="h-4 w-4 text-[#134e4a]" />
                             </div>
                             <div>
                               <p className="text-sm font-medium text-gray-100">Blinding Lights</p>
@@ -94,7 +97,7 @@ export default async function Home() {
                           
                           <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInRight_0.5s_ease-out_0.2s_forwards] opacity-0">
                             <div className="w-8 h-8 rounded flex items-center justify-center">
-                              <Music className="h-4 w-4 text-[#0f766e]" />
+                              <Music className="h-4 w-4 text-[#134e4a]" />
                             </div>
                             <div>
                               <p className="text-sm font-medium text-gray-100">Good 4 U</p>
@@ -104,7 +107,7 @@ export default async function Home() {
                           
                           <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_0.4s_forwards] opacity-0">
                             <div className="w-8 h-8 rounded flex items-center justify-center">
-                              <Music className="h-4 w-4 text-[#0f766e]" />
+                              <Music className="h-4 w-4 text-[#134e4a]" />
                             </div>
                             <div>
                               <p className="text-sm font-medium text-gray-100">Levitating</p>
@@ -114,7 +117,7 @@ export default async function Home() {
 
                           <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInRight_0.5s_ease-out_0.6s_forwards] opacity-0">
                             <div className="w-8 h-8 rounded flex items-center justify-center">
-                              <Music className="h-4 w-4 text-[#0f766e]" />
+                              <Music className="h-4 w-4 text-[#134e4a]" />
                             </div>
                             <div>
                               <p className="text-sm font-medium text-gray-100">As It Was</p>
@@ -124,7 +127,7 @@ export default async function Home() {
 
                           <div className="flex items-center gap-3 p-2.5 bg-[#252b3b] rounded-md hover:bg-[#2b324a] transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_0.8s_forwards] opacity-0 mb-1.5">
                             <div className="w-8 h-8 rounded flex items-center justify-center">
-                              <Music className="h-4 w-4 text-[#0f766e]" />
+                              <Music className="h-4 w-4 text-[#134e4a]" />
                             </div>
                             <div>
                               <p className="text-sm font-medium text-gray-100">Anti-Hero</p>
@@ -138,7 +141,7 @@ export default async function Home() {
                           <p className="text-sm font-medium text-[#1DB954] relative z-10">
                             <span className="mr-1">✨</span>
                             15 songs matched!
-                            <span className="ml-1">🎉</span>
+                            <span className="ml-1">✨</span>
                           </p>
                         </div>
                       </div>
@@ -146,11 +149,11 @@ export default async function Home() {
                     
                     {/* Stats */}
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-[#1a1f2b] rounded-lg p-4 text-center shadow-lg flex flex-col justify-center">
+                        <div className="bg-[#1a1f2b] rounded-lg p-4 text-center shadow-lg flex flex-col justify-center opacity-0 animate-[slideUp_0.5s_ease-out_1s_forwards]">
                           <p className="text-4xl font-bold text-[#0f766e] leading-none mb-1">85%</p>
                           <p className="text-xs text-gray-400">Match Score</p>
                         </div>
-                        <div className="bg-[#1a1f2b] rounded-lg p-4 text-center shadow-lg">
+                        <div className="bg-[#1a1f2b] rounded-lg p-4 text-center shadow-lg opacity-0 animate-[slideUp_0.5s_ease-out_1.2s_forwards]">
                           <div className="h-[100px]">
                             <GenreChart />
                           </div>
@@ -179,8 +182,8 @@ export default async function Home() {
           <div className="grid md:grid-cols-3 gap-8 max-w-[1000px] mx-auto">
             <Card className="text-center">
               <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="h-8 w-8 text-destructive" />
+                <div className="w-16 h-16 bg-[#134e4a]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Heart className="h-8 w-8 text-[#134e4a]" />
                 </div>
                 <CardTitle className="text-xl mb-2">Different Tastes</CardTitle>
                 <CardDescription>
@@ -191,8 +194,8 @@ export default async function Home() {
 
             <Card className="text-center">
               <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Music className="h-8 w-8 text-destructive" />
+                <div className="w-16 h-16 bg-[#134e4a]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Music className="h-8 w-8 text-[#134e4a]" />
                 </div>
                 <CardTitle className="text-xl mb-2">Playlist Wars</CardTitle>
                 <CardDescription>
@@ -203,8 +206,8 @@ export default async function Home() {
 
             <Card className="text-center">
               <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-8 w-8 text-destructive" />
+                <div className="w-16 h-16 bg-[#134e4a]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="h-8 w-8 text-[#134e4a]" />
                 </div>
                 <CardTitle className="text-xl mb-2">Missing Connection</CardTitle>
                 <CardDescription>
@@ -278,8 +281,8 @@ export default async function Home() {
               </h2>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-[#134e4a] flex items-center justify-center mt-1">
-                    <CheckCircle className="h-4 w-4 text-white" />
+                  <div className="w-6 h-6 rounded-full bg-[#134e4a]/10 flex items-center justify-center mt-1">
+                    <CheckCircle className="h-4 w-4 text-[#134e4a]" />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Instant Matching</h3>
@@ -290,8 +293,8 @@ export default async function Home() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-[#134e4a] flex items-center justify-center mt-1">
-                    <CheckCircle className="h-4 w-4 text-white" />
+                  <div className="w-6 h-6 rounded-full bg-[#134e4a]/10 flex items-center justify-center mt-1">
+                    <CheckCircle className="h-4 w-4 text-[#134e4a]" />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Smart Recommendations</h3>
@@ -302,8 +305,8 @@ export default async function Home() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-[#134e4a] flex items-center justify-center mt-1">
-                    <CheckCircle className="h-4 w-4 text-white" />
+                  <div className="w-6 h-6 rounded-full bg-[#134e4a]/10 flex items-center justify-center mt-1">
+                    <CheckCircle className="h-4 w-4 text-[#134e4a]" />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Easy Integration</h3>
@@ -314,8 +317,8 @@ export default async function Home() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-[#134e4a] flex items-center justify-center mt-1">
-                    <CheckCircle className="h-4 w-4 text-white" />
+                  <div className="w-6 h-6 rounded-full bg-[#134e4a]/10 flex items-center justify-center mt-1">
+                    <CheckCircle className="h-4 w-4 text-[#134e4a]" />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Privacy First</h3>
@@ -341,8 +344,8 @@ export default async function Home() {
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-[#134e4a] rounded-full flex items-center justify-center">
-                          <Users className="h-6 w-6 text-white" />
+                        <div className="w-12 h-12 bg-[#134e4a]/10 rounded-full flex items-center justify-center">
+                          <Users className="h-6 w-6 text-[#134e4a]" />
                         </div>
                         <div>
                           <h3 className="font-semibold text-xl">Your Match</h3>

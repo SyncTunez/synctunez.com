@@ -60,7 +60,7 @@ export default async function RootLayout({
         </head>
         <body
             className={cn(
-                'bg-background overflow-hidden overscroll-none font-sans antialiased',
+                'bg-background font-sans antialiased',
                 activeThemeValue ? `theme-${activeThemeValue}` : '',
                 isScaled ? 'theme-scaled' : '',
                 fontVariables
@@ -80,7 +80,7 @@ export default async function RootLayout({
                     <SidebarProvider defaultOpen={defaultOpen}>
                         <AppSidebar/>
                         <FloatingSidebarTrigger />
-                        <div className="w-full m-[10px]">
+                        <div className="w-full p-2.5">
                             {children}
                         </div>
                     </SidebarProvider>
