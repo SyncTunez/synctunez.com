@@ -81,7 +81,7 @@ export default async function Home() {
                       
                       {/* Mock playlist items */}
                       <div className="space-y-1">
-                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md hover:bg-card/60 transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_forwards] opacity-0">
+                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md animate-[slideInLeft_0.5s_ease-out_forwards] opacity-0">
                             <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
                               <Music className="h-4 w-4 text-primary" />
                             </div>
@@ -91,7 +91,7 @@ export default async function Home() {
                             </div>
                           </div>
                           
-                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md hover:bg-card/60 transition-colors cursor-pointer group animate-[slideInRight_0.5s_ease-out_0.2s_forwards] opacity-0">
+                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md animate-[slideInRight_0.5s_ease-out_0.2s_forwards] opacity-0">
                             <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
                               <Music className="h-4 w-4 text-primary" />
                             </div>
@@ -101,7 +101,7 @@ export default async function Home() {
                             </div>
                           </div>
                           
-                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md hover:bg-card/60 transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_0.4s_forwards] opacity-0">
+                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md animate-[slideInLeft_0.5s_ease-out_0.4s_forwards] opacity-0">
                             <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
                               <Music className="h-4 w-4 text-primary" />
                             </div>
@@ -111,7 +111,7 @@ export default async function Home() {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md hover:bg-card/60 transition-colors cursor-pointer group animate-[slideInRight_0.5s_ease-out_0.6s_forwards] opacity-0">
+                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md animate-[slideInRight_0.5s_ease-out_0.6s_forwards] opacity-0">
                             <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
                               <Music className="h-4 w-4 text-primary" />
                             </div>
@@ -121,7 +121,7 @@ export default async function Home() {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md hover:bg-card/60 transition-colors cursor-pointer group animate-[slideInLeft_0.5s_ease-out_0.8s_forwards] opacity-0 mb-1.5">
+                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md animate-[slideInLeft_0.5s_ease-out_0.8s_forwards] opacity-0 mb-1.5">
                             <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
                               <Music className="h-4 w-4 text-primary" />
                             </div>

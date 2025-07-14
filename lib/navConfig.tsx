@@ -1,4 +1,4 @@
-import { IconHome, IconUser, IconBrandSpotify, IconCreditCard } from "@tabler/icons-react";
+import { IconHome, IconUser, IconPlaylist, IconCreditCard } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 
 export type NavPage = {
@@ -13,24 +13,25 @@ export const NAV_PAGES: NavPage[] = [
   {
     label: "Home",
     path: "/",
-    icon: <IconHome size={18} />,
+    icon: <IconHome size={20} />,
     requiresAuth: false,
+  },
+  {
+    label: "Playlists",
+    path: "/account",
+    icon: <IconPlaylist size={20} />,
+    requiresAuth: true,
   },
   {
     label: "Account",
     path: "/",
-    icon: <IconUser size={18} />,
+    icon: <IconUser size={20} />,
     requiresAuth: true,
     children: [
       {
-        label: "Overview",
-        path: "/account",
-        requiresAuth: true,
-      },
-      {
         label: "Billing",
         path: "/account?tab=billing",
-        icon: <IconCreditCard size={18} />,
+        icon: <IconCreditCard size={20} />,
         requiresAuth: true,
       },
     ],

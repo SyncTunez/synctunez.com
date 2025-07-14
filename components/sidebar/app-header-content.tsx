@@ -26,8 +26,8 @@ export function AppHeaderContent() {
         <div className='text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg'>
           <WindowIcon />
         </div>
-        <div className='grid flex-1 text-left text-sm leading-tight'>
-          <span className='truncate font-semibold'>SyncTunez</span>
+        <div className='grid flex-1 text-left leading-tight'>
+          <span className='truncate font-bold text-lg'>SyncTunez</span>
         </div>
         {/* Reserve space for ModeToggle to prevent layout shift */}
         <div style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
