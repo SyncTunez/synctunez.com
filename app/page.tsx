@@ -10,24 +10,11 @@ import { FloatingUpArrow } from "@/components/ui/floating-up-arrow";
 import { FloatingDownArrow } from "@/components/ui/floating-down-arrow";
 
 export default function Home() {
-  const row1Card1 = useInView<HTMLDivElement>();
-  const row1Card2 = useInView<HTMLDivElement>();
-  const row2Card1 = useInView<HTMLDivElement>();
-  const row2Card2 = useInView<HTMLDivElement>();
-  const row3Card1 = useInView<HTMLDivElement>();
-  const row3Card2 = useInView<HTMLDivElement>();
-  
-  // Add hooks for testimonials
-  const testimonial1 = useInView<HTMLDivElement>();
-  const testimonial2 = useInView<HTMLDivElement>();
-  const testimonial3 = useInView<HTMLDivElement>();
 
-  // Add hooks for playlist items
-  const playlistItem1 = useInView<HTMLDivElement>();
-  const playlistItem2 = useInView<HTMLDivElement>();
-  const playlistItem3 = useInView<HTMLDivElement>();
-  const playlistItem4 = useInView<HTMLDivElement>();
-  const playlistItem5 = useInView<HTMLDivElement>();
+  const rowCards = Array(6).fill(0).map(() => useInView<HTMLDivElement>());
+  const testimonials = Array(3).fill(0).map(() => useInView<HTMLDivElement>());
+  const playlistItems = Array(5).fill(0).map(() => useInView<HTMLDivElement>());
+  
   const matchScore = useInView<HTMLDivElement>();
   const genreChart = useInView<HTMLDivElement>();
   const matchBadge = useInView<HTMLDivElement>();
@@ -112,10 +99,10 @@ export default function Home() {
                       
                       {/* Mock playlist items */}
                       <div className="space-y-1">
-                          <div 
-                            ref={playlistItem1.ref}
+                          <div
+                            ref={playlistItems[0].ref}
                             className={`transition-all duration-500 transform ${
-                              playlistItem1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInLeft_0.5s_ease-out_forwards]'
+                              playlistItems[0].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInLeft_0.5s_ease-out_forwards]'
                             }`}
                           >
                             <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
@@ -130,9 +117,9 @@ export default function Home() {
                           </div>
                           
                           <div 
-                            ref={playlistItem2.ref}
+                            ref={playlistItems[1].ref}
                             className={`transition-all duration-500 transform ${
-                              playlistItem2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInRight_0.5s_ease-out_0.2s_forwards]'
+                              playlistItems[1].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInRight_0.5s_ease-out_0.2s_forwards]'
                             }`}
                           >
                             <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
@@ -147,9 +134,9 @@ export default function Home() {
                           </div>
                           
                           <div 
-                            ref={playlistItem3.ref}
+                            ref={playlistItems[2].ref}
                             className={`transition-all duration-500 transform ${
-                              playlistItem3.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInLeft_0.5s_ease-out_0.4s_forwards]'
+                              playlistItems[2].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInLeft_0.5s_ease-out_0.4s_forwards]'
                             }`}
                           >
                             <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
@@ -164,9 +151,9 @@ export default function Home() {
                           </div>
 
                           <div 
-                            ref={playlistItem4.ref}
+                            ref={playlistItems[3].ref}
                             className={`transition-all duration-500 transform ${
-                              playlistItem4.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInRight_0.5s_ease-out_0.6s_forwards]'
+                              playlistItems[3].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInRight_0.5s_ease-out_0.6s_forwards]'
                             }`}
                           >
                             <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
@@ -181,9 +168,9 @@ export default function Home() {
                           </div>
 
                           <div 
-                            ref={playlistItem5.ref}
+                            ref={playlistItems[4].ref}
                             className={`transition-all duration-500 transform ${
-                              playlistItem5.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInLeft_0.5s_ease-out_0.8s_forwards]'
+                              playlistItems[4].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full lg:opacity-100 lg:translate-x-0 lg:animate-[slideInLeft_0.5s_ease-out_0.8s_forwards]'
                             }`}
                           >
                             <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md mb-1.5">
@@ -264,9 +251,9 @@ export default function Home() {
               {/* Row 1: Endless Scroll vs Perfect Match */}
               <div className="grid md:grid-cols-2 items-stretch gap-8">
                 <div 
-                  ref={row1Card1.ref}
+                  ref={rowCards[0].ref}
                   className={`flex justify-end transition-all duration-[1500ms] ease-out transform ${
-                    row1Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12 sm:-translate-x-full'
+                    rowCards[0].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12 sm:-translate-x-full'
                   }`}
                 >
                   <Card className="bg-card/80 relative overflow-hidden w-full md:min-w-[300px] lg:min-w-[400px] h-[200px]">
@@ -283,9 +270,9 @@ export default function Home() {
                 </div>
 
                 <div 
-                  ref={row1Card2.ref}
+                  ref={rowCards[1].ref}
                   className={`flex justify-start transition-all duration-[1500ms] delay-[185ms] ease-out transform ${
-                    row1Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
+                    rowCards[1].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
                   }`}
                 >
                   <div className="relative w-full md:min-w-[300px] lg:min-w-[400px]">
@@ -310,9 +297,9 @@ export default function Home() {
               {/* Row 2: Skip Battle vs Perfect Flow */}
               <div className="grid md:grid-cols-2 items-stretch gap-8 mt-8 lg:translate-x-64">
                 <div 
-                  ref={row2Card1.ref}
+                  ref={rowCards[2].ref}
                   className={`flex justify-end transition-all duration-[1500ms] delay-[375ms] ease-out transform ${
-                    row2Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12 sm:-translate-x-full'
+                    rowCards[2].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12 sm:-translate-x-full'
                   }`}
                 >
                   <Card className="bg-card/80 relative overflow-hidden w-full md:min-w-[300px] lg:min-w-[400px] h-[200px]">
@@ -329,9 +316,9 @@ export default function Home() {
                 </div>
 
                 <div 
-                  ref={row2Card2.ref}
+                  ref={rowCards[3].ref}
                   className={`flex justify-start transition-all duration-[1500ms] delay-[560ms] ease-out transform ${
-                    row2Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
+                    rowCards[3].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
                   }`}
                 >
                   <div className="relative w-full md:min-w-[300px] lg:min-w-[400px]">
@@ -356,9 +343,9 @@ export default function Home() {
               {/* Row 3: Connection Gap vs Music Community */}
               <div className="grid md:grid-cols-2 items-stretch gap-8 mt-8 lg:translate-x-[32rem]">
                 <div 
-                  ref={row3Card1.ref}
+                  ref={rowCards[4].ref}
                   className={`flex justify-end transition-all duration-[1500ms] delay-[750ms] ease-out transform ${
-                    row3Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12 sm:-translate-x-full'
+                    rowCards[4].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12 sm:-translate-x-full'
                   }`}
                 >
                   <Card className="bg-card/80 relative overflow-hidden w-full md:min-w-[300px] lg:min-w-[400px] h-[200px]">
@@ -378,9 +365,9 @@ export default function Home() {
                 </div>
 
                 <div 
-                  ref={row3Card2.ref}
+                  ref={rowCards[5].ref}
                   className={`flex justify-start transition-all duration-[1500ms] delay-[935ms] ease-out transform ${
-                    row3Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
+                    rowCards[5].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
                   }`}
                 >
                   <div className="relative w-full md:min-w-[300px] lg:min-w-[400px]">
@@ -494,9 +481,9 @@ export default function Home() {
               <div className="space-y-6">
                 {/* Testimonial 1 */}
                 <div 
-                  ref={testimonial1.ref}
+                  ref={testimonials[0].ref}
                   className={`transition-all duration-[1500ms] transform ${
-                    testimonial1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
+                    testimonials[0].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
                   }`}
                 >
                   <Card className="bg-card/50 py-2 lg:mr-auto lg:ml-0 lg:max-w-[85%] transform lg:-translate-x-8">
@@ -526,9 +513,9 @@ export default function Home() {
 
                 {/* Testimonial 2 */}
                 <div 
-                  ref={testimonial2.ref}
+                  ref={testimonials[1].ref}
                   className={`transition-all duration-[1500ms] delay-[185ms] transform ${
-                    testimonial2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
+                    testimonials[1].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
                   }`}
                 >
                   <Card className="bg-card/50 py-2 lg:mx-auto lg:max-w-[85%]">
@@ -558,9 +545,9 @@ export default function Home() {
 
                 {/* Testimonial 3 */}
                 <div 
-                  ref={testimonial3.ref}
+                  ref={testimonials[2].ref}
                   className={`transition-all duration-[1500ms] delay-[375ms] transform ${
-                    testimonial3.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
+                    testimonials[2].isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
                   }`}
                 >
                   <Card className="bg-card/50 py-2 lg:ml-auto lg:mr-0 lg:max-w-[85%] transform lg:translate-x-8">
