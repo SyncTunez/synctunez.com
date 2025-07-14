@@ -102,53 +102,63 @@ export default function Home() {
                       
                       {/* Mock playlist items */}
                       <div className="space-y-1">
-                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md animate-[slideInLeft_0.5s_ease-out_forwards] opacity-0">
-                            <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
-                              <Music className="h-4 w-4 text-primary" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-foreground">Blinding Lights</p>
-                              <p className="text-xs text-muted-foreground">The Weeknd</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md animate-[slideInRight_0.5s_ease-out_0.2s_forwards] opacity-0">
-                            <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
-                              <Music className="h-4 w-4 text-primary" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-foreground">Good 4 U</p>
-                              <p className="text-xs text-muted-foreground">Olivia Rodrigo</p>
+                          <div className="animate-[slideInLeft_0.5s_ease-out_forwards] opacity-0">
+                            <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
+                              <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                                <Music className="h-4 w-4 text-primary" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-foreground">Blinding Lights</p>
+                                <p className="text-xs text-muted-foreground">The Weeknd</p>
+                              </div>
                             </div>
                           </div>
                           
-                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md animate-[slideInLeft_0.5s_ease-out_0.4s_forwards] opacity-0">
-                            <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
-                              <Music className="h-4 w-4 text-primary" />
+                          <div className="animate-[slideInRight_0.5s_ease-out_0.2s_forwards] opacity-0">
+                            <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
+                              <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                                <Music className="h-4 w-4 text-primary" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-foreground">Good 4 U</p>
+                                <p className="text-xs text-muted-foreground">Olivia Rodrigo</p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-sm font-medium text-foreground">Levitating</p>
-                              <p className="text-xs text-muted-foreground">Dua Lipa</p>
+                          </div>
+                          
+                          <div className="animate-[slideInLeft_0.5s_ease-out_0.4s_forwards] opacity-0">
+                            <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
+                              <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                                <Music className="h-4 w-4 text-primary" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-foreground">Levitating</p>
+                                <p className="text-xs text-muted-foreground">Dua Lipa</p>
+                              </div>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md animate-[slideInRight_0.5s_ease-out_0.6s_forwards] opacity-0">
-                            <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
-                              <Music className="h-4 w-4 text-primary" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-foreground">As It Was</p>
-                              <p className="text-xs text-muted-foreground">Harry Styles</p>
+                          <div className="animate-[slideInRight_0.5s_ease-out_0.6s_forwards] opacity-0">
+                            <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md">
+                              <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                                <Music className="h-4 w-4 text-primary" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-foreground">As It Was</p>
+                                <p className="text-xs text-muted-foreground">Harry Styles</p>
+                              </div>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md animate-[slideInLeft_0.5s_ease-out_0.8s_forwards] opacity-0 mb-1.5">
-                            <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
-                              <Music className="h-4 w-4 text-primary" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-foreground">Anti-Hero</p>
-                              <p className="text-xs text-muted-foreground">Taylor Swift</p>
+                          <div className="animate-[slideInLeft_0.5s_ease-out_0.8s_forwards] opacity-0">
+                            <div className="flex items-center gap-3 p-2.5 bg-card/80 rounded-md mb-1.5">
+                              <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center">
+                                <Music className="h-4 w-4 text-primary" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-foreground">Anti-Hero</p>
+                                <p className="text-xs text-muted-foreground">Taylor Swift</p>
+                              </div>
                             </div>
                           </div>
                       </div>
