@@ -354,7 +354,7 @@ export function FriendsCard({ forceFullHeight = false }: { forceFullHeight?: boo
                             <div className="flex items-center gap-3 min-w-0 overflow-hidden">
                               <Avatar>
                                 {profileUrl ? (
-                                    <AvatarImage src={profileUrl} alt={name} referrerPolicy="no-referrer" />
+                                    <AvatarImage src={profileUrl} alt={name} loading="lazy" referrerPolicy="no-referrer" />
                                 ) : null}
                                 <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
                               </Avatar>
@@ -455,7 +455,7 @@ export function FriendsCard({ forceFullHeight = false }: { forceFullHeight?: boo
                                 }`}
                             >
                               <Avatar className="h-7 w-7">
-                                <AvatarImage src={''} alt={name} />
+                                <AvatarImage src={''} alt={name} loading="lazy" />
                                 <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
                               </Avatar>
                               <span className="font-medium text-base truncate">
@@ -476,7 +476,7 @@ export function FriendsCard({ forceFullHeight = false }: { forceFullHeight?: boo
               <div className="flex flex-col items-center gap-2 p-4 border-t">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={''} alt={selectedFriend} />
+                    <AvatarImage src={''} alt={selectedFriend} loading="lazy" />
                     <AvatarFallback>{selectedFriend.slice(0, 2).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <span className="font-medium text-base truncate">

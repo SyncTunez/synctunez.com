@@ -15,6 +15,7 @@ import {SidebarProvider} from "@/components/ui/sidebar";
 import {AppSidebar} from "@/components/sidebar/app-sidebar";
 import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
 import PageContainer from '@/components/layout/page-container';
+import Script from 'next/script';
 
 const META_THEME_COLORS = {
     light: '#ffffff',
@@ -49,7 +50,7 @@ export const metadata: Metadata = {
         siteName: 'SyncTuneZ',
         images: [
             {
-                url: '/og-image.jpg',
+                url: '/icon.svg',
                 width: 1200,
                 height: 630,
                 alt: 'SyncTuneZ - Collaborative Playlist Creation',
@@ -60,7 +61,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: 'SyncTuneZ - Create Perfect Collaborative Playlists with Friends',
         description: 'Compare playlists with friends and create collaborative mixes of all your shared favorites.',
-        images: ['/og-image.jpg'],
+        images: ['/icon.svg'],
         creator: '@synctunez',
     },
     robots: {
@@ -112,6 +113,19 @@ export default async function RootLayout({
             `
                 }}
             />
+            {/* Google Analytics */}
+            <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX'}`}
+                strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+                {`
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+                    gtag('config', '${process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX'}');
+                `}
+            </Script>
         </head>
         <body
             className={cn(

@@ -21,6 +21,7 @@ import { buildUrl } from '@/lib/api/apiClient';
 import { authorized } from '@/lib/api/apiClient';
 import type { SpotifyAccount } from '@/lib/api/types';
 import {Badge} from "lucide-react";
+import Image from 'next/image';
 
 export const serviceIcons = [
     { key: "hasSpotify", label: "Spotify", icon: <IconBrandSpotify className="text-green-500" /> },
@@ -133,9 +134,12 @@ export function ServiceCard({
                         <CardHeader className="p-0 pb-1 w-full flex flex-col items-center">
                             <CardTitle className="text-lg">{service.label}</CardTitle>
                             {isConnected && (spotifyAccountData as SpotifyAccount)?.images?.[0]?.url ? (
-                                <img 
-                                    src={(spotifyAccountData as SpotifyAccount)?.images?.[0]?.url} 
+                                <Image 
+                                    src={(spotifyAccountData as SpotifyAccount)?.images?.[0]?.url || ''} 
                                     alt="Spotify profile" 
+                                    width={56}
+                                    height={56}
+                                    loading="lazy"
                                     className="rounded-full w-14 h-14 object-cover my-2 border" 
                                 />
                             ) : null}

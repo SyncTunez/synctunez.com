@@ -1,15 +1,9 @@
 import type { NextConfig } from "next";
 
-const nextConfig: {
-  devIndicators: { errorIndicator: boolean; buildActivityPosition: string };
-  rewrites(): Promise<[{ destination: string; source: string }]>;
-  compress: boolean;
-  poweredByHeader: boolean;
-  generateEtags: boolean;
-} = {
+const nextConfig: NextConfig = {
   devIndicators: {
     buildActivityPosition: 'top-right',
-    errorIndicator: true,
+    buildActivity: true,
   },
   async rewrites() {
     return [
@@ -18,6 +12,59 @@ const nextConfig: {
         destination: 'http://localhost:8080/:path*',
       },
     ];
+  },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+        ],
+      },
+    ];
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'mosaic.scdn.co',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.scdn.co',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'wrapped-images.spotifycdn.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'seeded-session-images.scdn.co',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
   compress: true,
   poweredByHeader: false,

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 export interface PlaylistRowProps {
@@ -48,9 +49,12 @@ export const PlaylistRow: React.FC<PlaylistRowProps> = ({
         >
             {/* Image or Default Icon */}
             {imageUrl ? (
-                <img
+                <Image
                     src={imageUrl}
                     alt={title}
+                    width={40}
+                    height={40}
+                    loading="lazy"
                     className={cn("w-10 h-10 rounded-sm object-cover border", imageClassName)}
                 />
             ) : (

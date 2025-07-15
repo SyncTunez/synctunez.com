@@ -4,13 +4,40 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, CheckCircle, Quote, User } from "lucide-react";
 import { useInView } from "@/hooks/useInView";
+import Script from "next/script";
 
 export function BenefitsSection() {
   const testimonial1 = useInView<HTMLDivElement>();
   const testimonial2 = useInView<HTMLDivElement>();
   const testimonial3 = useInView<HTMLDivElement>();
 
+  const reviewSchema = {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "itemReviewed": {
+      "@type": "SoftwareApplication",
+      "name": "SyncTuneZ",
+      "description": "Create collaborative playlists with friends by comparing and syncing your music preferences"
+    },
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": "5",
+      "bestRating": "5"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Sarah Chen"
+    },
+    "reviewBody": "SyncTuneZ helped me discover so much amazing music through my friends. Our group hangouts have never been better!"
+  };
+
   return (
+    <>
+      <Script
+        id="review-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }}
+      />
     <section id="benefits" className="h-[calc(100vh-120px)] bg-[#134e4a]/5 flex items-center relative">
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px] py-24">
@@ -190,5 +217,6 @@ export function BenefitsSection() {
         </div>
       </div>
     </section>
+    </>
   );
 } 

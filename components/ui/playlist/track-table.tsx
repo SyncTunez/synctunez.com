@@ -123,6 +123,7 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                                                     <img
                                                         src={coverUrl}
                                                         alt={title}
+                                                        loading="lazy"
                                                         className="w-full h-full rounded-md object-cover shadow-sm"
                                                     />
                                                 </div>
