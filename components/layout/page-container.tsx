@@ -8,15 +8,15 @@ export default function PageContainer({
   children: React.ReactNode;
   scrollable?: boolean;
 }) {
+  if (!scrollable) {
+    return children;
+  }
+
   return (
-    <div className="w-full flex flex-col flex-1">
-      {scrollable ? (
-        <ScrollArea className='h-[calc(100dvh-52px)] w-full'>
-          {children}
-        </ScrollArea>
-      ) : (
-        children
-      )}
+    <div className="w-full h-[100dvh] flex flex-col overflow-hidden">
+      <ScrollArea className='h-full w-full'>
+        {children}
+      </ScrollArea>
     </div>
   );
 }

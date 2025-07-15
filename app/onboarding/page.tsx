@@ -76,27 +76,25 @@ function OnboardingContent() {
   };
 
   return (
-    <PageContainer>
-      <div className="min-h-screen w-full bg-[#134e4a]/5 px-4 flex flex-col">
-        {/* Progress indicator */}
-        <div className="w-full py-8">
-          <div className="w-full max-w-6xl mx-auto">
-            <OnboardingProgress
-              currentStep={currentStep}
-              totalSteps={ONBOARDING_STEPS.length}
-              steps={ONBOARDING_STEPS}
-            />
-          </div>
-        </div>
-
-        {/* Main content */}
-        <div className="flex-1 flex w-full">
-          <div className="w-full max-w-6xl mx-auto">
-            {renderStep()}
-          </div>
+    <div className="fixed inset-0 bg-[#134e4a]/5 flex flex-col overflow-hidden ml-[var(--sidebar-width,0px)]">
+      {/* Progress indicator */}
+      <div className="w-full py-6 flex-none">
+        <div className="w-full max-w-6xl mx-auto px-4">
+          <OnboardingProgress
+            currentStep={currentStep}
+            totalSteps={ONBOARDING_STEPS.length}
+            steps={ONBOARDING_STEPS}
+          />
         </div>
       </div>
-    </PageContainer>
+
+      {/* Main content */}
+      <div className="flex-1 flex w-full min-h-0 overflow-hidden">
+        <div className="w-full max-w-6xl mx-auto px-4">
+          {renderStep()}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -104,10 +102,10 @@ export default function OnboardingPage() {
   return (
     <ClientAuthWrapper
       fallback={
-        <div className="min-h-screen w-full bg-[#134e4a]/5 px-4 flex flex-col">
+        <div className="fixed inset-0 bg-[#134e4a]/5 flex flex-col overflow-hidden ml-[var(--sidebar-width,0px)]">
           {/* Progress indicator */}
-          <div className="w-full py-8">
-            <div className="w-full max-w-6xl mx-auto">
+          <div className="w-full py-6 flex-none">
+            <div className="w-full max-w-6xl mx-auto px-4">
               <OnboardingProgress
                 currentStep={1}
                 totalSteps={ONBOARDING_STEPS.length}
@@ -117,8 +115,8 @@ export default function OnboardingPage() {
           </div>
 
           {/* Main content */}
-          <div className="flex-1 flex w-full">
-            <div className="w-full max-w-6xl mx-auto">
+          <div className="flex-1 flex w-full min-h-0 overflow-hidden">
+            <div className="w-full max-w-6xl mx-auto px-4">
               <Step1GoogleSignIn onNext={() => {}} />
             </div>
           </div>
