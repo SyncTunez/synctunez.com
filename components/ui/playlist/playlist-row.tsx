@@ -13,6 +13,12 @@ export interface PlaylistRowProps {
     rightElement?: React.ReactNode;
     /** Extra className for root div */
     className?: string;
+    /** Extra className for image/icon container */
+    imageClassName?: string;
+    /** Extra className for title text */
+    titleClassName?: string;
+    /** Extra className for subtitle text */
+    subtitleClassName?: string;
 }
 
 /**
@@ -27,11 +33,14 @@ export const PlaylistRow: React.FC<PlaylistRowProps> = ({
     onClick,
     rightElement,
     className,
+    imageClassName,
+    titleClassName,
+    subtitleClassName,
 }) => {
     return (
         <div
             className={cn(
-                'flex items-center gap-2 px-3 py-1.5 rounded-none cursor-pointer transition-colors',
+                'flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1.5 rounded-none cursor-pointer transition-colors',
                 selected ? 'bg-muted' : 'hover:bg-muted/50',
                 className,
             )}
@@ -42,23 +51,23 @@ export const PlaylistRow: React.FC<PlaylistRowProps> = ({
                 <img
                     src={imageUrl}
                     alt={title}
-                    className="w-10 h-10 rounded-sm object-cover border"
+                    className={cn("w-10 h-10 rounded-sm object-cover border", imageClassName)}
                 />
             ) : (
-                <div className="w-10 h-10 rounded-sm border bg-muted flex items-center justify-center">
+                <div className={cn("w-10 h-10 rounded-sm border bg-muted flex items-center justify-center", imageClassName)}>
                     {defaultIcon}
                 </div>
             )}
 
             <div className="flex-1 overflow-hidden">
-                <div className="font-medium text-sm truncate" title={title}>{title}</div>
+                <div className={cn("font-medium text-sm truncate", titleClassName)} title={title}>{title}</div>
                 {subtitle && (
-                    <div className="text-xs text-muted-foreground truncate" title={subtitle}>{subtitle}</div>
+                    <div className={cn("text-xs text-muted-foreground truncate", subtitleClassName)} title={subtitle}>{subtitle}</div>
                 )}
             </div>
 
             {rightElement && (
-                <div className="ml-2 flex-shrink-0" onClick={e => e.stopPropagation()}>
+                <div className="ml-2 sm:ml-4 flex-shrink-0" onClick={e => e.stopPropagation()}>
                     {rightElement}
                 </div>
             )}

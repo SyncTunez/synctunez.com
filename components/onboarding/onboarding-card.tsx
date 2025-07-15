@@ -12,7 +12,7 @@ interface OnboardingCardProps {
 
 export function OnboardingCard({ icon, title, description, children }: OnboardingCardProps) {
   return (
-    <Card className="bg-muted shadow-lg border border-muted-foreground/10 relative mx-4">
+    <Card className="bg-muted shadow-lg border border-muted-foreground/10 relative mx-2 sm:mx-4">
       {/* Icon */}
       {icon && (
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-10">
@@ -23,11 +23,11 @@ export function OnboardingCard({ icon, title, description, children }: Onboardin
       )}
 
       {/* Content */}
-      <div className="pt-16 pb-12 px-8 text-center">
-        <h1 className="text-3xl font-bold text-foreground mb-3">
+      <div className="pt-16 pb-12 px-3 sm:px-8 text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
           {title}
         </h1>
-        <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+        <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
           {description}
         </p>
         

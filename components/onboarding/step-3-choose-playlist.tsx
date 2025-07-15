@@ -17,14 +17,27 @@ interface Step3ChoosePlaylistProps {
 }
 
 export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
+  const userContext = useContext(UserContext) as UserContextType | null;
+  const hasSpotify = !!userContext?.userAccount?.hasSpotify;
   const [selectedPlaylists, setSelectedPlaylists] = useState<Set<string>>(new Set());
-  const { data, loading } = useLiveResourceJson<SpotifyPlaylist[]>({
-    fetchUrl: buildUrl('/spotify/playlists'),
-    eventName: 'SpotifyPlaylists'
+
+  const {
+    data: rawSpotifyPlaylists,
+    error: spotifyPlaylistsError
+  } = useLiveResourceJson<SpotifyPlaylist>({
+    fetchUrl: buildUrl('spotify/playlists'),
+    eventName: 'SpotifyPlaylist',
+    reconnectIntervalMs: 5000,
+    shouldProcess: hasSpotify,
   });
 
-  // Ensure data is an array
-  const playlists = Array.isArray(data) ? data : [];
+  const playlistsLoading = rawSpotifyPlaylists === undefined;
+
+  const playlists: SpotifyPlaylist[] = Array.isArray(rawSpotifyPlaylists)
+    ? rawSpotifyPlaylists
+    : rawSpotifyPlaylists && typeof rawSpotifyPlaylists === 'object' && 'id' in rawSpotifyPlaylists
+      ? [rawSpotifyPlaylists as SpotifyPlaylist]
+      : [];
 
   const SpotifyIcon = () => (
     <IconBrandSpotify className="w-10 h-10 text-[#1DB954]" />
@@ -49,38 +62,42 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
         title="Choose Your Playlists"
         description="Select the playlists you want to import into SyncTunez"
       >
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Playlist Selection Area */}
-          <div className="bg-card/80 rounded-lg border border-muted-foreground/20">
-            <ScrollArea className="h-[300px] w-full rounded-md">
-              {loading ? (
+          <div className="bg-card/80 rounded-lg border border-muted-foreground/20 w-full max-w-[560px] mx-auto">
+            <ScrollArea className="h-[320px] w-full rounded-md">
+              {playlistsLoading ? (
                 // Loading state
-                <div className="p-4 space-y-2">
+                <div className="p-2 space-y-2">
                   {[...Array(5)].map((_, i) => (
-                    <div key={i} className="h-[52px] bg-muted animate-pulse rounded-md" />
+                    <div key={i} className="h-[64px] bg-muted animate-pulse rounded-md" />
                   ))}
                 </div>
               ) : playlists.length > 0 ? (
                 // Playlist list
-                <div className="p-2">
+                <div className="py-2">
                   {playlists.map((playlist: SpotifyPlaylist) => (
                     <PlaylistRow
                       key={playlist.id}
                       imageUrl={playlist.images?.[0]?.url}
-                      defaultIcon={<IconMusic className="w-5 h-5" />}
+                      defaultIcon={<IconMusic className="w-6 h-6" />}
                       title={playlist.name ?? 'Untitled Playlist'}
                       subtitle={playlist.tracks ? `${playlist.tracks.total} tracks` : undefined}
                       selected={selectedPlaylists.has(playlist.id)}
                       onClick={() => togglePlaylist(playlist.id)}
+                      className="text-left hover:bg-muted/30 py-2"
+                      imageClassName="w-12 h-12 sm:w-14 sm:h-14"
+                      titleClassName="text-base sm:text-lg font-medium"
+                      subtitleClassName="text-sm text-muted-foreground/80"
                       rightElement={
                         selectedPlaylists.has(playlist.id) ? (
-                          <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
-                            <svg className="w-3 h-3 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 bg-primary rounded-full flex items-center justify-center">
+                            <svg className="w-3 h-3 sm:w-4 sm:h-4 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                           </div>
                         ) : (
-                          <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30" />
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-muted-foreground/30" />
                         )
                       }
                     />
@@ -102,7 +119,7 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
               onClick={onNext}
               size="lg"
               disabled={selectedPlaylists.size === 0}
-              className="bg-card/80 hover:bg-card text-foreground border border-muted-foreground/20 hover:border-muted-foreground/40 px-8 py-6 h-auto text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+              className="bg-card/80 hover:bg-card text-foreground border border-muted-foreground/20 hover:border-muted-foreground/40 px-6 sm:px-8 py-6 h-auto text-base sm:text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
             >
               Import {selectedPlaylists.size} {selectedPlaylists.size === 1 ? 'Playlist' : 'Playlists'}
             </Button>

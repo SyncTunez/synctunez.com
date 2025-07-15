@@ -14,7 +14,7 @@ import {RegisterModal} from "@/components/RegisterModal";
 import {SidebarProvider} from "@/components/ui/sidebar";
 import {AppSidebar} from "@/components/sidebar/app-sidebar";
 import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
-import {CommandMenu} from "@/components/ui/command-menu";
+import PageContainer from '@/components/layout/page-container';
 
 const META_THEME_COLORS = {
     light: '#ffffff',
@@ -31,8 +31,8 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({
-                                             children
-                                         }: {
+    children
+}: {
     children: React.ReactNode;
 }) {
     const cookieStore = await cookies();
@@ -78,10 +78,14 @@ export default async function RootLayout({
                 <Providers activeThemeValue={activeThemeValue as string}>
                     <ClientToaster />
                     <SidebarProvider defaultOpen={defaultOpen}>
-                        <AppSidebar/>
-                        <FloatingSidebarTrigger />
-                        <div className="w-full p-2.5">
-                            {children}
+                        <div className="flex min-h-svh w-full">
+                            <AppSidebar/>
+                            <FloatingSidebarTrigger />
+                            <main className="flex-1 w-full">
+                                <PageContainer>
+                                    {children}
+                                </PageContainer>
+                            </main>
                         </div>
                     </SidebarProvider>
                     <RegisterModal userSession={userSession} userAccountRaw={userAccountRaw}/>
