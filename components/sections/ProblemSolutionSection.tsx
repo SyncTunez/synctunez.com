@@ -3,7 +3,6 @@
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { List, SkipForward, User, Play, Users, Heart, Sparkles } from "lucide-react";
 import { useInView } from "@/hooks/useInView";
-import { FloatingDownArrow } from "@/components/ui/floating-down-arrow";
 
 export function ProblemSolutionSection() {
   const row1Card1 = useInView<HTMLDivElement>();
@@ -171,9 +170,7 @@ export function ProblemSolutionSection() {
           </div>
         </div>
       </div>
-      <div className="absolute right-12 bottom-12 hidden lg:block">
-        <FloatingDownArrow />
-      </div>
+
     </section>
   );
 } 

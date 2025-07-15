@@ -3,6 +3,7 @@
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ProblemSolutionSection } from "@/components/sections/ProblemSolutionSection";
 import { BenefitsSection } from "@/components/sections/BenefitsSection";
+import { Footer } from "@/components/sections/Footer";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <HeroSection />
       <ProblemSolutionSection />
       <BenefitsSection />
+      <Footer />
     </div>
   );
 }

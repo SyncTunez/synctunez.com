@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, CheckCircle, Quote, User } from "lucide-react";
 import { useInView } from "@/hooks/useInView";
-import { FloatingUpArrow } from "@/components/ui/floating-up-arrow";
 
 export function BenefitsSection() {
   const testimonial1 = useInView<HTMLDivElement>();
@@ -12,10 +11,8 @@ export function BenefitsSection() {
   const testimonial3 = useInView<HTMLDivElement>();
 
   return (
-    <section id="benefits" className="min-h-screen bg-[#134e4a]/5 flex items-center relative">
-      <div className="absolute left-12 top-12 hidden lg:block">
-        <FloatingUpArrow />
-      </div>
+    <section id="benefits" className="h-[calc(100vh-120px)] bg-[#134e4a]/5 flex items-center relative">
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px] py-24">
         <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center w-full">
           <div className="lg:order-1">
