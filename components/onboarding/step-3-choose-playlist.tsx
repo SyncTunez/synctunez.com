@@ -62,7 +62,7 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
   );
 
   const selectPlaylist = (id: string) => {
-    setSelectedPlaylist(currentId => currentId === id ? null : id);
+    setSelectedPlaylist(id);
   };
 
   const handleImport = async () => {

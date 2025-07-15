@@ -97,7 +97,7 @@ export function BenefitsSection() {
               <div 
                 ref={testimonial1.ref}
                 className={`transition-all duration-[1500ms] transform ${
-                  testimonial1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
+                  testimonial1.isInView ? 'opacity-100 translate-y-0 lg:translate-x-0' : 'opacity-0 translate-y-12 lg:translate-x-full'
                 }`}
               >
                 <Card className="bg-card/50 py-2 lg:mr-auto lg:ml-0 lg:max-w-[85%] transform lg:-translate-x-8">
@@ -129,7 +129,7 @@ export function BenefitsSection() {
               <div 
                 ref={testimonial2.ref}
                 className={`transition-all duration-[1500ms] delay-[185ms] transform ${
-                  testimonial2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
+                  testimonial2.isInView ? 'opacity-100 translate-y-0 lg:translate-x-0' : 'opacity-0 translate-y-12 lg:translate-x-full'
                 }`}
               >
                 <Card className="bg-card/50 py-2 lg:mx-auto lg:max-w-[85%]">
@@ -161,7 +161,7 @@ export function BenefitsSection() {
               <div 
                 ref={testimonial3.ref}
                 className={`transition-all duration-[1500ms] delay-[375ms] transform ${
-                  testimonial3.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12 sm:translate-x-full'
+                  testimonial3.isInView ? 'opacity-100 translate-y-0 lg:translate-x-0' : 'opacity-0 translate-y-12 lg:translate-x-full'
                 }`}
               >
                 <Card className="bg-card/50 py-2 lg:ml-auto lg:mr-0 lg:max-w-[85%] transform lg:translate-x-8">

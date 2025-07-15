@@ -49,7 +49,7 @@ export function ProblemSolutionSection() {
 
             <div 
               ref={row1Card2.ref}
-              className={`transition-all duration-[1500ms] delay-[185ms] ease-out transform ${
+              className={`transition-all duration-[1500ms] delay-[100ms] ease-out transform ${
                 row1Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
               }`}
             >
@@ -76,7 +76,7 @@ export function ProblemSolutionSection() {
           <div className="flex flex-col lg:flex-row gap-8 justify-center transition-transform duration-500">
             <div 
               ref={row2Card1.ref}
-              className={`transition-all duration-[1500ms] delay-[375ms] ease-out transform ${
+              className={`transition-all duration-[1500ms] delay-[200ms] ease-out transform ${
                 row2Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'
               }`}
             >
@@ -95,7 +95,7 @@ export function ProblemSolutionSection() {
 
             <div 
               ref={row2Card2.ref}
-              className={`transition-all duration-[1500ms] delay-[560ms] ease-out transform ${
+              className={`transition-all duration-[1500ms] delay-[300ms] ease-out transform ${
                 row2Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
               }`}
             >
@@ -122,7 +122,7 @@ export function ProblemSolutionSection() {
           <div className="flex flex-col lg:flex-row gap-8 justify-center xl:translate-x-[15%] transition-transform duration-500">
             <div 
               ref={row3Card1.ref}
-              className={`transition-all duration-[1500ms] delay-[750ms] ease-out transform ${
+              className={`transition-all duration-[1500ms] delay-[300ms] ease-out transform ${
                 row3Card1.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'
               }`}
             >
@@ -144,7 +144,7 @@ export function ProblemSolutionSection() {
 
             <div 
               ref={row3Card2.ref}
-              className={`transition-all duration-[1500ms] delay-[935ms] ease-out transform ${
+              className={`transition-all duration-[1500ms] delay-[400ms] ease-out transform ${
                 row3Card2.isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
               }`}
             >
