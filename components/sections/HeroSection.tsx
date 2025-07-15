@@ -73,20 +73,20 @@ export function HeroSection() {
               {/* Main Demo Image */}
               <div className="bg-card rounded-2xl p-4 sm:p-6 lg:p-8 shadow-2xl relative">
                 {/* Star icon in top right */}
-                <div className="absolute -top-8 -right-8 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl hidden lg:flex">
+                <div className="absolute -top-8 -right-8 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl hidden lg:flex" aria-label="Sparkles decoration">
                   <Sparkles className="h-8 w-8 text-primary-foreground" />
                 </div>
                 {/* Heart icon in bottom left */}
-                <div className="absolute -bottom-8 -left-8 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl hidden lg:flex">
+                <div className="absolute -bottom-8 -left-8 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl hidden lg:flex" aria-label="Heart decoration">
                   <Heart className="h-8 w-8 text-primary-foreground" />
                 </div>
                 <div className="space-y-6">
                   {/* Mock App Interface */}
                   <div className="bg-muted rounded-lg p-4 pb-6 shadow-lg">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                        <Users className="h-5 w-5 text-primary-foreground" />
-                      </div>
+                                      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center" aria-label="Users icon">
+                  <Users className="h-5 w-5 text-primary-foreground" />
+                </div>
                       <div>
                         <h3 className="font-semibold text-foreground">Playlist Match</h3>
                         <p className="text-sm text-muted-foreground">Jack & Talisha</p>

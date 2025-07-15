@@ -22,8 +22,61 @@ const META_THEME_COLORS = {
 };
 
 export const metadata: Metadata = {
-    title: 'SyncTuneZ',
-    description: 'Basic dashboard with Next.js and Shadcn'
+    title: {
+        default: 'SyncTuneZ - Create Perfect Collaborative Playlists with Friends',
+        template: '%s | SyncTuneZ'
+    },
+    description: 'Compare playlists with friends and create collaborative mixes of all your shared favorites. Stop skipping songs, start syncing music with SyncTuneZ.',
+    keywords: ['playlist collaboration', 'music sharing', 'spotify playlist', 'music discovery', 'collaborative playlists', 'music sync', 'shared playlists'],
+    authors: [{ name: 'SyncTuneZ Team' }],
+    creator: 'SyncTuneZ',
+    publisher: 'SyncTuneZ',
+    formatDetection: {
+        email: false,
+        address: false,
+        telephone: false,
+    },
+    metadataBase: new URL('https://synctunez.com'),
+    alternates: {
+        canonical: '/',
+    },
+    openGraph: {
+        type: 'website',
+        locale: 'en_US',
+        url: 'https://synctunez.com',
+        title: 'SyncTuneZ - Create Perfect Collaborative Playlists with Friends',
+        description: 'Compare playlists with friends and create collaborative mixes of all your shared favorites. Stop skipping songs, start syncing music.',
+        siteName: 'SyncTuneZ',
+        images: [
+            {
+                url: '/og-image.jpg',
+                width: 1200,
+                height: 630,
+                alt: 'SyncTuneZ - Collaborative Playlist Creation',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'SyncTuneZ - Create Perfect Collaborative Playlists with Friends',
+        description: 'Compare playlists with friends and create collaborative mixes of all your shared favorites.',
+        images: ['/og-image.jpg'],
+        creator: '@synctunez',
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            'max-video-preview': -1,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+        },
+    },
+    verification: {
+        google: 'your-google-verification-code',
+    },
 };
 
 export const viewport: Viewport = {
@@ -46,6 +99,8 @@ export default async function RootLayout({
     return (
         <html lang='en' suppressHydrationWarning>
         <head>
+            <link rel="manifest" href="/manifest.json" />
+            <link rel="icon" href="/favicon.ico" />
             <script
                 dangerouslySetInnerHTML={{
                     __html: `

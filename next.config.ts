@@ -2,7 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: {
   devIndicators: { errorIndicator: boolean; buildActivityPosition: string };
-  rewrites(): Promise<[{ destination: string; source: string }]>
+  rewrites(): Promise<[{ destination: string; source: string }]>;
+  compress: boolean;
+  poweredByHeader: boolean;
+  generateEtags: boolean;
 } = {
   devIndicators: {
     buildActivityPosition: 'top-right',
@@ -16,7 +19,9 @@ const nextConfig: {
       },
     ];
   },
-  /* config options here */
+  compress: true,
+  poweredByHeader: false,
+  generateEtags: true,
 };
 
 export default nextConfig;

@@ -1,136 +1,24 @@
-'use client';
+import { Metadata } from 'next';
+import { ClientAuthWrapper } from '@/components/onboarding/client-auth-wrapper';
+import { OnboardingContent } from '@/components/onboarding/onboarding-content';
 
-import { useState, useContext, useEffect } from "react";
-import { UserContext, UserContextType } from "@/components/auth/UserContext";
-import { OnboardingProgress } from "@/components/ui/onboarding-progress";
-import { Step1GoogleSignIn } from "@/components/onboarding/step-1-google-signin";
-import { Step2SpotifyConnect } from "@/components/onboarding/step-2-spotify-connect";
-import { Step3ChoosePlaylist } from "@/components/onboarding/step-3-choose-playlist";
-import { Step4InviteFriends } from "@/components/onboarding/step-4-invite-friends";
-import { useRouter } from "next/navigation";
-import { ClientAuthWrapper } from "@/components/onboarding/client-auth-wrapper";
-import PageContainer from "@/components/layout/page-container";
-
-const ONBOARDING_STEPS = [
-  {
-    title: "Sign In",
-    description: "Create your account"
+export const metadata: Metadata = {
+  title: 'Get Started - Connect Your Music',
+  description: 'Connect your Spotify account and start creating collaborative playlists with friends. Quick setup, instant music sharing.',
+  keywords: ['spotify connect', 'music setup', 'playlist creation', 'music sharing setup'],
+  openGraph: {
+    title: 'Get Started - Connect Your Music | SyncTuneZ',
+    description: 'Connect your Spotify account and start creating collaborative playlists with friends.',
+    url: 'https://synctunez.com/onboarding',
   },
-  {
-    title: "Connect",
-    description: "Link your Spotify"
+  alternates: {
+    canonical: '/onboarding',
   },
-  {
-    title: "Import",
-    description: "Choose a playlist"
-  },
-  {
-    title: "Invite",
-    description: "Add friends"
-  }
-];
-
-function OnboardingContent() {
-  const userContext = useContext(UserContext) as UserContextType | null;
-  const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(() => {
-    // Calculate initial step based on user state
-    if (!userContext?.userAccount) return 1;
-    if (!userContext.userAccount.hasSpotify) return 2;
-    return 3; // If user has both account and Spotify, start at step 3
-  });
-  
-  // Update step when user context changes
-  useEffect(() => {
-    if (!userContext?.userAccount) {
-      setCurrentStep(1);
-    } else if (!userContext.userAccount.hasSpotify) {
-      setCurrentStep(2);
-    } else if (currentStep < 3) {
-      setCurrentStep(3);
-    }
-  }, [userContext, currentStep]);
-
-  const handleNext = () => {
-    setCurrentStep(prev => Math.min(prev + 1, 4));
-  };
-
-  const handleComplete = () => {
-    // This is handled by the Step4InviteFriends component
-    console.log('Onboarding completed');
-  };
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return <Step1GoogleSignIn onNext={handleNext} />;
-      case 2:
-        return <Step2SpotifyConnect onNext={handleNext} />;
-      case 3:
-        return <Step3ChoosePlaylist onNext={handleNext} />;
-      case 4:
-        return <Step4InviteFriends onComplete={handleComplete} />;
-      default:
-        return <Step1GoogleSignIn onNext={handleNext} />;
-    }
-  };
-
-  const content = (
-    <div className="bg-[#134e4a]/5 flex flex-col min-h-[100dvh]">
-      {/* Progress indicator */}
-      <div className="w-full py-6 flex-none">
-        <div className="w-full max-w-6xl mx-auto px-4">
-          <OnboardingProgress
-            currentStep={currentStep}
-            totalSteps={ONBOARDING_STEPS.length}
-            steps={ONBOARDING_STEPS}
-          />
-        </div>
-      </div>
-
-      {/* Main content */}
-      <div className="flex-1 flex w-full min-h-0">
-        <div className="w-full max-w-6xl mx-auto px-4">
-          {renderStep()}
-        </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <PageContainer scrollable={false}>
-      {content}
-    </PageContainer>
-  );
-}
+};
 
 export default function OnboardingPage() {
   return (
-    <ClientAuthWrapper
-      fallback={
-        <PageContainer scrollable={false}>
-          <div className="bg-[#134e4a]/5 flex flex-col min-h-[100dvh]">
-            {/* Progress indicator */}
-            <div className="w-full py-6 flex-none">
-              <div className="w-full max-w-6xl mx-auto px-4">
-                <OnboardingProgress
-                  currentStep={1}
-                  totalSteps={ONBOARDING_STEPS.length}
-                  steps={ONBOARDING_STEPS}
-                />
-              </div>
-            </div>
-
-            {/* Main content */}
-            <div className="flex-1 flex w-full min-h-0">
-              <div className="w-full max-w-6xl mx-auto px-4">
-                <Step1GoogleSignIn onNext={() => {}} />
-              </div>
-            </div>
-          </div>
-        </PageContainer>
-      }
-    >
+    <ClientAuthWrapper fallback={<OnboardingContent />}>
       <OnboardingContent />
     </ClientAuthWrapper>
   );
