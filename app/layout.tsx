@@ -11,9 +11,13 @@ import './globals.css';
 import './theme.css';
 import {Toaster} from "sonner";
 import {RegisterModal} from "@/components/RegisterModal";
-import {SidebarProvider} from "@/components/ui/sidebar";
+import {SidebarProvider, useSidebar} from "@/components/ui/sidebar";
 import {AppSidebar} from "@/components/sidebar/app-sidebar";
 import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
+<<<<<<< HEAD
+=======
+import ServerSidebarWrapper from '@/components/sidebar/ServerSidebarWrapper';
+>>>>>>> 27cdb0a1fd4c60b74a9fff2cbb7d8175374b1bb2
 
 const META_THEME_COLORS = {
     light: '#ffffff',
@@ -77,7 +81,7 @@ export default async function RootLayout({
                 <Providers activeThemeValue={activeThemeValue as string}>
                     <ClientToaster />
                     <SidebarProvider defaultOpen={defaultOpen}>
-                        <AppSidebar/>
+                        <ServerSidebarWrapper />
                         <FloatingSidebarTrigger />
                         <div className="w-full p-2.5">
                             {children}
