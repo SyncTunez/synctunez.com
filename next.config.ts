@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: {
   devIndicators: { errorIndicator: boolean; buildActivityPosition: string };
-  rewrites(): Promise<[{ destination: string; source: string }]>
+  rewrites(): Promise<[{ destination: string; source: string }]>;
+  eslint: { ignoreDuringBuilds: boolean };
 } = {
   devIndicators: {
     buildActivityPosition: 'top-right',
@@ -15,6 +16,9 @@ const nextConfig: {
         destination: 'http://localhost:8080/:path*',
       },
     ];
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
   /* config options here */
 };

@@ -14,7 +14,6 @@ import {RegisterModal} from "@/components/RegisterModal";
 import {SidebarProvider} from "@/components/ui/sidebar";
 import {AppSidebar} from "@/components/sidebar/app-sidebar";
 import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
-import {CommandMenu} from "@/components/ui/command-menu";
 
 const META_THEME_COLORS = {
     light: '#ffffff',
