@@ -77,10 +77,10 @@ function OnboardingContent() {
 
   return (
     <PageContainer>
-      <div className="min-h-screen bg-[#134e4a]/5">
+      <div className="min-h-screen w-full bg-[#134e4a]/5 px-4 flex flex-col">
         {/* Progress indicator */}
-        <div className="py-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full py-8">
+          <div className="w-full max-w-6xl mx-auto">
             <OnboardingProgress
               currentStep={currentStep}
               totalSteps={ONBOARDING_STEPS.length}
@@ -90,8 +90,8 @@ function OnboardingContent() {
         </div>
 
         {/* Main content */}
-        <div className="py-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex-1 flex w-full">
+          <div className="w-full max-w-6xl mx-auto">
             {renderStep()}
           </div>
         </div>
@@ -104,10 +104,10 @@ export default function OnboardingPage() {
   return (
     <ClientAuthWrapper
       fallback={
-        <div className="min-h-screen bg-[#134e4a]/5">
+        <div className="min-h-screen w-full bg-[#134e4a]/5 px-4 flex flex-col">
           {/* Progress indicator */}
-          <div className="py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="w-full py-8">
+            <div className="w-full max-w-6xl mx-auto">
               <OnboardingProgress
                 currentStep={1}
                 totalSteps={ONBOARDING_STEPS.length}
@@ -117,8 +117,8 @@ export default function OnboardingPage() {
           </div>
 
           {/* Main content */}
-          <div className="py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex-1 flex w-full">
+            <div className="w-full max-w-6xl mx-auto">
               <Step1GoogleSignIn onNext={() => {}} />
             </div>
           </div>

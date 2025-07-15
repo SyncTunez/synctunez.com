@@ -1,11 +1,10 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { IconBrandSpotify } from "@tabler/icons-react";
-import { buildUrl } from "@/lib/api/apiClient";
 import { useContext } from "react";
 import { UserContext, UserContextType } from "@/components/auth/UserContext";
+import { OnboardingLayout } from "./onboarding-layout";
+import { OnboardingCard } from "./onboarding-card";
 
 interface Step2SpotifyConnectProps {
   onNext: () => void;
@@ -13,108 +12,63 @@ interface Step2SpotifyConnectProps {
 
 export function Step2SpotifyConnect({ onNext }: Step2SpotifyConnectProps) {
   const userContext = useContext(UserContext) as UserContextType | null;
-  const hasSpotify = !!userContext?.userAccount?.hasSpotify;
+  const isConnected = false; // Replace with actual Spotify connection status
+
+  const SpotifyIcon = () => (
+    <svg className="w-10 h-10" viewBox="0 0 24 24">
+      <path
+        fill="#1DB954"
+        d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.371-.721.49-1.101.24-3.021-1.851-6.822-2.271-11.292-1.241-.418.081-.837-.241-.918-.651-.082-.41.24-.837.63-.918 4.891-1.121 9.092-.63 12.452 1.451.369.241.49.721.229 1.119zm1.471-3.291c-.301.459-.921.63-1.381.319-3.461-2.131-8.731-2.75-12.842-1.511-.499.15-1.021-.15-1.171-.65-.15-.5.15-1.021.65-1.171 4.681-1.42 10.511-.721 14.472 1.771.449.301.629.92.272 1.242zm.129-3.409c-4.151-2.461-11.022-2.689-15.002-1.489-.619.19-1.271-.17-1.461-.79-.19-.619.17-1.271.79-1.461 4.581-1.389 12.192-1.121 17.001 1.729.561.33.74 1.051.41 1.61-.321.54-1.049.721-1.738.401z"
+      />
+    </svg>
+  );
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4">
-      <Card className="bg-muted shadow-lg border border-muted-foreground/10 relative overflow-hidden">
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-card/80 text-foreground px-4 py-2 rounded-full text-sm font-medium border border-muted-foreground/20 z-10">
-          SyncTunez
-        </div>
-        <CardHeader className="text-center pb-6 pt-10">
-          <div className="w-20 h-20 bg-gradient-to-r from-[#1DB954] to-[#1ed760] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <IconBrandSpotify className="w-10 h-10 text-white" />
+    <OnboardingLayout currentStep={2}>
+      <OnboardingCard
+        icon={<SpotifyIcon />}
+        title="Connect Your Spotify"
+        description="Link your Spotify account to start syncing your music"
+      >
+        {!isConnected ? (
+          <div className="flex justify-center">
+            <Button
+              size="lg"
+              className="bg-[#1DB954] hover:bg-[#1DB954]/90 text-white px-8 py-6 h-auto text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+              onClick={() => {
+                // Add Spotify connect logic here
+              }}
+            >
+              <SpotifyIcon />
+              <span className="ml-3">Connect Spotify Account</span>
+            </Button>
           </div>
-          <CardTitle className="text-3xl font-bold text-foreground">
-            Connect Your Spotify
-          </CardTitle>
-          <CardDescription className="text-xl text-muted-foreground mt-3 max-w-2xl mx-auto">
-            Link your Spotify account to access your playlists
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent className="space-y-8 px-8 pb-8">
-          {!hasSpotify ? (
-            <>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3 text-sm text-muted-foreground">
-                  <div className="w-2 h-2 bg-[#1DB954] rounded-full"></div>
-                  <span>Import your existing Spotify playlists</span>
-                </div>
-                <div className="flex items-center space-x-3 text-sm text-muted-foreground">
-                  <div className="w-2 h-2 bg-[#1DB954] rounded-full"></div>
-                  <span>Find songs in common with your friends</span>
-                </div>
-                <div className="flex items-center space-x-3 text-sm text-muted-foreground">
-                  <div className="w-2 h-2 bg-[#1DB954] rounded-full"></div>
-                  <span>Create new shared playlists directly in Spotify</span>
-                </div>
+        ) : (
+          <>
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-card/80 rounded-full flex items-center justify-center mx-auto border border-muted-foreground/20">
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
               </div>
-              
-              <div className="bg-card/80 rounded-lg p-4 border border-muted-foreground/20">
-                <div className="flex items-start space-x-3">
-                  <div className="w-5 h-5 bg-card rounded-full flex items-center justify-center mt-0.5 border border-muted-foreground/20">
-                    <svg className="w-3 h-3 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-foreground">Your data is secure</h4>
-                    <p className="text-sm text-muted-foreground mt-1">We only access your playlist information and never modify your existing playlists without permission.</p>
-                  </div>
-                </div>
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">Spotify Connected!</h3>
+                <p className="text-muted-foreground mt-1">Your Spotify account is now linked to SyncTunez</p>
               </div>
-              
-              <div className="flex justify-center pt-4">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-gradient-to-r from-[#1DB954] to-[#1ed760] hover:from-[#1ed760] hover:to-[#1DB954] text-white px-8 py-6 h-auto text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  <a href={buildUrl("/spotify/connect")}>
-                    <IconBrandSpotify className="w-5 h-5 mr-2" />
-                    Connect Spotify
-                  </a>
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 bg-card/80 rounded-full flex items-center justify-center mx-auto border border-muted-foreground/20">
-                  <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground">Spotify Connected!</h3>
-                  <p className="text-muted-foreground mt-1">Your Spotify account is now linked to SyncTunez</p>
-                </div>
-              </div>
-              
-              <div className="bg-card/80 rounded-lg p-4 border border-muted-foreground/20">
-                <div className="flex items-center space-x-3">
-                  <IconBrandSpotify className="w-5 h-5 text-[#1DB954]" />
-                  <div>
-                    <p className="font-medium text-foreground">Ready to import playlists</p>
-                    <p className="text-sm text-muted-foreground mt-1">You can now access and import your Spotify playlists</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex justify-center pt-4">
-                <Button
-                  onClick={onNext}
-                  size="lg"
-                  className="bg-card/80 hover:bg-card text-foreground border border-muted-foreground/20 hover:border-muted-foreground/40 px-8 py-6 h-auto text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  Continue to Import Playlist
-                </Button>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+            </div>
+            
+            <div className="flex justify-center">
+              <Button
+                onClick={onNext}
+                size="lg"
+                className="bg-card/80 hover:bg-card text-foreground border border-muted-foreground/20 hover:border-muted-foreground/40 px-8 py-6 h-auto text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                Continue to Next Step
+              </Button>
+            </div>
+          </>
+        )}
+      </OnboardingCard>
+    </OnboardingLayout>
   );
 } 

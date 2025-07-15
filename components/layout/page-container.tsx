@@ -9,14 +9,14 @@ export default function PageContainer({
   scrollable?: boolean;
 }) {
   return (
-    <>
+    <div className="w-full flex flex-col flex-1">
       {scrollable ? (
         <ScrollArea className='h-[calc(100dvh-52px)] w-full'>
-          <div className='flex flex-1 w-full'>{children}</div>
+          {children}
         </ScrollArea>
       ) : (
-        <div className='flex flex-1 w-full'>{children}</div>
+        children
       )}
-    </>
+    </div>
   );
 }
