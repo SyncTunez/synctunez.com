@@ -35,7 +35,7 @@ const renderCustomizedLabel = (props: any) => {
   );
 };
 
-export function GenreChart() {
+export default function GenreChart() {
   return (
     <div className="h-full">
       <ResponsiveContainer width="100%" height="100%">

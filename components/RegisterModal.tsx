@@ -37,7 +37,7 @@ const FormSchema = z.object({
   }),
 });
 
-export function RegisterModal({ userSession, userAccountRaw }: { userSession: string | null; userAccountRaw: string | null; }) {
+export default function RegisterModal({ userSession, userAccountRaw }: { userSession: string | null; userAccountRaw: string | null; }) {
 
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [usernameError, setUsernameError] = useState<string | null>(null);

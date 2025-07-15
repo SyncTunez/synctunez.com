@@ -12,8 +12,10 @@ import { useLiveResourceJson } from "@/hooks/useLiveResource";
 import { ServiceCard, serviceIcons } from "@/components/ui/service-card";
 import { MobileNavigationMenu } from "@/components/ui/mobile-navigation-menu";
 import { PlaylistSection } from "@/components/ui/playlist/playlist-section";
-import { FriendsCard } from "@/components/ui/friends-card";
+import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
+
+const FriendsCard = dynamic(() => import('@/components/ui/friends-card'), { ssr: false });
 
 export default function AccountContent() {
     const userContext = React.useContext(UserContext) as UserContextType | null;

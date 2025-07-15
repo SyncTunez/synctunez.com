@@ -10,12 +10,13 @@ import {NuqsAdapter} from 'nuqs/adapters/next/app';
 import './globals.css';
 import './theme.css';
 import {Toaster} from "sonner";
-import {RegisterModal} from "@/components/RegisterModal";
+import dynamic from 'next/dynamic';
 import {SidebarProvider} from "@/components/ui/sidebar";
 import {AppSidebar} from "@/components/sidebar/app-sidebar";
 import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
 import PageContainer from '@/components/layout/page-container';
 import Script from 'next/script';
+import RegisterModalWrapper from '@/components/RegisterModalWrapper';
 
 const META_THEME_COLORS = {
     light: '#ffffff',
@@ -157,7 +158,7 @@ export default async function RootLayout({
                             </main>
                         </div>
                     </SidebarProvider>
-                    <RegisterModal userSession={userSession} userAccountRaw={userAccountRaw}/>
+                    <RegisterModalWrapper userSession={userSession} userAccountRaw={userAccountRaw}/>
                 </Providers>
             </ThemeProvider>
         </NuqsAdapter>

@@ -1,5 +1,9 @@
 import type { NextConfig } from "next";
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 const nextConfig: NextConfig = {
   devIndicators: {
     buildActivityPosition: 'top-right',
@@ -89,4 +93,4 @@ const nextConfig: NextConfig = {
   generateEtags: true,
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

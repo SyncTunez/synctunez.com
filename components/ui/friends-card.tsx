@@ -74,7 +74,7 @@ type FriendEntry = {
 };
 
 
-export function FriendsCard({ forceFullHeight = false }: { forceFullHeight?: boolean }) {
+export default function FriendsCard({ forceFullHeight = false }: { forceFullHeight?: boolean }) {
   const userContext = useContext(UserContext) as UserContextType;
   const [friends, setFriends] = useState<Map<string, { timestamp: number; profileUrl: string }>>(new Map());
   const [loading, setLoading] = useState(true);

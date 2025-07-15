@@ -2,9 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Music, Users, Heart, Sparkles } from "lucide-react";
-import { GenreChart } from "@/components/ui/genre-chart";
+import dynamic from 'next/dynamic';
 import { LearnMoreButton } from "@/components/ui/learn-more-button";
 import { useInView } from "@/hooks/useInView";
+
+const GenreChart = dynamic(() => import('@/components/ui/genre-chart'), { ssr: false });
 
 export function HeroSection() {
   // Add hooks for playlist items
