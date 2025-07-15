@@ -9,7 +9,7 @@ import { IconMusic, IconBrandSpotify } from "@tabler/icons-react";
 import { PlaylistRow } from "@/components/ui/playlist/playlist-row";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLiveResourceJson } from "@/hooks/useLiveResource";
-import type { SpotifyPlaylist } from "@/lib/api/types";
+import type { SpotifyPlaylist, SpotifyTrack } from "@/lib/api/types";
 import { buildUrl, authorized } from "@/lib/api/apiClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -37,12 +37,26 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
   // Listen for import completion events
   const {
     data: importedPlaylist
-  } = useLiveResourceJson<SpotifyPlaylist>({
-    fetchUrl: '',  // No initial fetch needed
-    eventName: 'ImportedPlaylist',
+  } = useLiveResourceJson<SpotifyTrack>({
+    fetchUrl: selectedPlaylist !== undefined ? buildUrl(`spotify/import?id=${selectedPlaylist}`) : '', 
+    eventName: 'SpotifyPlaylistTracks',
     reconnectIntervalMs: 5000,
     shouldProcess: isImporting,
     onMessage: (data) => {
+      const tracks = Array.isArray(data)
+      ? data
+      : data && typeof data === 'object'
+        ? [data as SpotifyTrack]
+        : [];
+
+        console.log(tracks);
+        //todo: wait until the entire playlist is imported
+        if(tracks.length > 0) {
+          toast.success('Playlist imported successfully!');
+          setIsImporting(false);
+          onNext();
+        }
+
       if (data?.id === selectedPlaylist) {
         toast.success('Playlist imported successfully!');
         setIsImporting(false);
@@ -70,12 +84,12 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
     
     setIsImporting(true);
     try {
-      await authorized.post(buildUrl('music/playlists/import'), {
-        playlistId: selectedPlaylist,
-        service: 'spotify'
-      });
-      // Don't navigate yet - wait for the SSE event
+console.log("Current: " + selectedPlaylist)
+
+      // The import completion will be handled by the ImportedPlaylist event listener above
+      
     } catch (error) {
+      console.error(error);
       toast.error('Failed to import playlist. Please try again.');
       setIsImporting(false);
     }
