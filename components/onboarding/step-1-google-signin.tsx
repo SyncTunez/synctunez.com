@@ -25,7 +25,7 @@ export function Step1GoogleSignIn({ onNext }: Step1GoogleSignInProps) {
   );
 
   return (
-    <OnboardingLayout>
+    <OnboardingLayout currentStep={1}>
       <OnboardingCard
         icon={<GoogleIcon />}
         title="Create Your Account"

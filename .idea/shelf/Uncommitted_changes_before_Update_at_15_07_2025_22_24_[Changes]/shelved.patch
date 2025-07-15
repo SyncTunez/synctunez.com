@@ -1,0 +1,107 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"9e2dc116-edfb-462b-b863-05ca80e0ae51\" name=\"Changes\" comment=\"\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/app/account/AccountContent.tsx\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/app/account/AccountContent.tsx\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/app/layout.tsx\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/app/layout.tsx\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/components/ui/friends-card.tsx\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/components/ui/friends-card.tsx\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/components/ui/playlist/playlist-section.tsx\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/components/ui/playlist/playlist-section.tsx\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/components/ui/playlist/track-table.tsx\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/components/ui/playlist/track-table.tsx\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/components/ui/table.tsx\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/components/ui/table.tsx\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/hooks/useLiveResource.ts\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/hooks/useLiveResource.ts\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/hooks/useSSE.ts\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/hooks/useSSE.ts\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 5\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2ytL2cXw9RcBIki6GGm4NT4GT6Q\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;main&quot;,\r\n    &quot;jsx.switch.disabled&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;E:/RSPS/OpenRune/openrune.dev&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,\r\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\r\n    &quot;npm.build.executor&quot;: &quot;Run&quot;,\r\n    &quot;npm.dev.executor&quot;: &quot;Run&quot;,\r\n    &quot;npm.lint.executor&quot;: &quot;Run&quot;,\r\n    &quot;npm.npm start.executor&quot;: &quot;Run&quot;,\r\n    &quot;npm.serve.executor&quot;: &quot;Run&quot;,\r\n    &quot;ts.external.directory.path&quot;: &quot;E:\\\\Programming\\\\synctunez\\\\synctunez.com\\\\node_modules\\\\typescript\\\\lib&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"E:\\Programming\\synctunez\\synctunez.com\\components\\sidebar\" />\r\n      <recent name=\"E:\\Programming\\synctunez\\synctunez.com\\src\\api\\data\" />\r\n      <recent name=\"E:\\Programming\\synctunez\\synctunez.com\\src\\views\" />\r\n      <recent name=\"E:\\Programming\\synctunez\" />\r\n      <recent name=\"E:\\Programming\\synctunez\\src\\layout\" />\r\n    </key>\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"E:\\Programming\\synctunez\\synctunez.com\\components\\ui\\playlist\" />\r\n      <recent name=\"E:\\Programming\\synctunez\\synctunez.com\\components\\layout\" />\r\n      <recent name=\"E:\\Programming\\synctunez\\synctunez.com\\components\\sidebar\" />\r\n      <recent name=\"E:\\Programming\\synctunez\\synctunez.com\\src\\api\" />\r\n      <recent name=\"E:\\Programming\\synctunez\\synctunez.com\\src\\components\\modals\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"npm.dev\">\r\n    <configuration name=\"Debug Application\" type=\"JavascriptDebugType\" uri=\"http://localhost:3000\">\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"build\" type=\"js.build_tools.npm\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <package-json value=\"$PROJECT_DIR$/package.json\" />\r\n      <command value=\"run\" />\r\n      <scripts>\r\n        <script value=\"build\" />\r\n      </scripts>\r\n      <node-interpreter value=\"project\" />\r\n      <envs />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"dev\" type=\"js.build_tools.npm\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <package-json value=\"$PROJECT_DIR$/package.json\" />\r\n      <command value=\"run\" />\r\n      <scripts>\r\n        <script value=\"dev\" />\r\n      </scripts>\r\n      <node-interpreter value=\"project\" />\r\n      <envs />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"lint\" type=\"js.build_tools.npm\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <package-json value=\"$PROJECT_DIR$/package.json\" />\r\n      <command value=\"run\" />\r\n      <scripts>\r\n        <script value=\"lint\" />\r\n      </scripts>\r\n      <node-interpreter value=\"project\" />\r\n      <envs />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"npm start\" type=\"js.build_tools.npm\">\r\n      <package-json value=\"$PROJECT_DIR$/package.json\" />\r\n      <command value=\"run\" />\r\n      <scripts>\r\n        <script value=\"start\" />\r\n      </scripts>\r\n      <node-interpreter value=\"project\" />\r\n      <envs />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"serve\" type=\"js.build_tools.npm\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <package-json value=\"$PROJECT_DIR$/package.json\" />\r\n      <command value=\"run\" />\r\n      <scripts>\r\n        <script value=\"serve\" />\r\n      </scripts>\r\n      <node-interpreter value=\"project\" />\r\n      <envs />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"npm.dev\" />\r\n        <item itemvalue=\"npm.serve\" />\r\n        <item itemvalue=\"npm.lint\" />\r\n        <item itemvalue=\"npm.build\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"9e2dc116-edfb-462b-b863-05ca80e0ae51\" name=\"Changes\" comment=\"\" />\r\n      <created>1750648717492</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1750648717492</updated>\r\n      <workItem from=\"1750648718515\" duration=\"1160000\" />\r\n      <workItem from=\"1750649992971\" duration=\"4828000\" />\r\n      <workItem from=\"1750724227090\" duration=\"5728000\" />\r\n      <workItem from=\"1750765351896\" duration=\"50000\" />\r\n      <workItem from=\"1750952391324\" duration=\"31970000\" />\r\n      <workItem from=\"1751654138490\" duration=\"953000\" />\r\n      <workItem from=\"1751657931242\" duration=\"2277000\" />\r\n      <workItem from=\"1751662887557\" duration=\"3769000\" />\r\n      <workItem from=\"1751763532153\" duration=\"56000\" />\r\n      <workItem from=\"1751766918941\" duration=\"21376000\" />\r\n      <workItem from=\"1751992488277\" duration=\"18299000\" />\r\n      <workItem from=\"1752120274951\" duration=\"18803000\" />\r\n      <workItem from=\"1752239542354\" duration=\"97000\" />\r\n      <workItem from=\"1752342757709\" duration=\"60000\" />\r\n      <workItem from=\"1752355735061\" duration=\"1667000\" />\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision b03cea037fdb09e29264346fa50c81d437bf1da4)
++++ b/.idea/workspace.xml	(date 1752614485305)
+@@ -4,17 +4,7 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="9e2dc116-edfb-462b-b863-05ca80e0ae51" name="Changes" comment="">
+-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/app/account/AccountContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/account/AccountContent.tsx" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.tsx" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/components/ui/friends-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/friends-card.tsx" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/components/ui/playlist/playlist-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/playlist/playlist-section.tsx" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/components/ui/playlist/track-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/playlist/track-table.tsx" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/components/ui/table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/table.tsx" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/hooks/useLiveResource.ts" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useLiveResource.ts" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/hooks/useSSE.ts" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useSSE.ts" afterDir="false" />
+-    </list>
++    <list default="true" id="9e2dc116-edfb-462b-b863-05ca80e0ae51" name="Changes" comment="s" />
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -34,30 +24,30 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+-    &quot;jsx.switch.disabled&quot;: &quot;true&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;E:/RSPS/OpenRune/openrune.dev&quot;,
+-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
+-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+-    &quot;npm.build.executor&quot;: &quot;Run&quot;,
+-    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
+-    &quot;npm.lint.executor&quot;: &quot;Run&quot;,
+-    &quot;npm.npm start.executor&quot;: &quot;Run&quot;,
+-    &quot;npm.serve.executor&quot;: &quot;Run&quot;,
+-    &quot;ts.external.directory.path&quot;: &quot;E:\\Programming\\synctunez\\synctunez.com\\node_modules\\typescript\\lib&quot;,
+-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "RunOnceActivity.OpenProjectViewOnStart": "true",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "git-widget-placeholder": "journey",
++    "jsx.switch.disabled": "true",
++    "last_opened_file_path": "E:/RSPS/OpenRune/openrune.dev",
++    "node.js.detected.package.eslint": "true",
++    "node.js.detected.package.standard": "true",
++    "node.js.detected.package.tslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "node.js.selected.package.standard": "",
++    "node.js.selected.package.tslint": "(autodetect)",
++    "nodejs_interpreter_path": "node",
++    "nodejs_package_manager_path": "npm",
++    "npm.build.executor": "Run",
++    "npm.dev.executor": "Run",
++    "npm.lint.executor": "Run",
++    "npm.npm start.executor": "Run",
++    "npm.serve.executor": "Run",
++    "ts.external.directory.path": "C:\\Users\\Jack\\WebstormProjects\\synctunez.com\\node_modules\\typescript\\lib",
++    "vue.rearranger.settings.migration": "true"
+   }
+-}</component>
++}]]></component>
+   <component name="RecentsManager">
+     <key name="CopyFile.RECENT_KEYS">
+       <recent name="E:\Programming\synctunez\synctunez.com\components\sidebar" />
+@@ -161,9 +151,22 @@
+       <workItem from="1752342757709" duration="60000" />
+       <workItem from="1752355735061" duration="1667000" />
+     </task>
++    <task id="LOCAL-00001" summary="s">
++      <option name="closed" value="true" />
++      <created>1752614436563</created>
++      <option name="number" value="00001" />
++      <option name="presentableId" value="LOCAL-00001" />
++      <option name="project" value="LOCAL" />
++      <updated>1752614436563</updated>
++    </task>
++    <option name="localTasksCounter" value="2" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+     <option name="version" value="3" />
+   </component>
++  <component name="VcsManagerConfiguration">
++    <MESSAGE value="s" />
++    <option name="LAST_COMMIT_MESSAGE" value="s" />
++  </component>
+ </project>
+\ No newline at end of file

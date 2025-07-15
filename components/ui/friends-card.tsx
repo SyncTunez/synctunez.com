@@ -137,8 +137,9 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
     try {
       const res = await authorized.get(
         `account/profilePicture?profile=${encodeURIComponent(name)}`,
+        'text'  // Specify text response type
       );
-      return res.data;
+      return res.data as string;
     } catch {
       return '';
     }

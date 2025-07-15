@@ -144,7 +144,7 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
   };
 
   return (
-    <OnboardingLayout>
+    <OnboardingLayout currentStep={3}>
       <OnboardingCard
         icon={<SpotifyIcon />}
         title="Choose Your Playlist"

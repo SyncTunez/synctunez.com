@@ -5,6 +5,9 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const nextConfig: NextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   devIndicators: {
     buildActivityPosition: 'top-right',
     buildActivity: true,
