@@ -9,7 +9,7 @@ interface OnboardingLayoutProps {
 
 export function OnboardingLayout({ children, currentStep }: OnboardingLayoutProps) {
   return (
-    <div className="w-full min-h-[calc(100vh-8rem)] flex items-center py-16 md:py-20">
+    <div id="onboarding-layout" className="w-full min-h-[calc(100vh-8rem)] flex pt-24 md:pt-32">
       <div className="w-full max-w-4xl mx-auto">
         {children}
       </div>
