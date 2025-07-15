@@ -16,44 +16,46 @@ interface OnboardingProgressProps {
 export function OnboardingProgress({ currentStep, totalSteps, steps }: OnboardingProgressProps) {
   return (
     <Card className="w-full bg-muted shadow-lg border border-muted-foreground/10 !py-2">
-      <CardContent className="flex items-center !px-8">
+      <CardContent className="flex items-center !px-4 sm:!px-8">
         {steps.map((step, index) => {
           const stepNumber = index + 1;
           const isCompleted = stepNumber < currentStep;
           const isCurrent = stepNumber === currentStep;
           
           return (
-            <div key={stepNumber} className="flex-1 flex items-center justify-center">
+            <div key={stepNumber} className="flex-1 flex items-center justify-center relative">
               <div className={cn(
-                "flex flex-col items-center",
-                "w-full max-w-[180px]"
+                "flex flex-col items-center relative",
+                "w-full"
               )}>
                 <div className="relative w-full flex justify-center">
                   {/* Step circle */}
                   <div
                     className={cn(
-                      "w-14 h-14 rounded-full flex items-center justify-center border-2 transition-all duration-300",
+                      "w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-2 transition-all duration-300 relative z-10",
                       isCompleted && "bg-gradient-to-r from-[#0f766e] to-[#14b8a6] border-[#0f766e] text-white shadow-lg",
                       isCurrent && "bg-[#0f766e] border-[#0f766e] text-white shadow-md",
                       !isCompleted && !isCurrent && "border-[#0f766e] bg-[#0f766e]/10 text-[#0f766e]"
                     )}
                   >
                     {isCompleted ? (
-                      <Check className="w-7 h-7" />
+                      <Check className="w-5 h-5 sm:w-7 sm:h-7" />
                     ) : (
-                      <span className="text-base font-semibold">{stepNumber}</span>
+                      <span className="text-sm sm:text-base font-semibold">{stepNumber}</span>
                     )}
                   </div>
 
                   {/* Arrow connector */}
                   {index < steps.length - 1 && (
-                    <div className="absolute right-[-5rem] top-1/2 -translate-y-1/2 flex gap-[-0.5rem]">
-                      <ChevronRight className={cn(
-                        "w-10 h-10 transition-all duration-300 text-[#0f766e]"
-                      )} strokeWidth={1.5} />
-                      <ChevronRight className={cn(
-                        "w-10 h-10 transition-all duration-300 text-[#0f766e] -ml-6"
-                      )} strokeWidth={1.5} />
+                    <div className="absolute w-full left-1/2 top-1/2 -translate-y-1/2 flex items-center justify-center z-0">
+                      <div className="flex -ml-1">
+                        <ChevronRight className={cn(
+                          "w-6 h-6 sm:w-10 sm:h-10 transition-all duration-300 text-[#0f766e]"
+                        )} strokeWidth={1.5} />
+                        <ChevronRight className={cn(
+                          "w-6 h-6 sm:w-10 sm:h-10 transition-all duration-300 text-[#0f766e] -ml-4 sm:-ml-6"
+                        )} strokeWidth={1.5} />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -61,7 +63,7 @@ export function OnboardingProgress({ currentStep, totalSteps, steps }: Onboardin
                 {/* Step info */}
                 <div className="mt-2 text-center">
                   <p className={cn(
-                    "text-base font-medium text-[#0f766e] transition-colors duration-300",
+                    "text-xs sm:text-base font-medium text-[#0f766e] transition-colors duration-300",
                   )}>
                     {step.title}
                   </p>

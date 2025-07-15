@@ -78,20 +78,6 @@ export function Step4InviteFriends({ onComplete }: Step4InviteFriendsProps) {
         </CardHeader>
         
         <CardContent className="space-y-8 px-8 pb-8">
-          <div className="space-y-4 max-w-3xl mx-auto">
-            <div className="flex items-center space-x-3 text-base text-muted-foreground">
-              <div className="w-2.5 h-2.5 bg-[#0f766e] rounded-full"></div>
-              <span>Share your invite link or send direct email invitations</span>
-            </div>
-            <div className="flex items-center space-x-3 text-base text-muted-foreground">
-              <div className="w-2.5 h-2.5 bg-[#0f766e] rounded-full"></div>
-              <span>Friends can connect their Spotify and import playlists</span>
-            </div>
-            <div className="flex items-center space-x-3 text-base text-muted-foreground">
-              <div className="w-2.5 h-2.5 bg-[#0f766e] rounded-full"></div>
-              <span>Find songs you both love and create shared playlists</span>
-            </div>
-          </div>
 
           {/* Email Invite */}
           <div className="space-y-4">

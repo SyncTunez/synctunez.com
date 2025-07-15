@@ -7,9 +7,9 @@ import { Step1GoogleSignIn } from "@/components/onboarding/step-1-google-signin"
 import { Step2SpotifyConnect } from "@/components/onboarding/step-2-spotify-connect";
 import { Step3ChoosePlaylist } from "@/components/onboarding/step-3-choose-playlist";
 import { Step4InviteFriends } from "@/components/onboarding/step-4-invite-friends";
-import PageContainer from "@/components/layout/page-container";
 import { useRouter } from "next/navigation";
 import { ClientAuthWrapper } from "@/components/onboarding/client-auth-wrapper";
+import PageContainer from "@/components/layout/page-container";
 
 const ONBOARDING_STEPS = [
   {
@@ -75,8 +75,8 @@ function OnboardingContent() {
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-[#134e4a]/5 flex flex-col overflow-hidden ml-[var(--sidebar-width,0px)]">
+  const content = (
+    <div className="bg-[#134e4a]/5 flex flex-col min-h-[100dvh]">
       {/* Progress indicator */}
       <div className="w-full py-6 flex-none">
         <div className="w-full max-w-6xl mx-auto px-4">
@@ -89,12 +89,18 @@ function OnboardingContent() {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex w-full min-h-0 overflow-hidden">
+      <div className="flex-1 flex w-full min-h-0">
         <div className="w-full max-w-6xl mx-auto px-4">
           {renderStep()}
         </div>
       </div>
     </div>
+  );
+
+  return (
+    <PageContainer scrollable={false}>
+      {content}
+    </PageContainer>
   );
 }
 
@@ -102,25 +108,27 @@ export default function OnboardingPage() {
   return (
     <ClientAuthWrapper
       fallback={
-        <div className="fixed inset-0 bg-[#134e4a]/5 flex flex-col overflow-hidden ml-[var(--sidebar-width,0px)]">
-          {/* Progress indicator */}
-          <div className="w-full py-6 flex-none">
-            <div className="w-full max-w-6xl mx-auto px-4">
-              <OnboardingProgress
-                currentStep={1}
-                totalSteps={ONBOARDING_STEPS.length}
-                steps={ONBOARDING_STEPS}
-              />
+        <PageContainer scrollable={false}>
+          <div className="bg-[#134e4a]/5 flex flex-col min-h-[100dvh]">
+            {/* Progress indicator */}
+            <div className="w-full py-6 flex-none">
+              <div className="w-full max-w-6xl mx-auto px-4">
+                <OnboardingProgress
+                  currentStep={1}
+                  totalSteps={ONBOARDING_STEPS.length}
+                  steps={ONBOARDING_STEPS}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Main content */}
-          <div className="flex-1 flex w-full min-h-0 overflow-hidden">
-            <div className="w-full max-w-6xl mx-auto px-4">
-              <Step1GoogleSignIn onNext={() => {}} />
+            {/* Main content */}
+            <div className="flex-1 flex w-full min-h-0">
+              <div className="w-full max-w-6xl mx-auto px-4">
+                <Step1GoogleSignIn onNext={() => {}} />
+              </div>
             </div>
           </div>
-        </div>
+        </PageContainer>
       }
     >
       <OnboardingContent />
