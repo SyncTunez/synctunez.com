@@ -1,10 +1,18 @@
 import type { NextConfig } from "next";
 
+<<<<<<< HEAD
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
 const nextConfig: NextConfig = {
+=======
+const nextConfig: {
+  devIndicators: { errorIndicator: boolean; buildActivityPosition: string };
+  rewrites(): Promise<[{ destination: string; source: string }]>;
+  eslint: { ignoreDuringBuilds: boolean };
+} = {
+>>>>>>> b007d859828a9dba75d1c496d8926b9126279fcb
   devIndicators: {
     buildActivityPosition: 'top-right',
     buildActivity: true,
@@ -17,6 +25,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+<<<<<<< HEAD
   async headers() {
     return [
       {
@@ -91,6 +100,12 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: true,
+=======
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  /* config options here */
+>>>>>>> b007d859828a9dba75d1c496d8926b9126279fcb
 };
 
 export default withBundleAnalyzer(nextConfig);

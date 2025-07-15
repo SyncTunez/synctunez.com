@@ -65,34 +65,10 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
-        "slideInLeft": {
-          from: { transform: "translateX(-100%)", opacity: 0 },
-          to: { transform: "translateX(0)", opacity: 1 },
-        },
-        "slideUp": {
-          from: { transform: "translateY(20px)", opacity: 0 },
-          to: { transform: "translateY(0)", opacity: 1 },
-        },
-        "slideUpHigher": {
-          from: { transform: "translateY(40px)", opacity: 0 },
-          to: { transform: "translateY(0)", opacity: 1 },
-        },
-        "gradientMove": {
-          "0%, 100%": { backgroundPosition: "0% 50%" },
-          "50%": { backgroundPosition: "100% 50%" },
-        },
-        "shimmer": {
-          "100%": { transform: "translateX(200%)" },
-        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "slideInLeft": "slideInLeft 0.5s ease-out forwards",
-        "slideUp": "slideUp 0.5s ease-out forwards",
-        "slideUpHigher": "slideUpHigher 0.5s ease-out forwards",
-        "gradientMove": "gradientMove 3s ease-in-out infinite",
-        "shimmer": "shimmer 2s ease-in-out infinite",
       },
       rotate: {
         'y-180': '180deg',

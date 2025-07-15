@@ -6,6 +6,7 @@ import { ArrowDown } from 'lucide-react';
 
 export function FloatingDownArrow() {
   const [isVisible, setIsVisible] = useState(false);
+  const [nextSectionId, setNextSectionId] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -13,13 +14,12 @@ export function FloatingDownArrow() {
       if (!section) return;
 
       const rect = section.getBoundingClientRect();
+      // Show when we've scrolled halfway through the section, matching the up arrow
+      const scrollProgress = (window.innerHeight - rect.top) / rect.height;
+      setIsVisible(scrollProgress >= 0.5);
       
-      // Show when the section is at the bottom of the viewport
-      // and hide when we start scrolling past it
-      const bottomInView = rect.bottom <= window.innerHeight;
-      const topStillVisible = rect.top > 0;
-      
-      setIsVisible(bottomInView && topStillVisible);
+      // Set the next section ID to 'benefits' section
+      setNextSectionId('benefits');
     };
 
     // Initial check
@@ -30,7 +30,8 @@ export function FloatingDownArrow() {
   }, []);
 
   const handleClick = () => {
-    const nextSection = document.getElementById('benefits');
+    if (!nextSectionId) return;
+    const nextSection = document.getElementById(nextSectionId);
     if (nextSection) {
       nextSection.scrollIntoView({ behavior: 'smooth' });
     }

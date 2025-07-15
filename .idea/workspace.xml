@@ -4,17 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e2dc116-edfb-462b-b863-05ca80e0ae51" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/account/AccountContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/account/AccountContent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/ui/friends-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/friends-card.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/ui/playlist/playlist-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/playlist/playlist-section.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/ui/playlist/track-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/playlist/track-table.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/ui/table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/table.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useLiveResource.ts" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useLiveResource.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useSSE.ts" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useSSE.ts" afterDir="false" />
-    </list>
+    <list default="true" id="9e2dc116-edfb-462b-b863-05ca80e0ae51" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,6 +13,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "JackHarnett"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/SyncTunez/synctunez.com.git",
+    "accountId": "56c281e8-c84d-433a-aa09-96c48c3be205"
+  }
+}]]></component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -34,30 +36,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;jsx.switch.disabled&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/RSPS/OpenRune/openrune.dev&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.build.executor&quot;: &quot;Run&quot;,
-    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
-    &quot;npm.lint.executor&quot;: &quot;Run&quot;,
-    &quot;npm.npm start.executor&quot;: &quot;Run&quot;,
-    &quot;npm.serve.executor&quot;: &quot;Run&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;E:\\Programming\\synctunez\\synctunez.com\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "jsx.switch.disabled": "true",
+    "last_opened_file_path": "E:/RSPS/OpenRune/openrune.dev",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "node",
+    "nodejs_package_manager_path": "npm",
+    "npm.build.executor": "Run",
+    "npm.dev.executor": "Run",
+    "npm.lint.executor": "Run",
+    "npm.npm start.executor": "Run",
+    "npm.serve.executor": "Run",
+    "ts.external.directory.path": "E:\\Programming\\synctunez\\synctunez.com\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\Programming\synctunez\synctunez.com\components\sidebar" />
@@ -137,6 +140,13 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-WS-243.22562.112" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -160,6 +170,7 @@
       <workItem from="1752239542354" duration="97000" />
       <workItem from="1752342757709" duration="60000" />
       <workItem from="1752355735061" duration="1667000" />
+      <workItem from="1752601631334" duration="32000" />
     </task>
     <servers />
   </component>

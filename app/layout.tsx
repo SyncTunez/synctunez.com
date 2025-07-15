@@ -10,6 +10,7 @@ import {NuqsAdapter} from 'nuqs/adapters/next/app';
 import './globals.css';
 import './theme.css';
 import {Toaster} from "sonner";
+<<<<<<< HEAD
 import dynamic from 'next/dynamic';
 import {SidebarProvider} from "@/components/ui/sidebar";
 import {AppSidebar} from "@/components/sidebar/app-sidebar";
@@ -17,6 +18,16 @@ import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
 import PageContainer from '@/components/layout/page-container';
 import Script from 'next/script';
 import RegisterModalWrapper from '@/components/RegisterModalWrapper';
+=======
+import {RegisterModal} from "@/components/RegisterModal";
+import {SidebarProvider, useSidebar} from "@/components/ui/sidebar";
+import {AppSidebar} from "@/components/sidebar/app-sidebar";
+import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
+<<<<<<< HEAD
+=======
+import ServerSidebarWrapper from '@/components/sidebar/ServerSidebarWrapper';
+>>>>>>> 27cdb0a1fd4c60b74a9fff2cbb7d8175374b1bb2
+>>>>>>> b007d859828a9dba75d1c496d8926b9126279fcb
 
 const META_THEME_COLORS = {
     light: '#ffffff',
@@ -148,6 +159,7 @@ export default async function RootLayout({
                 <Providers activeThemeValue={activeThemeValue as string}>
                     <ClientToaster />
                     <SidebarProvider defaultOpen={defaultOpen}>
+<<<<<<< HEAD
                         <div className="flex min-h-svh w-full">
                             <AppSidebar/>
                             <FloatingSidebarTrigger />
@@ -156,6 +168,12 @@ export default async function RootLayout({
                                     {children}
                                 </PageContainer>
                             </main>
+=======
+                        <ServerSidebarWrapper />
+                        <FloatingSidebarTrigger />
+                        <div className="w-full p-2.5">
+                            {children}
+>>>>>>> b007d859828a9dba75d1c496d8926b9126279fcb
                         </div>
                     </SidebarProvider>
                     <RegisterModalWrapper userSession={userSession} userAccountRaw={userAccountRaw}/>

@@ -1,10 +1,10 @@
+"use client";
 import {
     Sidebar, SidebarContent, SidebarFooter, SidebarGroup,
     SidebarGroupContent, SidebarGroupLabel, SidebarHeader,
     SidebarMenu, SidebarMenuButton, SidebarMenuItem,
     SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton, useSidebar, SidebarTrigger, SidebarSeparator
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import {
     IconBell,
     IconBrandGoogleFilled,
@@ -15,15 +15,11 @@ import {
 } from "@tabler/icons-react";
 import { AppHeaderContent } from "@/components/sidebar/app-header-content";
 import Link from "next/link";
-import SecureContentWrapper from "@/components/SecureContentWrapper";
-import { buildUrl } from "@/lib/api/apiClient";
 import { UserAccountDisplay } from "@/components/auth/UserAccountDisplay";
 import { NAV_PAGES } from "@/lib/navConfig";
 import {
     Collapsible, CollapsibleContent, CollapsibleTrigger
 } from "@/components/ui/collapsible";
-import {cookies} from "next/headers";
-import {cn} from "@/lib/utils";
 import {RegisterButton} from "@/components/sidebar/RegisterButton";
 import {
     DropdownMenu,
@@ -33,9 +29,15 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {UserAvatarProfile} from "@/components/ui/user-avatar-profile";
-import React from "react";
+import React, { useContext } from "react";
+import { UserContext } from "@/components/auth/UserContext";
 
 export function AppSidebar() {
+    const userContext = useContext(UserContext);
+    const userSession = userContext?.userSession ?? null;
+    const userAccount = userContext?.userAccount ?? null;
+
+    const { open } = useSidebar();
 
     const renderNavIcons = (filterAuthed: boolean) =>
         NAV_PAGES
@@ -48,41 +50,70 @@ export function AppSidebar() {
                 const hasVisibleChildren = children.length > 0;
 
                 if (item.children && hasVisibleChildren) {
-                    return (
-                        <Collapsible
-                            key={item.label}
-                            defaultOpen={false}
-                            asChild
-                            className="group/collapsible"
-                        >
-                            <SidebarMenuItem>
-                                <CollapsibleTrigger asChild>
-                                    <button
-                                        className="peer/menu-button flex w-full items-center gap-4 overflow-hidden rounded-md p-4 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0 h-12 text-base font-medium min-w-8 duration-200 ease-linear"
-                                        aria-label={item.label}
-                                    >
-                                        {item.icon}
-                                        <span className="ml-1">{item.label}</span>
-                                        <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 h-5 w-5"/>
-                                    </button>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="pl-4">
-                                    {children.map((child) => (
-                                        <SidebarMenuItem key={child.label}>
-                                            <Link
-                                                href={child.path}
-                                                className="peer/menu-button flex w-full items-center gap-4 overflow-hidden rounded-md p-4 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0 h-12 text-base font-medium min-w-8 duration-200 ease-linear"
-                                                aria-label={child.label}
-                                            >
-                                                {child.icon}
-                                                <span className="ml-1">{child.label}</span>
-                                            </Link>
-                                        </SidebarMenuItem>
-                                    ))}
-                                </CollapsibleContent>
+                    if (!open) {
+                        return (
+                            <SidebarMenuItem key={item.label}>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <button
+                                            className="peer/menu-button flex w-full items-center gap-4 overflow-hidden rounded-md p-4 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0 h-12 text-base font-medium min-w-8 duration-200 ease-linear"
+                                            aria-label={item.label}
+                                        >
+                                            {item.icon}
+                                            <span className="ml-1 hidden">{item.label}</span>
+                                            <IconChevronRight className="ml-auto h-5 w-5" />
+                                        </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent side="right" align="start" sideOffset={4} className="min-w-40">
+                                        {children.map((child) => (
+                                            <DropdownMenuItem asChild key={child.label}>
+                                                <Link href={child.path} className="flex items-center gap-2">
+                                                    {child.icon}
+                                                    <span>{child.label}</span>
+                                                </Link>
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </SidebarMenuItem>
-                        </Collapsible>
-                    );
+                        );
+                    } else {
+                        return (
+                            <Collapsible
+                                key={item.label}
+                                defaultOpen={false}
+                                asChild
+                                className="group/collapsible"
+                            >
+                                <SidebarMenuItem>
+                                    <CollapsibleTrigger asChild>
+                                        <button
+                                            className="peer/menu-button flex w-full items-center gap-4 overflow-hidden rounded-md p-4 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0 h-12 text-base font-medium min-w-8 duration-200 ease-linear"
+                                            aria-label={item.label}
+                                        >
+                                            {item.icon}
+                                            <span className="ml-1">{item.label}</span>
+                                            <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 h-5 w-5"/>
+                                        </button>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="pl-4">
+                                        {children.map((child) => (
+                                            <SidebarMenuItem key={child.label}>
+                                                <Link
+                                                    href={child.path}
+                                                    className="peer/menu-button flex w-full items-center gap-4 overflow-hidden rounded-md p-4 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0 h-12 text-base font-medium min-w-8 duration-200 ease-linear"
+                                                    aria-label={child.label}
+                                                >
+                                                    {child.icon}
+                                                    <span className="ml-1">{child.label}</span>
+                                                </Link>
+                                            </SidebarMenuItem>
+                                        ))}
+                                    </CollapsibleContent>
+                                </SidebarMenuItem>
+                            </Collapsible>
+                        );
+                    }
                 }
 
                 return (
@@ -115,9 +146,9 @@ export function AppSidebar() {
                     <SidebarGroup>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                <SecureContentWrapper fallback={renderNavIcons(true)}>
-                                    {renderNavIcons(false)}
-                                </SecureContentWrapper>
+                                {(userSession && userAccount)
+                                  ? renderNavIcons(false)
+                                  : renderNavIcons(true)}
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>
@@ -138,13 +169,9 @@ export function AppSidebar() {
                                 >
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                            <SecureContentWrapper
-                                fallback={
-                                    <RegisterButton/>
-                                }
-                            >
-                                <UserAccountDisplay/>
-                            </SecureContentWrapper>
+                            {(userSession && userAccount)
+                              ? <UserAccountDisplay/>
+                              : <RegisterButton/>}
                         </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarFooter>

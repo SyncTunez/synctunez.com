@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import React, { ReactNode } from "react";
 import SecureContent from "./SecureContent";
-import { UserAccount, UserAccountProps } from "@/app/api/UserAccount";
+import { UserAccount, UserAccountProps } from "@/lib/api/types";
 
 interface SecureContentWrapperProps {
     fallback: ReactNode;
