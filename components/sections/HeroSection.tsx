@@ -44,6 +44,7 @@ export function HeroSection() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-5">
               <Button 
+                asChild
                 size="lg" 
                 className="relative text-lg px-8 py-6 h-auto bg-gradient-to-r from-[#0f766e] via-[#0d9488] to-[#14b8a6] hover:from-[#0d9488] hover:via-[#14b8a6] hover:to-[#0f766e] text-white border-0 shadow-lg hover:shadow-xl hover:shadow-[#134e4a]/25 hover:scale-[1.02] transition-all duration-200 font-semibold overflow-hidden
                   [background-size:200%_200%]
@@ -55,10 +56,12 @@ export function HeroSection() {
                   before:skew-x-[-20deg]
                   before:w-[75%]"
               >
+                <a href="/onboarding">
                 <span className="relative flex items-center">
                   <span>🎧</span>
-                  <span className="ml-2">Match Playlists Now</span>
+                    <span className="ml-2">Start Now</span>
                 </span>
+                </a>
               </Button>
               <LearnMoreButton />
             </div>
