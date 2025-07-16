@@ -11,7 +11,7 @@ export function RegisterButton() {
 
     return (
         <Button asChild variant="outline" size="sm" className="w-full justify-center">
-            <Link href={buildUrl("/login")}>
+            <Link href="/login">
                 <IconBrandGoogleFilled />
                 {open && <span className="ml-2">Login</span>}
             </Link>

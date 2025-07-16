@@ -14,44 +14,23 @@ export function buildUrl(
     path: string,
     queryParams: Record<string, string | number | boolean | null | undefined> = {}
 ): string {
-    const base = apiClient.defaults.baseURL || '/'
-    const baseOrigin = base.startsWith('http')
-        ? base
-        : typeof window !== 'undefined'
-          ? window.location.origin
-          : '';
+    const base = apiClient.defaults.baseURL || '/';
+    const basePath = base.endsWith('/') ? base.slice(0, -1) : base;
+    const normalizedPath = path.startsWith('/') ? path : '/' + path;
+    const fullPath = basePath + normalizedPath;
 
-    const basePath = base.endsWith('/') ? base.slice(0, -1) : base
-    const normalizedPath = path.startsWith('/') ? path : '/' + path
-    const fullPath = basePath + normalizedPath
-
-    let url: URL;
-    if (baseOrigin) {
-        url = new URL(fullPath, baseOrigin);
-    } else {
-        // If baseOrigin is empty (server-side with relative baseURL),
-        // we assume fullPath is already correct relative path.
-        // Append query parameters manually.
-        let resultUrl = fullPath;
-        const queryString = new URLSearchParams();
-        Object.entries(queryParams).forEach(([key, value]) => {
-            if (value !== undefined && value !== null) {
-                queryString.append(key, String(value));
-            }
-        });
-        if (queryString.toString()) {
-            resultUrl += '?' + queryString.toString();
-        }
-        return resultUrl;
-    }
-
+    // Always return a relative URL for internal endpoints
+    let resultUrl = fullPath;
+    const queryString = new URLSearchParams();
     Object.entries(queryParams).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-            url.searchParams.append(key, String(value))
+            queryString.append(key, String(value));
         }
-    })
-
-    return url.toString()
+    });
+    if (queryString.toString()) {
+        resultUrl += '?' + queryString.toString();
+    }
+    return resultUrl;
 }
 
 // Authorized request (with cookies)

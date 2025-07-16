@@ -17,8 +17,8 @@ export function useInView<T extends HTMLElement>() {
         }
       },
       {
-        threshold: 0.05, // Trigger when at least 5% of the element is visible
-        rootMargin: '10px', // Start animation when closer to the viewport
+        threshold: 0.1, // Trigger when at least 10% of the element is visible
+        rootMargin: '50px', // Start animation when closer to the viewport
       }
     );
 

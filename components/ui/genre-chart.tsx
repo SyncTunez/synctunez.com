@@ -9,9 +9,9 @@ interface GenreData {
 }
 
 const genreData: GenreData[] = [
-  { name: 'Pop', value: 40, color: '#0f766e' },
-  { name: 'Rock', value: 30, color: '#0d9488' },
-  { name: 'Hip Hop', value: 30, color: '#14b8a6' },
+  { name: 'Pop', value: 60, color: '#0f766e' },
+  { name: 'Country', value: 35, color: '#0d9488' },
+  { name: 'Indie', value: 15, color: '#14b8a6' },
 ];
 
 const renderCustomizedLabel = (props: any) => {
@@ -35,7 +35,7 @@ const renderCustomizedLabel = (props: any) => {
   );
 };
 
-export function GenreChart() {
+export default function GenreChart() {
   return (
     <div className="h-full">
       <ResponsiveContainer width="100%" height="100%">

@@ -40,6 +40,7 @@ export function UserAvatarProfile({
                 <AvatarImage
                     src={profilePicture || ''}
                     alt={username || ''}
+                    loading="lazy"
                     style={showSkeleton ? { display: 'none' } : {}}
                     onLoad={() => setIsLoading(false)}
                     onError={() => setIsLoading(false)}

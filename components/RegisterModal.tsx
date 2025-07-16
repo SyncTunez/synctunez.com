@@ -37,7 +37,7 @@ const FormSchema = z.object({
   }),
 });
 
-export function RegisterModal({ userSession, userAccountRaw }: { userSession: string | null; userAccountRaw: string | null; }) {
+export default function RegisterModal({ userSession, userAccountRaw }: { userSession: string | null; userAccountRaw: string | null; }) {
 
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [usernameError, setUsernameError] = useState<string | null>(null);
@@ -147,7 +147,7 @@ export function RegisterModal({ userSession, userAccountRaw }: { userSession: st
                   )}
               />
               <Button type="submit" className="w-full">Register</Button>
-              <Link href={buildUrl("/logout")} className="w-full">
+              <Link href="/logout" className="w-full">
                 <Button className="w-full" variant="outline">Logout</Button>
               </Link>
             </form>

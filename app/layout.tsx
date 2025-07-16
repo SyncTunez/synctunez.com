@@ -10,14 +10,13 @@ import {NuqsAdapter} from 'nuqs/adapters/next/app';
 import './globals.css';
 import './theme.css';
 import {Toaster} from "sonner";
-import {RegisterModal} from "@/components/RegisterModal";
-import {SidebarProvider, useSidebar} from "@/components/ui/sidebar";
+import dynamic from 'next/dynamic';
+import {SidebarProvider} from "@/components/ui/sidebar";
 import {AppSidebar} from "@/components/sidebar/app-sidebar";
 import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
-<<<<<<< HEAD
-=======
-import ServerSidebarWrapper from '@/components/sidebar/ServerSidebarWrapper';
->>>>>>> 27cdb0a1fd4c60b74a9fff2cbb7d8175374b1bb2
+import PageContainer from '@/components/layout/page-container';
+import Script from 'next/script';
+import RegisterModalWrapper from '@/components/RegisterModalWrapper';
 
 const META_THEME_COLORS = {
     light: '#ffffff',
@@ -25,8 +24,61 @@ const META_THEME_COLORS = {
 };
 
 export const metadata: Metadata = {
-    title: 'SyncTuneZ',
-    description: 'Basic dashboard with Next.js and Shadcn'
+    title: {
+        default: 'SyncTuneZ - Create Perfect Collaborative Playlists with Friends',
+        template: '%s | SyncTuneZ'
+    },
+    description: 'Compare playlists with friends and create collaborative mixes of all your shared favorites. Stop skipping songs, start syncing music with SyncTuneZ.',
+    keywords: ['playlist collaboration', 'music sharing', 'spotify playlist', 'music discovery', 'collaborative playlists', 'music sync', 'shared playlists'],
+    authors: [{ name: 'SyncTuneZ Team' }],
+    creator: 'SyncTuneZ',
+    publisher: 'SyncTuneZ',
+    formatDetection: {
+        email: false,
+        address: false,
+        telephone: false,
+    },
+    metadataBase: new URL('https://synctunez.com'),
+    alternates: {
+        canonical: '/',
+    },
+    openGraph: {
+        type: 'website',
+        locale: 'en_US',
+        url: 'https://synctunez.com',
+        title: 'SyncTuneZ - Create Perfect Collaborative Playlists with Friends',
+        description: 'Compare playlists with friends and create collaborative mixes of all your shared favorites. Stop skipping songs, start syncing music.',
+        siteName: 'SyncTuneZ',
+        images: [
+            {
+                url: '/icon.svg',
+                width: 1200,
+                height: 630,
+                alt: 'SyncTuneZ - Collaborative Playlist Creation',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'SyncTuneZ - Create Perfect Collaborative Playlists with Friends',
+        description: 'Compare playlists with friends and create collaborative mixes of all your shared favorites.',
+        images: ['/icon.svg'],
+        creator: '@synctunez',
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            'max-video-preview': -1,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+        },
+    },
+    verification: {
+        google: 'your-google-verification-code',
+    },
 };
 
 export const viewport: Viewport = {
@@ -34,8 +86,8 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({
-                                             children
-                                         }: {
+    children
+}: {
     children: React.ReactNode;
 }) {
     const cookieStore = await cookies();
@@ -49,6 +101,8 @@ export default async function RootLayout({
     return (
         <html lang='en' suppressHydrationWarning>
         <head>
+            <link rel="manifest" href="/manifest.json" />
+            <link rel="icon" href="/favicon.ico" />
             <script
                 dangerouslySetInnerHTML={{
                     __html: `
@@ -60,6 +114,19 @@ export default async function RootLayout({
             `
                 }}
             />
+            {/* Google Analytics */}
+            <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX'}`}
+                strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+                {`
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+                    gtag('config', '${process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX'}');
+                `}
+            </Script>
         </head>
         <body
             className={cn(
@@ -81,13 +148,17 @@ export default async function RootLayout({
                 <Providers activeThemeValue={activeThemeValue as string}>
                     <ClientToaster />
                     <SidebarProvider defaultOpen={defaultOpen}>
-                        <ServerSidebarWrapper />
-                        <FloatingSidebarTrigger />
-                        <div className="w-full p-2.5">
-                            {children}
+                        <div className="flex min-h-svh w-full">
+                            <AppSidebar/>
+                            <FloatingSidebarTrigger />
+                            <main className="flex-1 w-full">
+                                <PageContainer>
+                                    {children}
+                                </PageContainer>
+                            </main>
                         </div>
                     </SidebarProvider>
-                    <RegisterModal userSession={userSession} userAccountRaw={userAccountRaw}/>
+                    <RegisterModalWrapper userSession={userSession} userAccountRaw={userAccountRaw}/>
                 </Providers>
             </ThemeProvider>
         </NuqsAdapter>
