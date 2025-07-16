@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { UserContext, UserContextType } from "@/components/auth/UserContext";
 import { OnboardingLayout } from "./onboarding-layout";
 import { OnboardingCard } from "./onboarding-card";
@@ -23,6 +23,24 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
   const hasSpotify = !!userContext?.userAccount?.hasSpotify;
   const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [loadingDots, setLoadingDots] = useState('');
+
+  // Animate loading dots
+  useEffect(() => {
+    if (!isImporting) {
+      setLoadingDots('');
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setLoadingDots(prev => {
+        if (prev === '...') return '';
+        return prev + '.';
+      });
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [isImporting]);
 
   const {
     data: rawSpotifyPlaylists,
@@ -176,9 +194,16 @@ console.log("Current: " + selectedPlaylist)
               onClick={handleImport}
               size="lg"
               disabled={!selectedPlaylist || isImporting}
-              className="bg-card/80 hover:bg-card text-foreground border border-muted-foreground/20 hover:border-muted-foreground/40 px-6 sm:px-8 py-6 h-auto text-base sm:text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+              className="bg-card/80 hover:bg-card text-foreground border border-muted-foreground/20 hover:border-muted-foreground/40 px-6 sm:px-8 py-6 h-auto text-base sm:text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 w-48"
             >
-              {isImporting ? 'Importing...' : 'Import Playlist'}
+              {isImporting ? (
+                <span className="flex items-center justify-center w-full">
+                  <span>Importing</span>
+                  <span className="w-6 text-left">{loadingDots}</span>
+                </span>
+              ) : (
+                'Import Playlist'
+              )}
             </Button>
           </div>
 
