@@ -154,8 +154,12 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
     }
 
     if (mode === 'share') {
-      const baseUrl = window.location.origin;
-      setShareLink(`${baseUrl}/profile/${userContext?.userAccount?.username || 'user'}`);
+      if (typeof window !== 'undefined') {
+        const baseUrl = window.location.origin;
+        setShareLink(`${baseUrl}/profile/${userContext?.userAccount?.username || 'user'}`);
+      } else {
+        setShareLink(`/profile/${userContext?.userAccount?.username || 'user'}`);
+      }
     } else {
       setShareLink('');
     }
