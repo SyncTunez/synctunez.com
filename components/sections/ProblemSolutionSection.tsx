@@ -133,9 +133,9 @@ export function ProblemSolutionSection() {
                       <User className="h-6 w-6 text-destructive absolute -right-1" />
                     </div>
                   </div>
-                  <CardTitle className="text-xl mb-2 text-destructive text-center">The Connection Gap</CardTitle>
+                  <CardTitle className="text-xl mb-2 text-destructive text-center">The Unplayed Anthem</CardTitle>
                   <CardDescription className="text-base text-center">
-                    Beyond small talk: Wish you could instantly bond over a shared love for that niche band or obscure genre?
+                  A favourite niche anthem is silenced from the room. The fear of an awkward pause keeps the best music locked away.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -159,9 +159,9 @@ export function ProblemSolutionSection() {
                         <Heart className="h-3 w-3 text-white absolute -top-1 -right-1" />
                       </div>
                     </div>
-                    <CardTitle className="text-xl mb-2 text-white text-center">Your Music Community</CardTitle>
+                    <CardTitle className="text-xl mb-2 text-white text-center">The Shared Treasure</CardTitle>
                     <CardDescription className="text-base text-white/80 text-center">
-                      Share Playlists, Swap Recommendations, and Discover New Sounds Together.
+                    Unearth your hidden gems become group favourites. Enjoy the music you love, with people who get it.
                     </CardDescription>
                   </CardContent>
                 </Card>

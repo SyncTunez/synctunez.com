@@ -20,7 +20,7 @@ export function HeroSection() {
   const matchBadge = useInView<HTMLDivElement>();
 
   return (
-    <section id="hero" className="relative bg-[#134e4a]/5">
+    <section id="hero" className="relative bg-gradient-to-b from-[#134e4a]/25 via-[#134e4a]/10 to-[#134e4a]/5">
       <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px]">
         <div className="grid xl:grid-cols-2 gap-8 xl:gap-16 xl:gap-24 xl:items-center min-h-screen">
           {/* Left Content */}
@@ -28,13 +28,13 @@ export function HeroSection() {
             {/* Hero Title */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-8 pt-12 xl:pt-0">
               Stop Skipping, <br />
-              <span className="inline-block bg-gradient-to-r from-[#0f766e] via-[#2dd4bf] to-[#14b8a6] text-transparent bg-clip-text transform rotate-[0.1deg] [text-shadow:_1px_1px_0_rgb(13_148_136/_30%),_0_1px_8px_rgb(15_118_110_/_15%)]">
+              <span className="inline-block bg-gradient-to-r from-[#0f766e] via-[#2dd4bf] to-[#14b8a6] text-transparent bg-clip-text transform rotate-[0.1deg] [text-shadow:_1px_1px_0_rgb(13_148_136/_30%),_0_1px_8px_rgb(15_118_110_/_15%)] pb-1">
                 Start Syncing
               </span>
             </h1>
             
             {/* Hero Description */}
-            <div className="mb-12 max-w-xl">
+            <div className="mb-16 max-w-xl">
               <p className="text-xl font-bold text-foreground mb-3 leading-relaxed">
                 Create Your Perfect Playlist
               </p>
@@ -44,11 +44,11 @@ export function HeroSection() {
             </div>
             
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-5">
+            <div className="flex flex-col sm:flex-row gap-5 pb-8">
               <Button 
                 asChild
                 size="lg" 
-                className="relative text-lg px-8 py-6 h-auto bg-gradient-to-r from-[#0f766e] via-[#0d9488] to-[#14b8a6] hover:from-[#0d9488] hover:via-[#14b8a6] hover:to-[#0f766e] text-white border-0 shadow-lg hover:shadow-xl hover:shadow-[#134e4a]/25 hover:scale-[1.02] transition-all duration-200 font-semibold overflow-hidden
+                className="relative text-lg px-8 py-6 h-auto bg-gradient-to-r from-[#0f766e] via-[#0d9488] to-[#14b8a6] hover:from-[#0d9488] hover:via-[#14b8a6] hover:to-[#0f766e] text-white border-0 shadow-lg hover:shadow-xl hover:shadow-[#134e4a]/25 hover:scale-105 transition-transform duration-200 font-semibold overflow-hidden
                   [background-size:200%_200%]
                   animate-[gradientMove_3s_ease-in-out_infinite]
                   before:absolute before:inset-0
@@ -60,8 +60,8 @@ export function HeroSection() {
               >
                 <a href="/onboarding">
                 <span className="relative flex items-center">
-                  <span>🎧</span>
-                    <span className="ml-2">Start Now</span>
+                
+                    <span className="ml-2">Start Syncing Now</span>
                 </span>
                 </a>
               </Button>
@@ -182,7 +182,7 @@ export function HeroSection() {
                         </div>
                       </div>
                       
-                      <div className="mt-0">
+                      <div className="mt-4">
                         <div 
                           ref={matchBadge.ref}
                           className={`p-1.5 rounded-md text-center bg-[#1DB954]/30 border border-[#1DB954]/50 shadow-lg relative transition-all duration-500 delay-[1000ms] ${

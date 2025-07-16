@@ -38,10 +38,10 @@ export function BenefitsSection() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }}
       />
-    <section id="benefits" className="h-[calc(100vh-120px)] bg-[#134e4a]/5 flex items-center relative">
+    <section id="benefits" className="bg-[#134e4a]/5 relative py-8">
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px] py-24">
-        <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center w-full">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px] py-8 lg:py-16">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-20 items-start w-full">
           <div className="lg:order-1">
             <h2 className="text-3xl font-bold mb-6 inline-block transform rotate-[0.1deg] [text-shadow:_1px_1px_0_rgb(0_0_0/_10%),_0_1px_8px_rgb(0_0_0/_10%)]">
               Why SyncTunez?
@@ -116,7 +116,7 @@ export function BenefitsSection() {
           </div>
 
           <div className="lg:order-2">
-            <div className="space-y-6">
+            <div className="space-y-4 lg:space-y-6">
               {/* Testimonial 1 */}
               <div 
                 ref={testimonial1.ref}
@@ -125,13 +125,13 @@ export function BenefitsSection() {
                 }`}
               >
                 <Card className="bg-card/50 py-2 lg:mr-auto lg:ml-0 lg:max-w-[85%] transform lg:-translate-x-8">
-                  <CardContent className="py-2">
+                  <CardContent className="py-2 px-3 lg:px-4">
                     <div className="flex gap-4">
                       <div className="w-8 h-8 rounded-full bg-[#134e4a] flex items-center justify-center flex-shrink-0">
                         <Quote className="h-4 w-4 text-white" />
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground italic mb-2">
+                        <p className="text-xs lg:text-sm text-muted-foreground italic mb-2">
                           "SyncTunez helped me discover so much amazing music through my friends. Our group hangouts have never been better!"
                         </p>
                         <div className="flex items-center gap-2">
@@ -157,13 +157,13 @@ export function BenefitsSection() {
                 }`}
               >
                 <Card className="bg-card/50 py-2 lg:mx-auto lg:max-w-[85%]">
-                  <CardContent className="py-2">
+                  <CardContent className="py-2 px-3 lg:px-4">
                     <div className="flex gap-4">
                       <div className="w-8 h-8 rounded-full bg-[#134e4a] flex items-center justify-center flex-shrink-0">
                         <Quote className="h-4 w-4 text-white" />
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground italic mb-2">
+                        <p className="text-xs lg:text-sm text-muted-foreground italic mb-2">
                           "The playlist matching is incredible! It's like having a DJ that knows everyone's taste perfectly."
                         </p>
                         <div className="flex items-center gap-2">
@@ -189,13 +189,13 @@ export function BenefitsSection() {
                 }`}
               >
                 <Card className="bg-card/50 py-2 lg:ml-auto lg:mr-0 lg:max-w-[85%] transform lg:translate-x-8">
-                  <CardContent className="py-2">
+                  <CardContent className="py-2 px-3 lg:px-4">
                     <div className="flex gap-4">
                       <div className="w-8 h-8 rounded-full bg-[#134e4a] flex items-center justify-center flex-shrink-0">
                         <Quote className="h-4 w-4 text-white" />
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground italic mb-2">
+                        <p className="text-xs lg:text-sm text-muted-foreground italic mb-2">
                           "Finally, road trips without the music drama! Everyone's favorites get played and we all discover new songs."
                         </p>
                         <div className="flex items-center gap-2">
