@@ -1,14 +1,15 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { IconUserPlus, IconShare, IconCopy, IconCheck, IconMail, IconBrandTwitter } from "@tabler/icons-react";
+import { IconUserPlus, IconShare, IconCopy, IconCheck, IconMail, IconBrandTwitter, IconQrcode, IconBrandFacebook } from "@tabler/icons-react";
 import { useState, useContext } from "react";
 import { UserContext, UserContextType } from "@/components/auth/UserContext";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { OnboardingLayout } from "./onboarding-layout";
+import { OnboardingCard } from "./onboarding-card";
 
 interface Step4InviteFriendsProps {
   onComplete: () => void;
@@ -54,30 +55,34 @@ export function Step4InviteFriends({ onComplete }: Step4InviteFriendsProps) {
     window.open(twitterUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const handleShareFacebook = () => {
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
+    window.open(facebookUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleShareQRCode = () => {
+    // TODO: Implement QR code generation and display
+    toast.info("QR Code sharing coming soon!");
+  };
+
   const handleFinish = () => {
     toast.success("Welcome to SyncTunez! 🎵");
     router.push("/account");
   };
 
+  const FriendIcon = () => (
+    <div className="w-20 h-20 bg-gradient-to-r from-[#0f766e] to-[#14b8a6] rounded-full flex items-center justify-center shadow-lg">
+      <IconUserPlus className="w-10 h-10 text-white" />
+    </div>
+  );
+
   return (
-    <div className="w-full max-w-4xl mx-auto px-4">
-      <Card className="bg-muted shadow-lg border border-muted-foreground/10 relative overflow-hidden">
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-card/80 text-foreground px-4 py-2 rounded-full text-sm font-medium border border-muted-foreground/20 z-10">
-          SyncTunez
-        </div>
-        <CardHeader className="text-center pb-6 pt-10">
-          <div className="w-20 h-20 bg-gradient-to-r from-[#0f766e] to-[#14b8a6] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <IconUserPlus className="w-10 h-10 text-white" />
-          </div>
-          <CardTitle className="text-3xl font-bold text-foreground">
-            Invite Your Friends
-          </CardTitle>
-          <CardDescription className="text-xl text-muted-foreground mt-3 max-w-2xl mx-auto">
-            The fun begins when you sync playlists with friends
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent className="space-y-8 px-8 pb-8">
+    <OnboardingLayout currentStep={4}>
+      <OnboardingCard
+        icon={<FriendIcon />}
+        title="Invite Your Friends"
+        description="The fun begins when you sync playlists with friends"
+      >
 
           {/* Email Invite */}
           <div className="space-y-4">
@@ -128,60 +133,77 @@ export function Step4InviteFriends({ onComplete }: Step4InviteFriendsProps) {
                 onClick={handleCopyLink}
                 variant="outline"
                 size="lg"
-                className="px-8 h-12 bg-card/80 border-muted-foreground/20 text-foreground hover:bg-card hover:border-muted-foreground/40"
+                className="px-6 h-12 bg-card/80 border-muted-foreground/20 text-foreground hover:bg-card hover:border-muted-foreground/40"
               >
                 {copied ? <IconCheck className="w-5 h-5" /> : <IconCopy className="w-5 h-5" />}
               </Button>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
+              {/* X Button - Authentic X branding */}
               <Button
                 onClick={handleShareTwitter}
-                variant="outline"
                 size="lg"
-                className="h-12 bg-card/80 border-muted-foreground/20 text-foreground hover:bg-card hover:border-muted-foreground/40"
+                className="h-12 bg-black hover:bg-gray-800 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 font-medium"
               >
-                <IconBrandTwitter className="w-5 h-5 mr-2" />
-                Share on Twitter
+                <svg className="w-5 h-5 md:mr-2" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                <span className="hidden md:inline">Share on X</span>
               </Button>
+              
+              {/* Facebook Button - Authentic Facebook branding */}
               <Button
-                onClick={handleCopyLink}
+                onClick={handleShareFacebook}
+                size="lg"
+                className="h-12 bg-[#1877F2] hover:bg-[#166fe5] text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 font-medium"
+              >
+                <svg className="w-5 h-5 md:mr-2" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                <span className="hidden md:inline">Share on Facebook</span>
+              </Button>
+              
+              {/* QR Code Button - New */}
+              <Button
+                onClick={handleShareQRCode}
                 variant="outline"
                 size="lg"
                 className="h-12 bg-card/80 border-muted-foreground/20 text-foreground hover:bg-card hover:border-muted-foreground/40"
               >
-                <IconShare className="w-5 h-5 mr-2" />
-                Share Link
+                <IconQrcode className="w-5 h-5 md:mr-2" />
+                <span className="hidden md:inline">QR Code</span>
               </Button>
             </div>
           </div>
 
-          {/* Completion */}
-          <div className="bg-card/80 rounded-lg p-4 border border-muted-foreground/20">
-            <div className="flex items-start space-x-3">
-              <div className="w-5 h-5 bg-card rounded-full flex items-center justify-center mt-0.5 border border-muted-foreground/20">
-                <svg className="w-3 h-3 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <h4 className="font-medium text-foreground">You can invite friends anytime</h4>
-                <p className="text-sm text-muted-foreground mt-1">Don't worry if no one joins right now - you can always invite more friends later from your account page.</p>
-              </div>
-            </div>
-          </div>
+          {/* Helper Text */}
+          <p className="text-sm text-muted-foreground text-center">
+            You can invite friends anytime, don't worry if no one joins right now!
+          </p>
+
           
           <div className="flex justify-center pt-4">
             <Button
               onClick={handleFinish}
               size="lg"
-              className="bg-card/80 hover:bg-card text-foreground border border-muted-foreground/20 hover:border-muted-foreground/40 px-8 py-6 h-auto text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+              className="relative text-lg px-8 py-6 h-auto bg-gradient-to-r from-[#0f766e] via-[#0d9488] to-[#14b8a6] hover:from-[#0d9488] hover:via-[#14b8a6] hover:to-[#0f766e] text-white border-0 shadow-lg hover:shadow-xl hover:shadow-[#134e4a]/25 hover:scale-[1.02] transition-all duration-200 font-semibold overflow-hidden
+                [background-size:200%_200%]
+                animate-[gradientMove_3s_ease-in-out_infinite]
+                before:absolute before:inset-0
+                before:bg-gradient-to-r before:from-white/0 before:via-white/25 before:to-white/0
+                before:translate-x-[-200%]
+                before:animate-[shimmer_2s_ease-in-out_infinite]
+                before:skew-x-[-20deg]
+                before:w-[75%]"
             >
-              Complete Setup & Start Syncing
+              <span className="relative flex items-center">
+                <span>🎧</span>
+                <span className="ml-2">Start Syncing</span>
+              </span>
             </Button>
           </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+        </OnboardingCard>
+      </OnboardingLayout>
+    );
 } 

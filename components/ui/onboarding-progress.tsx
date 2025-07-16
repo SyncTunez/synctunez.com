@@ -32,16 +32,17 @@ export function OnboardingProgress({ currentStep, totalSteps, steps }: Onboardin
                   {/* Step circle */}
                   <div
                     className={cn(
-                      "w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-2 transition-all duration-300 relative z-10",
+                      "w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-2 transition-all duration-300 relative z-10 overflow-hidden",
                       isCompleted && "bg-gradient-to-r from-[#0f766e] to-[#14b8a6] border-[#0f766e] text-white shadow-lg",
-                      isCurrent && "bg-[#0f766e] border-[#0f766e] text-white shadow-md",
+                      isCurrent && "bg-gradient-to-r from-[#0f766e] via-[#0d9488] to-[#14b8a6] border-[#0f766e] text-white shadow-md [background-size:200%_200%] animate-[gradientMove_3s_ease-in-out_infinite]",
                       !isCompleted && !isCurrent && "border-[#0f766e] bg-[#0f766e]/10 text-[#0f766e]"
                     )}
                   >
+
                     {isCompleted ? (
-                      <Check className="w-5 h-5 sm:w-7 sm:h-7" />
+                      <Check className="w-5 h-5 sm:w-7 sm:h-7 relative z-10" />
                     ) : (
-                      <span className="text-sm sm:text-base font-semibold">{stepNumber}</span>
+                      <span className="text-sm sm:text-base font-semibold relative z-10">{stepNumber}</span>
                     )}
                   </div>
 
