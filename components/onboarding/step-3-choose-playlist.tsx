@@ -65,7 +65,6 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
         ? [data as MusicPlaylistImportResult]
         : [];
 
-        console.log(response);
         //todo: wait until the entire playlist is imported
         if(response.length > 0) {
           toast.success('Playlist imported successfully!');
@@ -100,10 +99,8 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
     
     setIsImporting(true);
     try {
-console.log("Current: " + selectedPlaylist)
 
-      // The import completion will be handled by the ImportedPlaylist event listener above
-      
+
     } catch (error) {
       console.error(error);
       toast.error('Failed to import playlist. Please try again.');
