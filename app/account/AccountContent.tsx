@@ -11,11 +11,15 @@ import type { SpotifyAccount, SpotifyTrack, SpotifyPlaylist } from '@/lib/api/ty
 import { useLiveResourceJson } from "@/hooks/useLiveResource";
 import { ServiceCard, serviceIcons } from "@/components/ui/service-card";
 import { MobileNavigationMenu } from "@/components/ui/mobile-navigation-menu";
-import { PlaylistSection } from "@/components/ui/playlist/playlist-section";
+import { PlaylistSection, PlaylistSectionSkeleton } from "@/components/ui/playlist/playlist-section";
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
+import { FriendsCardSkeleton } from '@/components/ui/friends-card';
 
-const FriendsCard = dynamic(() => import('@/components/ui/friends-card'), { ssr: false });
+const FriendsCard = dynamic(() => import('@/components/ui/friends-card'), { 
+  ssr: false,
+  loading: () => <FriendsCardSkeleton forceFullHeight />
+});
 
 export default function AccountContent() {
     const userContext = React.useContext(UserContext) as UserContextType | null;
@@ -138,20 +142,23 @@ export default function AccountContent() {
                                 </div>
 
 
-                                <div className="flex flex-wrap gap-4 w-full h-auto min-h-0 min-w-0">
-                                    <div className="flex-shrink min-w-[280px] flex-grow flex flex-col overflow-x-auto w-full max-w-full sm:max-w-[345px]">
+                                <div className="flex flex-col xl:flex-row gap-4 w-full h-auto min-h-0 min-w-0">
+                                    <div className="w-full max-w-md mx-auto xl:max-w-none xl:mx-0 xl:w-[345px] xl:flex-shrink-0">
                                         <FriendsCard forceFullHeight/>
                                     </div>
                                     {userAccount?.hasSpotify && (
-                                        <div
-                                            className="flex-shrink min-w-[280px] flex-grow-0 flex flex-col overflow-x-auto w-full sm:w-[calc(100%-365px)]">
-                                            <PlaylistSection
-                                                mainPlaylists={playlists}
-                                                mainTracks={tracks}
-                                                mainPlaylistsLoading={playlistsLoading}
-                                                selectedMainPlaylistId={selectedPlaylistId}
-                                                onMainPlaylistSelect={setSelectedPlaylistId}
-                                            />
+                                        <div className="w-full xl:flex-1">
+                                            {playlistsLoading ? (
+                                                <PlaylistSectionSkeleton />
+                                            ) : (
+                                                <PlaylistSection
+                                                    mainPlaylists={playlists}
+                                                    mainTracks={tracks}
+                                                    mainPlaylistsLoading={playlistsLoading}
+                                                    selectedMainPlaylistId={selectedPlaylistId}
+                                                    onMainPlaylistSelect={setSelectedPlaylistId}
+                                                />
+                                            )}
                                         </div>
                                     )}
                                 </div>

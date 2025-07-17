@@ -13,18 +13,18 @@ export function ProblemSolutionSection() {
   const row3Card2 = useInView<HTMLDivElement>();
 
   return (
-    <section id="problems-solutions" className="min-h-screen bg-background flex flex-col overflow-hidden relative py-16 lg:py-24">
+    <section id="problems-solutions" className="bg-background flex flex-col overflow-hidden relative py-16 lg:py-24">
       <div className="container mx-auto px-4 flex flex-col">
         <div className="text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-2">
-            Discover Your Shared Sound
+          <h2 className="text-3xl sm:text-4xl font-bold mb-2 text-[#0f766e]">
+            All The Music, None Of The Stress
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Say goodbye to playlist wars. Create playlists everyone can vibe to.
+            Make creating the perfect group playlist quick, easy and stress free.
           </p>
         </div>
         
-        <div className="max-w-7xl mx-auto flex flex-col gap-8 flex-1 justify-center mt-16 lg:mt-24">
+        <div className="max-w-7xl mx-auto flex flex-col gap-8 mt-16 lg:mt-24">
           {/* Row 1: Endless Scroll vs Perfect Match */}
           <div className="flex flex-col lg:flex-row gap-8 justify-center xl:translate-x-[-15%] transition-transform duration-500">
             <div 
@@ -133,9 +133,9 @@ export function ProblemSolutionSection() {
                       <User className="h-6 w-6 text-destructive absolute -right-1" />
                     </div>
                   </div>
-                  <CardTitle className="text-xl mb-2 text-destructive text-center">The Connection Gap</CardTitle>
+                  <CardTitle className="text-xl mb-2 text-destructive text-center">The Unplayed Anthem</CardTitle>
                   <CardDescription className="text-base text-center">
-                    Beyond small talk: Wish you could instantly bond over a shared love for that niche band or obscure genre?
+                  A favourite niche anthem is silenced from the room. The fear of an awkward pause keeps the best music locked away.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -159,9 +159,9 @@ export function ProblemSolutionSection() {
                         <Heart className="h-3 w-3 text-white absolute -top-1 -right-1" />
                       </div>
                     </div>
-                    <CardTitle className="text-xl mb-2 text-white text-center">Your Music Community</CardTitle>
+                    <CardTitle className="text-xl mb-2 text-white text-center">The Shared Treasure</CardTitle>
                     <CardDescription className="text-base text-white/80 text-center">
-                      Share Playlists, Swap Recommendations, and Discover New Sounds Together.
+                    Hidden gems become group favourites. Enjoy the music you really love, with people who get it.
                     </CardDescription>
                   </CardContent>
                 </Card>

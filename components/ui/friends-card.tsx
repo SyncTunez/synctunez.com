@@ -19,7 +19,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { UserContext, UserContextType } from "@/components/auth/UserContext"
-import { authorized } from '@/lib/api/apiClient'
+import { authorized, buildUrl } from '@/lib/api/apiClient'
 import { IconUserPlus, IconShare, IconHeart, IconChevronDown, IconUser } from "@tabler/icons-react"
 import { toast } from 'sonner'
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -46,6 +46,52 @@ import {
   ContextMenuItem,
 } from "@/components/ui/context-menu"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useLiveResourceJson } from '@/hooks/useLiveResource'
+import { useRef } from 'react';
+
+// FriendsCardSkeleton component to prevent layout shifts
+export function FriendsCardSkeleton({ forceFullHeight = false }: { forceFullHeight?: boolean }) {
+  const cardClassName = forceFullHeight
+    ? 'flex flex-col sm:h-[600px] sm:min-h-0'
+    : 'flex flex-col';
+
+  return (
+    <Card className={cardClassName}>
+      <CardHeader className="space-y-2 flex-none px-4 py-2 sm:py-3">
+        {/* Header skeleton */}
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-6 w-20" />
+          <div className="flex gap-2">
+            <Skeleton className="h-8 w-8 rounded-md" />
+            <Skeleton className="h-8 w-8 rounded-md" />
+          </div>
+        </div>
+
+        {/* Search and filter skeleton */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2">
+          <Skeleton className="h-10 flex-grow max-w-full sm:max-w-xs" />
+          <Skeleton className="h-10 w-full sm:w-[110px]" />
+        </div>
+      </CardHeader>
+
+      {/* Content skeleton */}
+      <CardContent className="flex-1 p-0 min-h-0 overflow-hidden">
+        <div className="h-full flex flex-col gap-2 p-4">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex items-center gap-3 py-2">
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <div className="flex-1 min-w-0">
+                <Skeleton className="h-4 w-1/3 mb-2" />
+                <Skeleton className="h-3 w-1/4" />
+              </div>
+              <Skeleton className="h-6 w-6 rounded-md ml-auto" />
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 const FILTER_MODES = {
   ALL: 'all',
@@ -84,12 +130,32 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
   const [shareLink, setShareLink] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMode, setFilterMode] = useState<FilterMode>(FILTER_MODES.ALL);
-  const MOCK_USERNAMES = [
-    'jack', 'talisha', 'tim mcgee'
-  ];
   const [showAddCommand, setShowAddCommand] = useState(false);
   const [addFriendSearch, setAddFriendSearch] = useState("");
+  const [debouncedAddFriendSearch, setDebouncedAddFriendSearch] = useState("");
   const [selectedFriend, setSelectedFriend] = useState<string | null>(null);
+
+  // Debounce addFriendSearch
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedAddFriendSearch(addFriendSearch);
+      console.log('debouncedAddFriendSearch', debouncedAddFriendSearch, 'addFriendSearch', addFriendSearch);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [addFriendSearch, debouncedAddFriendSearch]);
+
+  // SSE for friend suggestions
+  const {
+    data: friendSuggestions,
+    loading: suggestionsLoading,
+    error: suggestionsError
+  } = useLiveResourceJson<string[]>({
+    fetchUrl: buildUrl('account/search', { q: debouncedAddFriendSearch }),
+    eventName: 'AccountSearch',
+    reconnectIntervalMs: 5000,
+    shouldProcess: !!debouncedAddFriendSearch && debouncedAddFriendSearch.length > 0,
+  });
+  console.log('friendSuggestions', friendSuggestions);
 
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
@@ -236,10 +302,16 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
   const handleAddFriend = async (username: string) => {
     setProcessing(true);
     try {
-      await authorized.get(`account/addFriend?friend=${encodeURIComponent(username)}`);
+      const res = await authorized.get(`account/friends/add?friend=${encodeURIComponent(username)}`);
+
+      if(res.status === 200) {
+        fetchFriends();
+        toast.success('Friend added successfully');
+      } else {
+        toast.error('Failed to add friend.');
+      }
+
       setShowAddCommand(false);
-      fetchFriends();
-      toast.success('Friend added successfully');
     } catch {
       toast.error('Failed to add friend. Please try again.');
     } finally {
@@ -444,11 +516,11 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
             <CommandGroup heading="Suggested">
               {addFriendSearch
                   ? (() => {
-                    const suggestions = MOCK_USERNAMES.filter(
+                    const suggestions = Array.isArray(friendSuggestions) ? friendSuggestions.filter(
                         (name) =>
                             name !== userContext?.userAccount?.username &&
                             name.toLowerCase().includes(addFriendSearch.toLowerCase())
-                    ).slice(0, 5);
+                    ).slice(0, 5) : [];
                     return suggestions.length > 0
                         ? suggestions.map((name) => (
                             <CommandItem
