@@ -49,7 +49,7 @@ export function BenefitsSection() {
             <div className="space-y-6">
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-[#134e4a]/10 flex items-center justify-center mt-1">
-                  <CheckCircle className="h-4 w-4 text-[#134e4a]" />
+                  <CheckCircle className="h-4 w-4 text-[#14b8a6] dark:text-[#2dd4bf]" />
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Instant Matching</h3>
@@ -61,7 +61,7 @@ export function BenefitsSection() {
 
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-[#134e4a]/10 flex items-center justify-center mt-1">
-                  <CheckCircle className="h-4 w-4 text-[#134e4a]" />
+                  <CheckCircle className="h-4 w-4 text-[#14b8a6] dark:text-[#2dd4bf]" />
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Measure Compatibility</h3>
@@ -73,7 +73,7 @@ export function BenefitsSection() {
 
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-[#134e4a]/10 flex items-center justify-center mt-1">
-                  <CheckCircle className="h-4 w-4 text-[#134e4a]" />
+                  <CheckCircle className="h-4 w-4 text-[#14b8a6] dark:text-[#2dd4bf]" />
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Easy Integration</h3>
@@ -85,7 +85,7 @@ export function BenefitsSection() {
 
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-[#134e4a]/10 flex items-center justify-center mt-1">
-                  <CheckCircle className="h-4 w-4 text-[#134e4a]" />
+                  <CheckCircle className="h-4 w-4 text-[#14b8a6] dark:text-[#2dd4bf]" />
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Privacy First</h3>

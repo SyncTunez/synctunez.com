@@ -16,11 +16,11 @@ export function ProblemSolutionSection() {
     <section id="problems-solutions" className="bg-background flex flex-col overflow-hidden relative py-16 lg:py-24">
       <div className="container mx-auto px-4 flex flex-col">
         <div className="text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-2">
-            Discover Your Shared Sound
+          <h2 className="text-3xl sm:text-4xl font-bold mb-2 text-[#0f766e]">
+            All The Music, None Of The Stress
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Say goodbye to playlist wars. Create playlists everyone can vibe to.
+            Make creating the perfect group playlist quick, easy and stress free.
           </p>
         </div>
         
@@ -161,7 +161,7 @@ export function ProblemSolutionSection() {
                     </div>
                     <CardTitle className="text-xl mb-2 text-white text-center">The Shared Treasure</CardTitle>
                     <CardDescription className="text-base text-white/80 text-center">
-                    Unearth your hidden gems become group favourites. Enjoy the music you love, with people who get it.
+                    Hidden gems become group favourites. Enjoy the music you really love, with people who get it.
                     </CardDescription>
                   </CardContent>
                 </Card>
