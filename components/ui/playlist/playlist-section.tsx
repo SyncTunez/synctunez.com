@@ -25,7 +25,7 @@ import {
     TabsList,
     TabsTrigger
 } from '@/components/ui/tabs';
-import type { SpotifyTrack, SpotifyPlaylist } from '@/lib/api/types';
+import type { SpotifyTrack, SpotifyPlaylist, MusicPlaylistImportResult } from '@/lib/api/types';
 import { authorized, buildUrl } from '@/lib/api/apiClient';
 import { toast } from 'sonner';
 import { useLiveResourceJson } from '@/hooks/useLiveResource';
@@ -36,7 +36,6 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useRef, useEffect } from 'react';
 import {Table, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-
 interface PlaylistSectionProps {
     mainPlaylists: any[];
     mainTracks: any[];
@@ -342,8 +341,33 @@ export function PlaylistSection({
     // false = normal playlist view, true = import view
     const [importedView, setImportedView] = useState(false);
     const [showNoPlaylists, setShowNoPlaylists] = useState(false);
-
+    const [importingPlaylist, setImportingPlaylist] = useState<string | null>(null);
     const [selectedSpotifyPlaylistId, setSelectedSpotifyPlaylistId] = useState<string | undefined>(undefined);
+
+    const {
+        data: rawImportPlaylist,
+        error: spotifyPlaylistsError
+      } = useLiveResourceJson<MusicPlaylistImportResult>({
+        fetchUrl: buildUrl(`spotify/import?id=${importingPlaylist}`),
+        eventName: 'SpotifyPlaylistImport',
+        reconnectIntervalMs: 5000,
+        shouldProcess: true,
+        onMessage: (data) => {
+            const response = typeof data === 'object' && data.status === 'success'
+              ? [data as MusicPlaylistImportResult]
+              : [];
+
+              console.log(processedSpotifyTracks);
+              console.log("Selected Spotify Playlist ID: ", importingPlaylist + ", " + selectedSpotifyPlaylistId);
+              processedSpotifyTracks = processedSpotifyTracks.filter((playlist) => playlist.id !== importingPlaylist);
+              toast.success('Playlist imported successfully!');
+              setImportingPlaylist(null);
+              setSelectedSpotifyPlaylistId(undefined);
+
+              //todo: remove from the view
+          }
+      });
+    
 
     // Delay showing "no playlists" message to prevent premature empty states
     useEffect(() => {
@@ -381,7 +405,7 @@ export function PlaylistSection({
         shouldProcess: importedView && !!selectedSpotifyPlaylistId,
     });
 
-    const processedSpotifyTracks: SpotifyTrack[] = Array.isArray(rawSpotifyTracks)
+    var processedSpotifyTracks: SpotifyTrack[] = Array.isArray(rawSpotifyTracks)
         ? rawSpotifyTracks.map((entry: any) => entry.track || entry)
         : [];
 
@@ -426,10 +450,10 @@ export function PlaylistSection({
                     />
                 )}
             </div>
-            <CardContent className="p-0">
-                <div className="flex gap-2">
+            <CardContent className="p-0 flex-1 min-h-0">
+                <div className="flex gap-2 h-full">
                     <div
-                        className="w-72 min-w-[220px] h-[45vh] overflow-y-auto border-r pr-1 flex flex-col justify-between">
+                        className="w-72 min-w-[220px] overflow-y-auto border-r pr-1 flex flex-col">
                         <div className="flex flex-col gap-0">
                             {!importedView && (mainPlaylistsLoading || (!showNoPlaylists && mainPlaylists.length === 0)) ? (
                                 // Enhanced skeleton while main playlists loading or during delay
@@ -454,9 +478,16 @@ export function PlaylistSection({
                                 </div>
                             )}
                             {isSpotifyPlaylistsLoading ? (
-                                // Skeletons while importing spotify playlists list loads
+                                // Enhanced skeletons while importing spotify playlists list loads
                                 Array.from({length: 6}).map((_, idx) => (
-                                    <Skeleton key={idx} className="h-12 w-full"/>
+                                    <div key={idx} className="flex items-center gap-3 p-3 hover:bg-accent/50 cursor-pointer">
+                                        <Skeleton className="h-12 w-12 rounded-md flex-shrink-0" />
+                                        <div className="flex-1 min-w-0">
+                                            <Skeleton className="h-4 w-3/4 mb-1" />
+                                            <Skeleton className="h-3 w-1/2" />
+                                        </div>
+                                        <Skeleton className="h-8 w-8 rounded-md flex-shrink-0" />
+                                    </div>
                                 ))
                             ) : !importedView ? (
                                 mainPlaylists.map(playlist => (
@@ -514,9 +545,15 @@ export function PlaylistSection({
                                                         className="hover:bg-accent hover:[&>svg]:text-white"
                                                         tabIndex={-1}
                                                         type="button"
+                                                        disabled={importingPlaylist !== null}
                                                         onClick={async e => {
                                                             e.stopPropagation();
-                                                            const url = buildUrl('spotify/import', { id: playlist.id });
+                                                            const playlistId = playlist.id;
+                                                            
+                                                            // Set the currently importing playlist
+                                                            setImportingPlaylist(playlistId);
+                                                            
+                                                            const url = buildUrl('spotify/import', { id: playlistId });
                                                             try {
                                                                 const response = await fetch(url, {
                                                                     method: 'GET',
@@ -529,14 +566,18 @@ export function PlaylistSection({
                                                                 }
                                                             } catch (err: any) {
                                                                 toast.error('Failed to import playlist.');
-                                                            }
+                                                            } 
                                                         }}
                                                     >
-                                                        <IconPlus className="w-5 h-5 text-muted-foreground" />
+                                                        {importingPlaylist === playlist.id ? (
+                                                            <div className="w-5 h-5 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
+                                                        ) : (
+                                                            <IconPlus className="w-5 h-5 text-muted-foreground" />
+                                                        )}
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent side="left" align="center">
-                                                    Import
+                                                    {importingPlaylist === playlist.id ? 'Importing...' : 'Import'}
                                                 </TooltipContent>
                                             </Tooltip>
                                         }
@@ -546,8 +587,8 @@ export function PlaylistSection({
                         </div>
                     </div>
 
-                    <div className="flex-1 pl-0">
-                        <div>
+                    <div className="flex-1 pl-0 overflow-hidden">
+                        <div className="h-full overflow-y-auto">
                             {(() => {
                                 const isPlaylistMode = !importedView;
                                 const hasSelection = isPlaylistMode ? !!selectedMainPlaylistId : !!selectedSpotifyPlaylistId;
