@@ -26,13 +26,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form"
-import {
   CommandDialog,
   CommandInput,
   CommandList,
@@ -47,7 +40,7 @@ import {
 } from "@/components/ui/context-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useLiveResourceJson } from '@/hooks/useLiveResource'
-import { useRef } from 'react';
+import QRCodeWithLogo from "@/components/ui/QRCodeWithLogo";
 
 // FriendsCardSkeleton component to prevent layout shifts
 export function FriendsCardSkeleton({ forceFullHeight = false }: { forceFullHeight?: boolean }) {
@@ -119,43 +112,45 @@ type FriendEntry = {
   profileUrl: string;
 };
 
-
 export default function FriendsCard({ forceFullHeight = false }: { forceFullHeight?: boolean }) {
-  const userContext = useContext(UserContext) as UserContextType;
-  const [friends, setFriends] = useState<Map<string, { timestamp: number; profileUrl: string }>>(new Map());
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [processing, setProcessing] = useState(false);
-  const [modalMode, setModalMode] = useState<'add' | 'remove' | 'share'>('add');
-  const [shareLink, setShareLink] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterMode, setFilterMode] = useState<FilterMode>(FILTER_MODES.ALL);
-  const [showAddCommand, setShowAddCommand] = useState(false);
-  const [addFriendSearch, setAddFriendSearch] = useState("");
-  const [debouncedAddFriendSearch, setDebouncedAddFriendSearch] = useState("");
-  const [selectedFriend, setSelectedFriend] = useState<string | null>(null);
+  const userContext = useContext(UserContext) as UserContextType
+
+  const [friends, setFriends] = useState<Map<string, FriendEntry>>(new Map())
+  const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const [processing, setProcessing] = useState(false)
+  const [modalMode, setModalMode] = useState<'add' | 'remove' | 'share'>('add')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterMode, setFilterMode] = useState<FilterMode>(FILTER_MODES.ALL)
+
+
+  const [showAddCommand, setShowAddCommand] = useState(false)
+  const [addFriendSearch, setAddFriendSearch] = useState('')
+  const [debouncedAddFriendSearch, setDebouncedAddFriendSearch] = useState('')
+  const [selectedFriend, setSelectedFriend] = useState<string | null>(null)
 
   // Debounce addFriendSearch
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedAddFriendSearch(addFriendSearch);
-      console.log('debouncedAddFriendSearch', debouncedAddFriendSearch, 'addFriendSearch', addFriendSearch);
     }, 300);
     return () => clearTimeout(handler);
   }, [addFriendSearch, debouncedAddFriendSearch]);
 
-  // SSE for friend suggestions
-  const {
-    data: friendSuggestions,
-    loading: suggestionsLoading,
-    error: suggestionsError
-  } = useLiveResourceJson<string[]>({
+
+  // Change friendSuggestions to a map
+  const [friendSuggestions, setFriendSuggestions] = useState<Record<string, string>>({});
+
+  useLiveResourceJson<Record<string, string>>({
     fetchUrl: buildUrl('account/search', { q: debouncedAddFriendSearch }),
     eventName: 'AccountSearch',
     reconnectIntervalMs: 5000,
     shouldProcess: !!debouncedAddFriendSearch && debouncedAddFriendSearch.length > 0,
+    onMessage: (newData) => {
+      if (!newData || typeof newData !== 'object' || Object.keys(newData).length === 0) return;
+      setFriendSuggestions(prev => ({ ...prev, ...newData }));
+    },
   });
-  console.log('friendSuggestions', friendSuggestions);
 
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
@@ -165,56 +160,42 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
     }
   });
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<z.infer<typeof formSchema>, unknown, z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-    },
-  });
+    defaultValues: { username: '' },
+  })
 
-  // Fetch friends on mount
-  useEffect(() => {
-    fetchFriends();
-  }, []);
+  // State to control when SSE is active for friends
+  const [friendsLiveEnabled, setFriendsLiveEnabled] = useState(true);
 
-  const fetchFriends = async (): Promise<void> => {
-    setLoading(true);
-    try {
-      const res = await authorized.get<FriendApiResponse[]>('account/friends');
-      const friendsArray = res.data || [];
-
+  // Fetch friends via SSE, only when friendsLiveEnabled is true
+  useLiveResourceJson<FriendApiResponse[]>({
+    fetchUrl: buildUrl('account/friends'),
+    eventName: 'AccountFriends',
+    reconnectIntervalMs: 5000,
+    shouldProcess: friendsLiveEnabled,
+    onMessage: async (friendsArray) => {
+      if (!Array.isArray(friendsArray)) return;
       const enrichedEntries: [string, FriendEntry][] = await Promise.all(
         friendsArray.map(async ({ username, addTime }) => {
-          const profileUrl = await getProfilePictureUrl(username);
+          const profileUrl = await buildUrl(`account/profilePicture?profile=${encodeURIComponent(username)}`);
           return [username, { timestamp: addTime, profileUrl }];
         })
       );
-
       setFriends(new Map<string, FriendEntry>(enrichedEntries));
-    } catch (e) {
-      console.error('Error fetching friends or profile pictures', e);
-      toast.error('Failed to load friends');
-    } finally {
       setLoading(false);
-    }
-  };
-
-  const getProfilePictureUrl = async (name: string): Promise<string> => {
-    try {
-      const res = await authorized.get(
-        `account/profilePicture?profile=${encodeURIComponent(name)}`,
-        'text'  // Specify text response type
-      );
-      return res.data as string;
-    } catch {
-      return '';
-    }
-  };
+      setFriendsLiveEnabled(false); // Disable after one fetch
+    },
+    onFail: () => {
+      setLoading(false);
+      setFriendsLiveEnabled(false);
+    },
+  });
 
   const openModal = (mode: 'add' | 'remove' | 'share', defaultName = '') => {
     setModalMode(mode);
     if (mode === 'remove') {
-      form.setValue('username', defaultName);
+      form.setValue('username' as keyof z.infer<typeof formSchema>, defaultName as z.infer<typeof formSchema>["username"]);
     } else {
       form.reset();
     }
@@ -222,12 +203,12 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
     if (mode === 'share') {
       if (typeof window !== 'undefined') {
         const baseUrl = window.location.origin;
-        setShareLink(`${baseUrl}/profile/${userContext?.userAccount?.username || 'user'}`);
+        // setShareLink(`${baseUrl}/profile/${userContext?.userAccount?.username || 'user'}`); // Removed as per edit hint
       } else {
-        setShareLink(`/profile/${userContext?.userAccount?.username || 'user'}`);
+        // setShareLink(`/profile/${userContext?.userAccount?.username || 'user'}`); // Removed as per edit hint
       }
     } else {
-      setShareLink('');
+      // setShareLink(''); // Removed as per edit hint
     }
 
     setShowModal(true);
@@ -235,26 +216,35 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
 
   const handleFriendAction = async (values: z.infer<typeof formSchema>) => {
     setProcessing(true);
-
+    let res = undefined;
+    let error = undefined;
     try {
       const endpoint =
         modalMode === 'add'
-          ? `account/addFriend?friend=${encodeURIComponent(values.username)}`
-          : `account/removeFriend?friend=${encodeURIComponent(values.username)}`;
+          ? `account/friends/add?friend=${encodeURIComponent(values.username)}`
+          : `account/friends/remove?friend=${encodeURIComponent(values.username)}`;
 
-      await authorized.get(endpoint);
+      res = await authorized.get(endpoint);
       setShowModal(false);
       form.reset();
-      fetchFriends();
+      // fetchFriends(); // Removed, SSE will update friends
       toast.success(
         modalMode === 'add'
           ? 'Friend added successfully'
           : 'Friend removed successfully'
       );
-    } catch {
+    } catch (err) {
+      error = err;
+      console.log('handleFriendAction error:', error);
+      console.log('handleFriendAction response:', res);
       toast.error(`Failed to ${modalMode} friend. Please try again.`);
     } finally {
       setProcessing(false);
+      if (res) {
+        console.log('handleFriendAction response:', res);
+      } else if (error) {
+        console.log('handleFriendAction error:', error);
+      }
     }
   };
 
@@ -275,8 +265,8 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
 
   // Filtering and sorting friends based on search and filter mode
   const filteredFriends = Array.from(friends.entries())
-    .filter(([name]) => name.toLowerCase().includes(searchQuery.toLowerCase()))
-    .filter(([name]) => {
+    .filter(([name, _entry]: [string, FriendEntry]) => name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter(([name, _entry]: [string, FriendEntry]) => {
       if (filterMode === FILTER_MODES.FAVORITES) {
         return favorites.includes(name);
       }
@@ -305,7 +295,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
       const res = await authorized.get(`account/friends/add?friend=${encodeURIComponent(username)}`);
 
       if(res.status === 200) {
-        fetchFriends();
+        // fetchFriends(); // Removed, SSE will update friends
         toast.success('Friend added successfully');
       } else {
         toast.error('Failed to add friend.');
@@ -359,6 +349,23 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Share Profile</TooltipContent>
+              </Tooltip>
+              {/* Manual Refresh Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      setLoading(true);
+                      setFriendsLiveEnabled(true);
+                    }}
+                    aria-label="Refresh Friends"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582M20 20v-5h-.581M5.635 19.364A9 9 0 104.582 9.582" /></svg>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Refresh Friends</TooltipContent>
               </Tooltip>
             </div>
           </div>
@@ -430,9 +437,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
                           <div className="flex items-center justify-between p-4 hover:bg-accent/50 cursor-pointer min-w-0">
                             <div className="flex items-center gap-3 min-w-0 overflow-hidden">
                               <Avatar>
-                                {profileUrl ? (
-                                    <AvatarImage src={profileUrl} alt={name} loading="lazy" referrerPolicy="no-referrer" />
-                                ) : null}
+                                <ProfilePicture name={name} profileUrl={profileUrl} />
                                 <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
                               </Avatar>
                               <span className="font-medium truncate">
@@ -514,117 +519,117 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
           />
           <CommandList>
             <CommandGroup heading="Suggested">
-              {addFriendSearch
-                  ? (() => {
-                    const suggestions = Array.isArray(friendSuggestions) ? friendSuggestions.filter(
-                        (name) =>
-                            name !== userContext?.userAccount?.username &&
-                            name.toLowerCase().includes(addFriendSearch.toLowerCase())
-                    ).slice(0, 5) : [];
-                    return suggestions.length > 0
-                        ? suggestions.map((name) => (
-                            <CommandItem
-                                key={name}
-                                onSelect={() => setSelectedFriend(name)}
-                                disabled={processing}
-                                className={`flex items-center gap-3 px-4 py-2 rounded-md transition-colors hover:bg-accent/70 cursor-pointer ${
-                                    selectedFriend === name ? 'bg-accent' : ''
-                                }`}
-                            >
-                              <Avatar className="h-7 w-7">
-                                <AvatarImage src={''} alt={name} loading="lazy" />
-                                <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
-                              </Avatar>
-                              <span className="font-medium text-base truncate">
-                            {name.charAt(0).toUpperCase() + name.slice(1)}
-                          </span>
-                            </CommandItem>
-                        ))
-                        : null;
-                  })()
-                  : (
-                      <div className="px-4 py-2 text-muted-foreground text-sm">
-                        Start typing to find friends...
-                      </div>
-                  )}
+              {addFriendSearch ? (
+                Object.keys(friendSuggestions).length > 0 ? (
+                  Object.entries(friendSuggestions).map(([name, profileUrl]: [string, string]) => (
+                    <CommandItem
+                      key={name}
+                      onSelect={() => setSelectedFriend(name)}
+                      disabled={processing}
+                    >
+                      <Avatar className="h-7 w-7">
+                        <ProfilePicture name={name} profileUrl={profileUrl} />
+                        <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <span className="font-medium text-base truncate">
+                        {name.charAt(0).toUpperCase() + name.slice(1)}
+                      </span>
+                    </CommandItem>
+                  ))
+                ) : (
+                  <div className="px-4 py-2 text-muted-foreground text-sm">No suggestions</div>
+                )
+              ) : (
+                <div className="px-4 py-2 text-muted-foreground text-sm">Start typing to find friends...</div>
+              )}
             </CommandGroup>
           </CommandList>
           {selectedFriend && (
-              <div className="flex flex-col items-center gap-2 p-4 border-t">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={''} alt={selectedFriend} loading="lazy" />
-                    <AvatarFallback>{selectedFriend.slice(0, 2).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <span className="font-medium text-base truncate">
-                {selectedFriend.charAt(0).toUpperCase() + selectedFriend.slice(1)}
-              </span>
-                </div>
-                <Button
-                    className="w-full mt-2"
-                    disabled={processing}
-                    onClick={async () => {
-                      await handleAddFriend(selectedFriend);
-                      setSelectedFriend(null);
-                    }}
-                >
-                  {processing ? 'Adding...' : 'Confirm Add Friend'}
-                </Button>
+            <div className="flex flex-col items-center gap-2 p-4 border-t">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-8 w-8">
+                  <ProfilePicture name={selectedFriend} profileUrl={friendSuggestions[selectedFriend] || ''} />
+                  <AvatarFallback>{selectedFriend.slice(0, 2).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <span className="font-medium text-base truncate">
+                  {selectedFriend.charAt(0).toUpperCase() + selectedFriend.slice(1)}
+                </span>
               </div>
+              <Button
+                className="w-full mt-2"
+                disabled={processing}
+                onClick={async () => {
+                  if (!selectedFriend) return;
+                  await handleAddFriend(selectedFriend);
+                  setSelectedFriend(null);
+                }}
+              >
+                {processing ? 'Adding...' : 'Confirm Add Friend'}
+              </Button>
+            </div>
           )}
         </CommandDialog>
 
         {/* Remove Friend Modal */}
-        <Dialog open={showModal} onOpenChange={setShowModal}>
-          <DialogContent className="max-w-sm w-full mx-2">
-            <DialogHeader>
-              <DialogTitle>Remove Friend</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to remove this friend? This action cannot be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex justify-end gap-2 mt-4">
-              <Button variant="outline" onClick={() => setShowModal(false)}>
-                Cancel
-              </Button>
-              <Button
-                  variant="destructive"
-                  disabled={processing}
-                  onClick={form.handleSubmit(handleFriendAction)}
-              >
-                {processing ? 'Removing...' : 'Remove'}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-
+        {modalMode === 'remove' && (
+          <Dialog open={showModal} onOpenChange={setShowModal}>
+            <DialogContent className="max-w-sm w-full mx-2">
+              <DialogHeader>
+                <DialogTitle>Remove Friend</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to remove this friend? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex justify-end gap-2 mt-4">
+                <Button variant="outline" onClick={() => setShowModal(false)}>
+                  Cancel
+                </Button>
+                <Button
+                    variant="destructive"
+                    disabled={processing}
+                    onClick={form.handleSubmit(handleFriendAction)}
+                >
+                  {processing ? 'Removing...' : 'Remove'}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
         {/* Share Profile Modal */}
-        <Dialog open={showModal} onOpenChange={setShowModal}>
-          <DialogContent className="max-w-sm w-full mx-2">
-            <DialogHeader>
-              <DialogTitle>Share Profile</DialogTitle>
-              <DialogDescription>
-                Share your profile link with friends!
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex flex-col gap-2 mt-2">
-              <Input
-                  readOnly
-                  value={`https://yoursite.com/profile/${userContext?.userAccount?.username}`}
-                  className="select-all"
-              />
-              <Button
-                  onClick={() => {
-                    navigator.clipboard.writeText(
-                        `https://yoursite.com/profile/${userContext?.userAccount?.username}`
-                    );
-                  }}
-              >
-                Copy Link
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        {modalMode === 'share' && (
+          <Dialog open={showModal} onOpenChange={setShowModal}>
+            <DialogContent className="max-w-sm w-full mx-2">
+              <DialogHeader>
+                <DialogTitle>Share Profile</DialogTitle>
+                <DialogDescription>
+                  Share your profile link with friends!
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-2 mt-2 items-center">
+                <QRCodeWithLogo url={buildUrl(`/account/invite?refer=${userContext?.userAccount?.username}`)} size={200} />
+                <Input
+                    readOnly
+                    value={buildUrl(`/account/invite?refer=${userContext?.userAccount?.username}`)}
+                    className="select-all"
+                />
+                <Button
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                          buildUrl(`/account/invite?refer=${userContext?.userAccount?.username}`)
+                      );
+                    }}
+                >
+                  Copy Link
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </Card>
   );
+}
+
+function ProfilePicture({ name, profileUrl }: { name: string, profileUrl: string }) {
+  if (!profileUrl) return null;
+  return <AvatarImage src={profileUrl} alt={name} loading="lazy" referrerPolicy="no-referrer" />;
 }
