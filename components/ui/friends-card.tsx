@@ -19,7 +19,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { UserContext, UserContextType } from "@/components/auth/UserContext"
-import { authorized } from '@/lib/api/apiClient'
+import { authorized, buildUrl } from '@/lib/api/apiClient'
 import { IconUserPlus, IconShare, IconHeart, IconChevronDown, IconUser } from "@tabler/icons-react"
 import { toast } from 'sonner'
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -46,6 +46,8 @@ import {
   ContextMenuItem,
 } from "@/components/ui/context-menu"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useLiveResourceJson } from '@/hooks/useLiveResource'
+import { useRef } from 'react';
 
 const FILTER_MODES = {
   ALL: 'all',
@@ -84,12 +86,32 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
   const [shareLink, setShareLink] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMode, setFilterMode] = useState<FilterMode>(FILTER_MODES.ALL);
-  const MOCK_USERNAMES = [
-    'jack', 'talisha', 'tim mcgee'
-  ];
   const [showAddCommand, setShowAddCommand] = useState(false);
   const [addFriendSearch, setAddFriendSearch] = useState("");
+  const [debouncedAddFriendSearch, setDebouncedAddFriendSearch] = useState("");
   const [selectedFriend, setSelectedFriend] = useState<string | null>(null);
+
+  // Debounce addFriendSearch
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedAddFriendSearch(addFriendSearch);
+      console.log('debouncedAddFriendSearch', debouncedAddFriendSearch, 'addFriendSearch', addFriendSearch);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [addFriendSearch, debouncedAddFriendSearch]);
+
+  // SSE for friend suggestions
+  const {
+    data: friendSuggestions,
+    loading: suggestionsLoading,
+    error: suggestionsError
+  } = useLiveResourceJson<string[]>({
+    fetchUrl: buildUrl('account/search', { q: debouncedAddFriendSearch }),
+    eventName: 'AccountSearch',
+    reconnectIntervalMs: 5000,
+    shouldProcess: !!debouncedAddFriendSearch && debouncedAddFriendSearch.length > 0,
+  });
+  console.log('friendSuggestions', friendSuggestions);
 
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
@@ -450,11 +472,11 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
             <CommandGroup heading="Suggested">
               {addFriendSearch
                   ? (() => {
-                    const suggestions = MOCK_USERNAMES.filter(
+                    const suggestions = Array.isArray(friendSuggestions) ? friendSuggestions.filter(
                         (name) =>
                             name !== userContext?.userAccount?.username &&
                             name.toLowerCase().includes(addFriendSearch.toLowerCase())
-                    ).slice(0, 5);
+                    ).slice(0, 5) : [];
                     return suggestions.length > 0
                         ? suggestions.map((name) => (
                             <CommandItem
