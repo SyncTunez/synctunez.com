@@ -280,6 +280,55 @@ function useElementOverflow<T extends HTMLElement>() {
     return [ref, isOverflowing] as const;
 }
 
+// PlaylistSectionSkeleton component for comprehensive loading state
+export function PlaylistSectionSkeleton() {
+    return (
+        <Card className="h-[600px] min-h-0">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-2">
+                <Skeleton className="h-6 w-24" />
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <Skeleton className="h-10 w-32" />
+                    <Skeleton className="h-10 w-40" />
+                </div>
+            </CardHeader>
+            <CardContent className="p-0">
+                <div className="flex gap-2">
+                    {/* Playlist list skeleton */}
+                    <div className="w-72 min-w-[220px] h-[45vh] overflow-y-auto border-r pr-1 flex flex-col justify-between">
+                        <div className="flex flex-col gap-0">
+                            {Array.from({length: 6}).map((_, idx) => (
+                                <div key={idx} className="flex items-center gap-3 p-3">
+                                    <Skeleton className="h-12 w-12 rounded-md" />
+                                    <div className="flex-1 min-w-0">
+                                        <Skeleton className="h-4 w-3/4 mb-1" />
+                                        <Skeleton className="h-3 w-1/2" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Tracks table skeleton */}
+                    <div className="flex-1 pl-0">
+                        <div className="space-y-2 p-4">
+                            {Array.from({ length: 8 }).map((_, idx) => (
+                                <div key={idx} className="flex items-center gap-3">
+                                    <Skeleton className="h-10 w-10 rounded-md" />
+                                    <div className="flex-1 min-w-0">
+                                        <Skeleton className="h-4 w-2/3 mb-1" />
+                                        <Skeleton className="h-3 w-1/3" />
+                                    </div>
+                                    <Skeleton className="h-4 w-16" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
 export function PlaylistSection({
                                     mainPlaylists,
                                     mainTracks,
@@ -292,8 +341,27 @@ export function PlaylistSection({
     const [selectedService, setSelectedService] = useState<Service>('spotify');
     // false = normal playlist view, true = import view
     const [importedView, setImportedView] = useState(false);
+    const [showNoPlaylists, setShowNoPlaylists] = useState(false);
 
     const [selectedSpotifyPlaylistId, setSelectedSpotifyPlaylistId] = useState<string | undefined>(undefined);
+
+    // Delay showing "no playlists" message to prevent premature empty states
+    useEffect(() => {
+        if (mainPlaylistsLoading) {
+            setShowNoPlaylists(false);
+            return;
+        }
+
+        if (mainPlaylists.length === 0) {
+            const timer = setTimeout(() => {
+                setShowNoPlaylists(true);
+            }, 2000); // 2 second delay
+
+            return () => clearTimeout(timer);
+        } else {
+            setShowNoPlaylists(false);
+        }
+    }, [mainPlaylists.length, mainPlaylistsLoading]);
 
     const {
         data: rawSpotifyPlaylists
@@ -363,16 +431,26 @@ export function PlaylistSection({
                     <div
                         className="w-72 min-w-[220px] h-[45vh] overflow-y-auto border-r pr-1 flex flex-col justify-between">
                         <div className="flex flex-col gap-0">
-                            {!importedView && mainPlaylists.length === 0 && mainPlaylistsLoading ? (
-                                // skeleton while main playlists loading
+                            {!importedView && (mainPlaylistsLoading || (!showNoPlaylists && mainPlaylists.length === 0)) ? (
+                                // Enhanced skeleton while main playlists loading or during delay
                                 Array.from({length: 6}).map((_, idx) => (
-                                    <Skeleton key={idx} className="h-12 w-full"/>
+                                    <div key={idx} className="flex items-center gap-3 p-3">
+                                        <Skeleton className="h-12 w-12 rounded-md" />
+                                        <div className="flex-1 min-w-0">
+                                            <Skeleton className="h-4 w-3/4 mb-1" />
+                                            <Skeleton className="h-3 w-1/2" />
+                                        </div>
+                                    </div>
                                 ))
                             ) : null}
-                            {!importedView && mainPlaylists.length === 0 && !mainPlaylistsLoading && (
+                            {!importedView && mainPlaylists.length === 0 && showNoPlaylists && !mainPlaylistsLoading && (
                                 <div
-                                    className="flex items-center justify-center py-2 text-muted-foreground text-center">
-                                    No playlists found. Press Import to add.
+                                    className="flex items-center justify-center py-8 text-muted-foreground text-center">
+                                    <div className="flex flex-col items-center gap-2">
+                                        <IconMusic className="w-8 h-8 text-muted-foreground/50" />
+                                        <p>No playlists found</p>
+                                        <p className="text-sm">Press Import to add playlists</p>
+                                    </div>
                                 </div>
                             )}
                             {isSpotifyPlaylistsLoading ? (

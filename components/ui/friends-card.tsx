@@ -49,6 +49,50 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useLiveResourceJson } from '@/hooks/useLiveResource'
 import { useRef } from 'react';
 
+// FriendsCardSkeleton component to prevent layout shifts
+export function FriendsCardSkeleton({ forceFullHeight = false }: { forceFullHeight?: boolean }) {
+  const cardClassName = forceFullHeight
+    ? 'flex flex-col sm:h-[600px] sm:min-h-0'
+    : 'flex flex-col';
+
+  return (
+    <Card className={cardClassName}>
+      <CardHeader className="space-y-2 flex-none px-4 py-2 sm:py-3">
+        {/* Header skeleton */}
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-6 w-20" />
+          <div className="flex gap-2">
+            <Skeleton className="h-8 w-8 rounded-md" />
+            <Skeleton className="h-8 w-8 rounded-md" />
+          </div>
+        </div>
+
+        {/* Search and filter skeleton */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2">
+          <Skeleton className="h-10 flex-grow max-w-full sm:max-w-xs" />
+          <Skeleton className="h-10 w-full sm:w-[110px]" />
+        </div>
+      </CardHeader>
+
+      {/* Content skeleton */}
+      <CardContent className="flex-1 p-0 min-h-0 overflow-hidden">
+        <div className="h-full flex flex-col gap-2 p-4">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex items-center gap-3 py-2">
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <div className="flex-1 min-w-0">
+                <Skeleton className="h-4 w-1/3 mb-2" />
+                <Skeleton className="h-3 w-1/4" />
+              </div>
+              <Skeleton className="h-6 w-6 rounded-md ml-auto" />
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 const FILTER_MODES = {
   ALL: 'all',
   RECENT: 'recent',
