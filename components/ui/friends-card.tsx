@@ -236,10 +236,16 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
   const handleAddFriend = async (username: string) => {
     setProcessing(true);
     try {
-      await authorized.get(`account/addFriend?friend=${encodeURIComponent(username)}`);
+      const res = await authorized.get(`account/friends/add?friend=${encodeURIComponent(username)}`);
+
+      if(res.status === 200) {
+        fetchFriends();
+        toast.success('Friend added successfully');
+      } else {
+        toast.error('Failed to add friend.');
+      }
+
       setShowAddCommand(false);
-      fetchFriends();
-      toast.success('Friend added successfully');
     } catch {
       toast.error('Failed to add friend. Please try again.');
     } finally {

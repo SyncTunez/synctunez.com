@@ -78,7 +78,7 @@ export function useLiveResource<T = any>({
   }, [fetchUrl, onFail, shouldProcess]);
 
   // Construct SSE URL only when eventName is provided
-  const eventUrl = shouldProcess && eventName ? `/events/${eventName}` : '';
+  const eventUrl = shouldProcess && eventName ? `http://localhost:8080/events/${eventName}` : '';
 
   useSSE<any>(
     eventUrl,
