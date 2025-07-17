@@ -22,9 +22,9 @@ export function HeroSection() {
   return (
     <section id="hero" className="relative bg-gradient-to-b from-[#134e4a]/25 via-[#134e4a]/10 to-[#134e4a]/5">
       <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 max-w-[1400px]">
-        <div className="grid xl:grid-cols-2 gap-8 xl:gap-16 xl:gap-24 xl:items-center min-h-screen">
+        <div className="grid xl:grid-cols-2 gap-8 xl:gap-16 xl:gap-24 xl:items-center xl:min-h-screen">
           {/* Left Content */}
-          <div className="text-left py-8 xl:pr-8 min-h-screen xl:min-h-0 flex flex-col justify-center">
+          <div className="text-left py-8 xl:pr-8 xl:min-h-screen xl:flex xl:flex-col xl:justify-center">
             {/* Hero Title */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-8 pt-12 xl:pt-0">
               Stop Skipping, <br />
