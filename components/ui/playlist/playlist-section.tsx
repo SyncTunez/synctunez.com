@@ -351,7 +351,7 @@ export function PlaylistSection({
         fetchUrl: buildUrl(`spotify/import?id=${importingPlaylist}`),
         eventName: 'SpotifyPlaylistImport',
         reconnectIntervalMs: 5000,
-        shouldProcess: true,
+        shouldProcess: importingPlaylist != null,
         onMessage: (data) => {
             const response = typeof data === 'object' && data.status === 'success'
               ? [data as MusicPlaylistImportResult]
