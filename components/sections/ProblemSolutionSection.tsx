@@ -13,7 +13,7 @@ export function ProblemSolutionSection() {
   const row3Card2 = useInView<HTMLDivElement>();
 
   return (
-    <section id="problems-solutions" className="bg-background flex flex-col overflow-hidden relative py-16 lg:py-24">
+    <section id="problems-solutions" className="bg-gradient-to-b from-background to-muted/20 flex flex-col overflow-hidden relative py-16 lg:py-24">
       <div className="container mx-auto px-4 flex flex-col">
         <div className="text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-2 text-[#0f766e]">
