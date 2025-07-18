@@ -34,13 +34,15 @@ export function Step2SpotifyConnect({ onNext }: Step2SpotifyConnectProps) {
           <div className="flex justify-center">
             <Button
               size="lg"
-              className="bg-[#1DB954] hover:bg-[#1DB954]/90 text-white px-8 py-6 h-auto text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+              className="bg-[#1DB954] hover:bg-[#1DB954]/90 text-white px-6 py-3 h-auto text-base font-semibold rounded-full shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center min-w-[200px]"
               onClick={() => {
-                // Add Spotify connect logic here
+                window.location.href = '/api/link/spotify';
               }}
             >
-              <SpotifyIcon />
-              <span className="ml-3">Connect Spotify Account</span>
+              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.371-.721.49-1.101.24-3.021-1.851-6.822-2.271-11.292-1.241-.418.081-.837-.241-.918-.651-.082-.41.24-.837.63-.918 4.891-1.121 9.092-.63 12.452 1.451.369.241.49.721.229 1.119zm1.471-3.291c-.301.459-.921.63-1.381.319-3.461-2.131-8.731-2.75-12.842-1.511-.499.15-1.021-.15-1.171-.65-.15-.5.15-1.021.65-1.171 4.681-1.42 10.511-.721 14.472 1.771.449.301.629.92.272 1.242zm.129-3.409c-4.151-2.461-11.022-2.689-15.002-1.489-.619.19-1.271-.17-1.461-.79-.19-.619.17-1.271.79-1.461 4.581-1.389 12.192-1.121 17.001 1.729.561.33.74 1.051.41 1.61-.321.54-1.049.721-1.738.401z"/>
+              </svg>
+              Continue with Spotify
             </Button>
           </div>
         ) : (
