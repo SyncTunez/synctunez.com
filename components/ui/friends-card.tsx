@@ -311,12 +311,12 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
 
   // Define class for container height constraints
   const cardClassName = forceFullHeight
-      ? 'flex flex-col sm:h-[600px] sm:min-h-0'
-      : 'flex flex-col';
+      ? 'flex flex-col w-full h-full sm:h-[600px] sm:min-h-0'
+      : 'flex flex-col w-full';
 
   return (
       <Card className={cardClassName}>
-        <CardHeader className="space-y-2 flex-none px-4 py-2 sm:py-3">
+        <CardHeader className="space-y-2 flex-none px-4 py-2 sm:py-3 w-full">
           {/* Header and controls */}
           <div className="flex justify-between items-center">
             <CardTitle className="text-lg sm:text-xl">Friends</CardTitle>

@@ -29,6 +29,12 @@ export const NAV_PAGES: NavPage[] = [
     requiresAuth: true,
   },
   {
+    label: "Merge Playlists",
+    path: "/merge",
+    icon: <IconPlaylist size={20} />,
+    requiresAuth: true,
+  },
+  {
     label: "Account",
     path: "/",
     icon: <IconUser size={20} />,

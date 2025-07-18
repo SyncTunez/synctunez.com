@@ -42,6 +42,7 @@ interface PlaylistSectionProps {
     mainPlaylistsLoading?: boolean;
     selectedMainPlaylistId: number | undefined;
     onMainPlaylistSelect: (id?: number) => void;
+    hideTracksSection?: boolean;
 }
 
 type Service = 'spotify' | 'apple' | 'youtube' | 'tidal';
@@ -63,6 +64,7 @@ function PlaylistSectionHeaderCompact({
                                           setSelectedService,
                                           services,
                                           comingSoonServices,
+                                          hideTracksSection = false,
                                       }: {
     importedView: boolean;
     setImportedView: React.Dispatch<React.SetStateAction<boolean>>;
@@ -70,13 +72,14 @@ function PlaylistSectionHeaderCompact({
     setSelectedService: (v: Service) => void;
     services: { id: Service; key: string; label: string; icon: ReactNode }[];
     comingSoonServices: Service[];
+    hideTracksSection?: boolean;
 }) {
     return (
         <CardHeader className="flex flex-col items-start gap-2">
             <div className="flex items-center gap-2 w-full justify-between">
                 <CardTitle>{importedView ? 'Import' : 'Playlists'}</CardTitle>
                 <div className="flex items-center gap-2">
-                    {importedView && (
+                    {importedView && !hideTracksSection && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline">
@@ -102,18 +105,20 @@ function PlaylistSectionHeaderCompact({
                             </DropdownMenuContent>
                         </DropdownMenu>
                     )}
-                    <Button
-                        variant="outline"
-                        onClick={() => setImportedView(prev => !prev)}
-                        size="icon"
-                        aria-label={!importedView ? "Import more playlists" : "Back to your playlists"}
-                    >
-                        {!importedView ? (
-                            <IconPlus className="w-4 h-4" />
-                        ) : (
-                            <IconArrowLeft className="w-4 h-4" />
-                        )}
-                    </Button>
+                    {!hideTracksSection && (
+                        <Button
+                            variant="outline"
+                            onClick={() => setImportedView(prev => !prev)}
+                            size="icon"
+                            aria-label={!importedView ? "Import more playlists" : "Back to your playlists"}
+                        >
+                            {!importedView ? (
+                                <IconPlus className="w-4 h-4" />
+                            ) : (
+                                <IconArrowLeft className="w-4 h-4" />
+                            )}
+                        </Button>
+                    )}
                 </div>
             </div>
         </CardHeader>
@@ -127,6 +132,7 @@ function PlaylistSectionHeaderRegular({
                                           setSelectedService,
                                           services,
                                           comingSoonServices,
+                                          hideTracksSection = false,
                                       }: {
     importedView: boolean;
     setImportedView: React.Dispatch<React.SetStateAction<boolean>>;
@@ -134,6 +140,7 @@ function PlaylistSectionHeaderRegular({
     setSelectedService: (v: Service) => void;
     services: { id: Service; key: string; label: string; icon: React.ReactNode }[];
     comingSoonServices: Service[];
+    hideTracksSection?: boolean;
 }) {
     const tabsListRef = useRef<HTMLDivElement>(null);
 
@@ -165,7 +172,7 @@ function PlaylistSectionHeaderRegular({
             <CardTitle className="text-xl">{importedView ? "Import" : "Playlists"}</CardTitle>
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                {importedView && (
+                {importedView && !hideTracksSection && (
                     <>
                         {useDropdown ? (
                             <DropdownMenu>
@@ -228,32 +235,36 @@ function PlaylistSectionHeaderRegular({
                 )}
 
                 <div className="flex items-center gap-2">
-                    <Button
-                        variant="outline"
-                        onClick={() => setImportedView((prev) => !prev)}
-                        className="hidden sm:inline-flex"
-                    >
-                        {!importedView ? (
-                            <>
-                                <IconPlus className="w-4 h-4" />
-                                Import more playlists
-                            </>
-                        ) : (
-                            <>
-                                <IconArrowLeft className="w-4 h-4" />
-                                Back to your playlists
-                            </>
-                        )}
-                    </Button>
-                    <Button
-                        variant="outline"
-                        onClick={() => setImportedView((prev) => !prev)}
-                        className="sm:hidden"
-                        size="icon"
-                        aria-label={!importedView ? "Import more playlists" : "Back to your playlists"}
-                    >
-                        {!importedView ? <IconPlus className="w-4 h-4" /> : <IconArrowLeft className="w-4 h-4" />}
-                    </Button>
+                    {!hideTracksSection && (
+                        <Button
+                            variant="outline"
+                            onClick={() => setImportedView((prev) => !prev)}
+                            className="hidden sm:inline-flex"
+                        >
+                            {!importedView ? (
+                                <>
+                                    <IconPlus className="w-4 h-4" />
+                                    Import more playlists
+                                </>
+                            ) : (
+                                <>
+                                    <IconArrowLeft className="w-4 h-4" />
+                                    Back to your playlists
+                                </>
+                            )}
+                        </Button>
+                    )}
+                    {!hideTracksSection && (
+                        <Button
+                            variant="outline"
+                            onClick={() => setImportedView((prev) => !prev)}
+                            className="sm:hidden"
+                            size="icon"
+                            aria-label={!importedView ? "Import more playlists" : "Back to your playlists"}
+                        >
+                            {!importedView ? <IconPlus className="w-4 h-4" /> : <IconArrowLeft className="w-4 h-4" />}
+                        </Button>
+                    )}
                 </div>
             </div>
         </CardHeader>
@@ -333,7 +344,8 @@ export function PlaylistSection({
                                     mainTracks,
                                     mainPlaylistsLoading = false,
                                     selectedMainPlaylistId,
-                                    onMainPlaylistSelect
+                                    onMainPlaylistSelect,
+                                    hideTracksSection = false,
                                 }: PlaylistSectionProps) {
 
     const router = useRouter();
@@ -437,6 +449,7 @@ export function PlaylistSection({
                         setSelectedService={setSelectedService}
                         services={services}
                         comingSoonServices={comingSoonServices}
+                        hideTracksSection={hideTracksSection}
                     />
                 ) : (
                     <PlaylistSectionHeaderRegular
@@ -446,14 +459,16 @@ export function PlaylistSection({
                         setSelectedService={setSelectedService}
                         services={services}
                         comingSoonServices={comingSoonServices}
+                        hideTracksSection={hideTracksSection}
                     />
                 )}
             </div>
             <CardContent className="p-0 flex-1 min-h-0">
-                <div className="flex gap-2 h-full">
+                <div className={`flex gap-2 h-full${hideTracksSection ? '' : ''}`}>
                     <div
-                        className="w-72 min-w-[220px] overflow-y-auto border-r pr-1 flex flex-col">
-                        <div className="flex flex-col gap-0">
+                        className={`w-72 min-w-[220px] overflow-y-auto flex flex-col ${hideTracksSection ? 'items-center border-r-0 pr-0' : 'border-r pr-1'}`}
+                    >
+                        <div className={`flex flex-col gap-0 ${hideTracksSection ? 'w-full' : ''}`}>
                             {!importedView && (mainPlaylistsLoading || (!showNoPlaylists && mainPlaylists.length === 0)) ? (
                                 // Enhanced skeleton while main playlists loading or during delay
                                 Array.from({length: 6}).map((_, idx) => (
@@ -586,34 +601,36 @@ export function PlaylistSection({
                         </div>
                     </div>
 
-                    <div className="flex-1 pl-0 overflow-hidden">
-                        <div className="h-full overflow-y-auto">
-                            {(() => {
-                                const isPlaylistMode = !importedView;
-                                const hasSelection = isPlaylistMode ? !!selectedMainPlaylistId : !!selectedSpotifyPlaylistId;
-                                const tracksToShow = isPlaylistMode ? (hasSelection ? mainTracks : [])
-                                    : (hasSelection ? processedSpotifyTracks : []);
-                                const emptyLabel = hasSelection ? 'No tracks found' : 'Select a playlist to view tracks';
+                    {!hideTracksSection && (
+                        <div className="flex-1 pl-0 overflow-hidden">
+                            <div className="h-full overflow-y-auto">
+                                {(() => {
+                                    const isPlaylistMode = !importedView;
+                                    const hasSelection = isPlaylistMode ? !!selectedMainPlaylistId : !!selectedSpotifyPlaylistId;
+                                    const tracksToShow = isPlaylistMode ? (hasSelection ? mainTracks : [])
+                                        : (hasSelection ? processedSpotifyTracks : []);
+                                    const emptyLabel = hasSelection ? 'No tracks found' : 'Select a playlist to view tracks';
 
-                                if (isTracksLoading) {
+                                    if (isTracksLoading) {
+                                        return (
+                                            <div className="space-y-2">
+                                                {Array.from({ length: 6 }).map((_, idx) => (
+                                                    <Skeleton key={idx} className="h-12 w-full" />
+                                                ))}
+                                            </div>
+                                        );
+                                    }
                                     return (
-                                        <div className="space-y-2">
-                                            {Array.from({ length: 6 }).map((_, idx) => (
-                                                <Skeleton key={idx} className="h-12 w-full" />
-                                            ))}
-                                        </div>
+                                        <TrackTable
+                                            tracks={tracksToShow}
+                                            isSpotify={!isPlaylistMode}
+                                            emptyLabel={emptyLabel}
+                                        />
                                     );
-                                }
-                                return (
-                                    <TrackTable
-                                        tracks={tracksToShow}
-                                        isSpotify={!isPlaylistMode}
-                                        emptyLabel={emptyLabel}
-                                    />
-                                );
-                            })()}
+                                })()}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </CardContent>
         </Card>

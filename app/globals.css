@@ -267,3 +267,7 @@
 [class*='animate-[slide'] > * {
   pointer-events: auto;
 }
+
+.hover-override-accent:hover {
+  color: var(--accent) !important;
+}
