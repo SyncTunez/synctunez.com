@@ -169,7 +169,7 @@ export function Step4InviteFriends({ onComplete }: Step4InviteFriendsProps) {
                 onClick={handleShareQRCode}
                 variant="outline"
                 size="lg"
-                className="h-12 bg-card/80 border-muted-foreground/20 text-foreground hover:bg-card hover:border-muted-foreground/40"
+                className="h-12 bg-card/80 border-muted-foreground/20 text-foreground hover:bg-card hover:border-muted-foreground/40 hover:text-black dark:hover:text-foreground"
               >
                 <IconQrcode className="w-5 h-5 md:mr-2" />
                 <span className="hidden md:inline">QR Code</span>
