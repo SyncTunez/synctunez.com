@@ -6,9 +6,9 @@ import { Search } from "lucide-react";
 export function LearnMoreButton() {
   return (
     <Button 
-      variant="outline" 
+      variant="ghost" 
       size="lg" 
-      className="text-lg px-8 py-6 h-auto hover:scale-[1.02] transition-all duration-200"
+              className="text-lg px-8 py-6 h-auto hover:scale-[1.02] hover:bg-muted/90 transition-all duration-200"
       onClick={() => {
         document.getElementById('problems-solutions')?.scrollIntoView({ behavior: 'smooth' });
       }}
