@@ -20,11 +20,7 @@ export default async function SecureContentWrapper({
     let userAccount: UserAccountProps | null = null;
     try {
         if (userAccountRaw) {
-            console.log('UserAccount cookie raw value:', userAccountRaw);
             userAccount = JSON.parse(userAccountRaw) as UserAccountProps;
-            console.log('Parsed userAccount:', userAccount);
-        } else {
-            console.log('UserAccount cookie is null or undefined');
         }
     } catch (error) {
         console.error('Failed to parse UserAccount cookie:', error);

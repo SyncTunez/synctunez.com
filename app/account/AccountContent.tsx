@@ -21,9 +21,7 @@ export default function AccountContent() {
     const userContext = React.useContext(UserContext) as UserContextType | null;
     const userAccount = userContext?.userAccount;
     
-    console.log('AccountContent - userContext:', userContext);
-    console.log('AccountContent - userAccount:', userAccount);
-    console.log('AccountContent - userAccount?.username:', userAccount?.username);
+
     const searchParams = useSearchParams();
     const tabParam = searchParams.get('tab');
     const tabIndex = tabParam === 'billing' ? 1 : 0;

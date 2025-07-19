@@ -114,14 +114,6 @@ type FriendEntry = {
 
 export default function FriendsCard({ forceFullHeight = false }: { forceFullHeight?: boolean }) {
   const userContext = useContext(UserContext) as UserContextType
-  console.log('FriendsCard - userContext:', userContext);
-  console.log('FriendsCard - userContext?.userAccount:', userContext?.userAccount);
-  console.log('FriendsCard - userContext?.userAccount?.username:', userContext?.userAccount?.username);
-  
-  // Add a simple test to see if we can access the context at all
-  if (!userContext) {
-    console.error('FriendsCard - UserContext is null! This means the component is not wrapped in UserContext.Provider');
-  }
 
   const [friends, setFriends] = useState<Array<Friend>>([])
   const [loading, setLoading] = useState(true)
@@ -149,49 +141,49 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
   // Change friendSuggestions to a map
   const [friendSuggestions, setFriendSuggestions] = useState<Array<Friend>>([]);
 
-  // Import friend playlists
+  // Import friend suggestions via SSE
   useEffect(() => {
     let eventSource: EventSource | null = null;
     
-    const loadFriends = async () => {
-        eventSource = await useServerEvents(
-          buildUrl(`account/search?q=${debouncedAddFriendSearch}`), 
-          'AccountSearch', 
-          FriendSchema.array(), 
-          (data) => {
-            console.log("loaded suggestions! ", data)
-            setFriendSuggestions(data);
-          }
-        );
+    const loadSuggestions = async () => {
+      if (!debouncedAddFriendSearch.trim()) {
+        setFriendSuggestions([]);
+        return;
+      }
+      
+      eventSource = await useServerEvents(
+        buildUrl(`account/search?q=${debouncedAddFriendSearch}`), 
+        'AccountSearch', 
+        FriendSchema.array(), 
+        (data) => {
+          setFriendSuggestions(data);
+        }
+      );
     };
   
-    loadFriends();
+    loadSuggestions();
   
     // Cleanup function to close the connection when component unmounts
     return () => { eventSource?.close() };
   }, [debouncedAddFriendSearch]);
 
+
+  // Fetch friends - using regular fetch instead of SSE
   useEffect(() => {
-    let eventSource: EventSource | null = null;
-    
     const loadFriends = async () => {
-      console.log("loading friends!")
-        eventSource = await useServerEvents(
-          buildUrl(`account/friends`), 
-          'AccountFriends', 
-          FriendSchema.array(), 
-          (data) => {
-            console.log("loaded friends!")
-            setFriends((old) => [...old, ...data]);
-            setLoading(false);
-          }
-        );
+      try {
+        const res = await fetch(buildUrl(`account/friends`))
+        const json = await res.json()
+        const parsed = FriendSchema.array().safeParse(json)
+        if (parsed.success) {
+          setFriends(parsed.data)
+        }
+      } finally {
+        setLoading(false)
+      }
     };
   
     loadFriends();
-  
-    // Cleanup function to close the connection when component unmounts
-    return () => { eventSource?.close() };
   }, []);
   
   const [favorites, setFavorites] = useState<string[]>(() => {
@@ -242,27 +234,38 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
           ? `account/friends/add?friend=${encodeURIComponent(values.username)}`
           : `account/friends/remove?friend=${encodeURIComponent(values.username)}`;
 
-      res = await authorized.get(endpoint);
+      res = await fetch(buildUrl(endpoint));
+
+      if (res.ok) {
+        toast.success(
+          modalMode === 'add'
+            ? 'Friend added successfully'
+            : 'Friend removed successfully'
+        );
+        
+        // Refresh friends list after adding/removing
+        const friendsRes = await fetch(buildUrl('account/friends'));
+        if (friendsRes.ok) {
+          const friendsJson = await friendsRes.json();
+          const friendsParsed = FriendSchema.array().safeParse(friendsJson);
+          if (friendsParsed.success) {
+            setFriends(friendsParsed.data);
+          }
+        }
+      } else {
+        toast.error(`Failed to ${modalMode} friend. Please try again.`);
+      }
+
       setShowModal(false);
       form.reset();
-      // fetchFriends(); // Removed, SSE will update friends
-      toast.success(
-        modalMode === 'add'
-          ? 'Friend added successfully'
-          : 'Friend removed successfully'
-      );
+      
+      
+     
     } catch (err) {
       error = err;
-      console.log('handleFriendAction error:', error);
-      console.log('handleFriendAction response:', res);
       toast.error(`Failed to ${modalMode} friend. Please try again.`);
     } finally {
       setProcessing(false);
-      if (res) {
-        console.log('handleFriendAction response:', res);
-      } else if (error) {
-        console.log('handleFriendAction error:', error);
-      }
     }
   };
 
@@ -519,31 +522,25 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
               aria-label="Add friend username"
           />
                       <CommandList>
-              <CommandGroup heading="Suggested">
-                {addFriendSearch ? (
-                  friendSuggestions.length > 0 ? (
-                    friendSuggestions.map((friend) => (
-                      <CommandItem
-                        key={friend.username}
-                        onSelect={() => setSelectedFriend(friend.username)}
-                        disabled={processing}
-                      >
-                        <Avatar className="h-7 w-7">
-                          <ProfilePicture name={friend.username} profileUrl={friend.profilePicture} />
-                          <AvatarFallback>{friend.username.slice(0, 2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <span className="font-medium text-base truncate">
-                          {friend.username.charAt(0).toUpperCase() + friend.username.slice(1)}
-                        </span>
-                      </CommandItem>
-                    ))
-                  ) : (
-                    <div className="px-4 py-2 text-muted-foreground text-sm">No suggestions</div>
-                  )
+                          <CommandGroup heading="Suggested">
+              {addFriendSearch ? (
+                friendSuggestions.length > 0 ? (
+                  friendSuggestions.map((friend) => (
+                    <CommandItem
+                      key={friend.username}
+                      onSelect={() => setSelectedFriend(friend.username)}
+                      disabled={processing}
+                    >
+                      {friend.username.charAt(0).toUpperCase() + friend.username.slice(1)}
+                    </CommandItem>
+                  ))
                 ) : (
-                  <div className="px-4 py-2 text-muted-foreground text-sm">Start typing to find friends...</div>
-                )}
-              </CommandGroup>
+                  <div className="px-4 py-2 text-muted-foreground text-sm">No suggestions found</div>
+                )
+              ) : (
+                <div className="px-4 py-2 text-muted-foreground text-sm">Start typing to find friends...</div>
+              )}
+            </CommandGroup>
           </CommandList>
           {selectedFriend && (
             <div className="flex flex-col items-center gap-2 p-4 border-t">

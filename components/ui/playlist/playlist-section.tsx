@@ -371,7 +371,7 @@ export function PlaylistSection({
               ? [data as MusicPlaylistImportResult]
               : [];
 
-              console.log("Selected Spotify Playlist ID: ", importingPlaylist + ", " + selectedSpotifyPlaylistId);
+      
               processedSpotifyTracks = processedSpotifyTracks.filter((playlist) => playlist.id !== importingPlaylist);
               toast.success('Playlist imported successfully!');
               setImportingPlaylist(null);

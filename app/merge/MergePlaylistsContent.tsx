@@ -12,6 +12,7 @@ import { MusicPlaylistImportResult, MusicPlaylistMeta } from "@/lib/api/types";
 import { buildUrl } from "@/lib/api/apiClient";
 import { MusicPlaylistImportFriendResult, MusicPlaylistImportFriendResultSchema, MusicPlaylistImportResultSchema } from "@/lib/api/schemas";
 import { useServerEvents } from "@/lib/api/ServerEvents";
+import FriendSelection from "@/components/ui/friend-selection";
 
 const combinedTracks = [
   { hash: "1", name: "Song 1", album: { name: "Album 1", images: [{ url: "/icon.png" }] }, artists: [{ name: "Artist 1" }], durationMs: 180000 },
@@ -41,10 +42,6 @@ export default function MergePlaylistsContent() {
   const [loadedFriends, setLoadedFriends] = useState<Array<string>>([]);
   const [hasStartedLoadingFriendPlaylists, setHasStartedLoadingFriendPlaylists] = useState(false);
 
-  // Extract MusicPlaylistMeta from imported playlists
-  const playlistMetas: MusicPlaylistMeta[] = importedPlaylists.map(playlist => playlist.meta);
-  
-
   useEffect(() => {
     let eventSource: EventSource | null = null;
     
@@ -56,7 +53,6 @@ export default function MergePlaylistsContent() {
           'ImportedPlaylists', 
           MusicPlaylistImportResultSchema.array(), 
           (data) => {
-            console.log("Received playlist data:", data);
             setImportedPlaylists(data);
             setIsLoadingPlaylists(false);
           }
@@ -85,7 +81,6 @@ export default function MergePlaylistsContent() {
           'ImportedPlaylistFriend', 
           MusicPlaylistImportFriendResultSchema.array(), 
           (data) => {
-            console.log("Received friend playlist data:", data);
             setFriendsPlaylists(data);
             setIsLoadingPlaylists(false);
           }
@@ -185,31 +180,28 @@ export default function MergePlaylistsContent() {
         <div className="flex-1 min-w-[300px] flex items-stretch w-full">
           <FriendsCard forceFullHeight={false} />
         </div>
-        <Card className="flex-1 min-w-[300px] max-w-xl">
-          <CardHeader>
-            <CardTitle>Collaborators</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-muted-foreground">Collaborators content goes here.</div>
-          </CardContent>
-        </Card>
+        
+        <div className="flex-1 min-w-[300px] flex items-stretch w-full">
+        <FriendSelection
+                selectedFriends={selectedFriends}
+                onFriendSelectionChange={setSelectedFriends}  
+                title="Collaborators"
+                emptyMessage="No friends found"
+                className="w-full"
+                forceFullHeight={false}
+                />  
+        </div>
       </div>
+    
       {/* Main content row */}
       <div className="flex flex-1 flex-row gap-6 min-h-[600px]">
         {/* Left: My Playlists */}
-        <Card className="flex-1 min-w-[300px]">
-          <CardHeader>
-            <CardTitle>My Playlists</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <MergePlaylistList
-              playlists={playlistMetas}
+        <MergePlaylistList
+              playlists={importedPlaylists.map(playlist => playlist.meta)}
               selectedPlaylistId={selectedMyPlaylist}
               onPlaylistSelect={setSelectedMyPlaylist}
               loading={isLoadingPlaylists}
             />
-          </CardContent>
-        </Card>
         {/* Center: Combined Tracks */}
         <Card className="flex-1 min-w-[300px]">
           <CardHeader>
@@ -220,19 +212,12 @@ export default function MergePlaylistsContent() {
           </CardContent>
         </Card>
         {/* Right: Friend Playlists */}
-        <Card className="flex-1 min-w-[300px]">
-          <CardHeader>
-            <CardTitle>Friend Playlists</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <MergePlaylistList
+        <MergePlaylistList
               playlists={friendsPlaylists.map(playlist => playlist.meta)}
               selectedPlaylistId={selectedFriendPlaylist}
               onPlaylistSelect={setSelectedFriendPlaylist}
-              loading={isLoadingPlaylists}
+              loading={true}
             />
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

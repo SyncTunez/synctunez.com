@@ -54,7 +54,7 @@ export function useLiveResource<T = any>({
     let cancelled = false;
     setLoading(true);
     setError(null);
-    console.log(fetchUrl);
+    
 
     fetch(fetchUrl)
       .then(async (res) => {

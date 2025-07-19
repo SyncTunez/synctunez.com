@@ -55,7 +55,7 @@ export function OnboardingContent() {
 
   const handleComplete = () => {
     // This is handled by the Step4InviteFriends component
-    console.log('Onboarding completed');
+    
   };
 
   const renderStep = () => {
