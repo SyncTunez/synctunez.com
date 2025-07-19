@@ -3,12 +3,13 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { PlaylistRow } from "@/components/ui/playlist/playlist-row";
 import { IconMusic, IconBrandSpotify, IconBrandApple, IconBrandYoutube, IconBrandTidal } from "@tabler/icons-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { MusicPlaylistMeta } from '@/lib/api/types';
 
 export interface MergePlaylistListProps {
   playlists: MusicPlaylistMeta[];
-  selectedPlaylistId?: number;
-  onPlaylistSelect: (playlistId: number) => void;
+  selectedPlaylistIds?: number[];
+  onPlaylistSelect: (playlistIds: number[]) => void;
   title?: string;
   emptyMessage?: string;
   className?: string;
@@ -20,7 +21,7 @@ export interface MergePlaylistListProps {
  */
 export const MergePlaylistList: React.FC<MergePlaylistListProps> = ({
   playlists,
-  selectedPlaylistId,
+  selectedPlaylistIds = [],
   onPlaylistSelect,
   title = "Playlists",
   emptyMessage = "No playlists found",
@@ -52,12 +53,29 @@ export const MergePlaylistList: React.FC<MergePlaylistListProps> = ({
     <Card className={className}>
       <CardHeader>
         <CardTitle className="text-lg flex items-center justify-between">
-          {title}
-          {selectedPlaylistId && (
-            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-              Selected
-            </span>
-          )}
+          <span>{title}</span>
+          <div className="flex items-center gap-2">
+            {playlists.length > 0 && (
+              <Checkbox
+                checked={selectedPlaylistIds.length === playlists.length && playlists.length > 0}
+                indeterminate={selectedPlaylistIds.length > 0 && selectedPlaylistIds.length < playlists.length}
+                onChange={(checked) => {
+                  if (checked) {
+                    onPlaylistSelect(playlists.map(p => p.id));
+                  } else {
+                    onPlaylistSelect([]);
+                  }
+                }}
+                aria-label="Select all playlists"
+                className="flex-shrink-0"
+              />
+            )}
+            {selectedPlaylistIds.length > 0 && (
+              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                {selectedPlaylistIds.length} selected
+              </span>
+            )}
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
@@ -85,10 +103,10 @@ export const MergePlaylistList: React.FC<MergePlaylistListProps> = ({
                 key={playlist.id}
                 imageUrl={playlist.image?.url}
                 defaultIcon={getServiceIcon(playlist.from)}
-                title={playlist.title}
+                title={playlist.title.length > 20 ? playlist.title.slice(0, 35) + '...' : playlist.title}
                 subtitle={`${formatTrackCount(playlist.trackNumber)} • ${playlist.owner}`}
-                selected={selectedPlaylistId === playlist.id}
-                onClick={() => onPlaylistSelect(playlist.id)}
+                selected={selectedPlaylistIds.includes(playlist.id)}
+                onClick={() => onPlaylistSelect([playlist.id])}
                 showRadioButton={true}
                 className="border-b border-border last:border-b-0"
               />

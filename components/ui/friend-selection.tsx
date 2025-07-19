@@ -68,33 +68,32 @@ const FriendRow: React.FC<FriendRowProps> = ({
   return (
     <div
       className={cn(
-        'text-left hover:bg-muted/30 py-2 px-4 sm:px-6 grid grid-cols-[auto_1fr_auto] items-center gap-2 cursor-pointer transition-colors',
+        'flex items-center justify-between p-4 hover:bg-accent/50 cursor-pointer min-w-0',
         selected ? 'bg-muted/30' : '',
+        'border-b border-border last:border-b-0',
         className,
       )}
       onClick={() => onToggle(friend.username, !selected)}
     >
-      <Checkbox
-        checked={selected}
-        onChange={(event) => onToggle(friend.username, event.target.checked)}
-        onClick={(e) => e.stopPropagation()}
-        aria-label={`Select ${friend.username}`}
-        className="flex-shrink-0"
-      />
-      
-      <Avatar className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
-        <ProfilePicture name={friend.username} profileUrl={friend.profilePicture} />
-        <AvatarFallback className="text-sm">{friend.username.slice(0, 2).toUpperCase()}</AvatarFallback>
-      </Avatar>
-
-      <div className="overflow-hidden">
-        <div className="text-base sm:text-lg font-medium truncate" title={friend.username}>
+      <div className="flex items-center gap-3 min-w-0 overflow-hidden">
+        <Avatar>
+          <ProfilePicture name={friend.username} profileUrl={friend.profilePicture} />
+          <AvatarFallback>{friend.username.slice(0, 2).toUpperCase()}</AvatarFallback>
+        </Avatar>
+        <span className="font-medium truncate">
           {friend.username.charAt(0).toUpperCase() + friend.username.slice(1)}
-        </div>
-        <div className="text-sm text-muted-foreground/80 truncate">
-          Added {new Date(friend.addTime).toLocaleDateString()}
-        </div>
+        </span>
       </div>
+
+      {selected ? (
+        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+          <svg className="w-3 h-3 sm:w-4 sm:h-4 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+      ) : (
+        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-muted-foreground/30 flex-shrink-0" />
+      )}
     </div>
   );
 };
@@ -156,49 +155,49 @@ export default function FriendSelection({
     : 'flex flex-col w-full';
 
   return (
-    <div className={cn(cardClassName, className)}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-medium">{title}</h3>
-        {friends.length > 0 && (
-          <div className="flex items-center gap-2">
-            <Checkbox
-              checked={allSelected}
-              indeterminate={someSelected}
-              onChange={handleSelectAll}
-              aria-label="Select all friends"
-              className="flex-shrink-0"
-            />
-            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-              {selectedFriends.length} of {friends.length} selected
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Content Area - matching onboarding style */}
-      <div className="bg-card/80 rounded-lg border border-muted-foreground/20 w-full">
-        <ScrollArea className="h-[320px] w-full rounded-md">
-          {loading ? (
-            <div className="py-2">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="flex items-center gap-2 py-2 px-4 sm:px-6 grid grid-cols-[auto_1fr_auto]">
-                  <Skeleton className="w-4 h-4 rounded flex-shrink-0" />
-                  <Skeleton className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex-shrink-0" />
-                  <div className="space-y-2 pl-2">
-                    <Skeleton className="h-6 w-[200px]" />
-                    <Skeleton className="h-4 w-[140px]" />
-                  </div>
-                </div>
-              ))}
+    <Card className={cn(cardClassName, className)}>
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center justify-between">
+          {title}
+          {friends.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={allSelected}
+                indeterminate={someSelected}
+                onChange={handleSelectAll}
+                aria-label="Select all friends"
+                className="flex-shrink-0"
+              />
+              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                {selectedFriends.length} of {friends.length} selected
+              </span>
             </div>
-          ) : friends.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground">
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-0">
+        {loading ? (
+          <div className="max-h-[500px] overflow-y-auto">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex items-center justify-between p-4">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="w-10 h-10 rounded-full flex-shrink-0" />
+                  <Skeleton className="h-4 w-[150px]" />
+                </div>
+                <Skeleton className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex-shrink-0" />
+              </div>
+            ))}
+          </div>
+        ) : friends.length === 0 ? (
+          <div className="flex items-center justify-center h-32 text-muted-foreground px-4">
+            <div className="text-center">
               <IconUser className="w-8 h-8 mx-auto mb-2" />
               <p>{emptyMessage}</p>
             </div>
-          ) : (
-            <div className="py-2">
+          </div>
+        ) : (
+          <ScrollArea className="h-full min-h-0 max-h-[450px] sm:max-h-[550px]">
+            <div className="divide-y min-w-0">
               {friends.map((friend) => (
                 <FriendRow
                   key={friend.username}
@@ -208,10 +207,10 @@ export default function FriendSelection({
                 />
               ))}
             </div>
-          )}
-        </ScrollArea>
-      </div>
-    </div>
+          </ScrollArea>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
