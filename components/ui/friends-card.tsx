@@ -114,6 +114,14 @@ type FriendEntry = {
 
 export default function FriendsCard({ forceFullHeight = false }: { forceFullHeight?: boolean }) {
   const userContext = useContext(UserContext) as UserContextType
+  console.log('FriendsCard - userContext:', userContext);
+  console.log('FriendsCard - userContext?.userAccount:', userContext?.userAccount);
+  console.log('FriendsCard - userContext?.userAccount?.username:', userContext?.userAccount?.username);
+  
+  // Add a simple test to see if we can access the context at all
+  if (!userContext) {
+    console.error('FriendsCard - UserContext is null! This means the component is not wrapped in UserContext.Provider');
+  }
 
   const [friends, setFriends] = useState<Array<Friend>>([])
   const [loading, setLoading] = useState(true)

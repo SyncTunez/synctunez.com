@@ -16,7 +16,11 @@ const SecureContent: React.FC<SecureContentProps> = ({
                                                          fallback,
                                                          children,
                                                      }) => {
+    console.log('SecureContent - userSession:', userSession);
+    console.log('SecureContent - userAccount:', userAccount);
+    
     if (userSession && userAccount) {
+        console.log('SecureContent - Providing UserContext with:', { userSession, userAccount });
         return (
             <UserContext.Provider value={{ userSession, userAccount }}>
                 {children}
@@ -24,6 +28,7 @@ const SecureContent: React.FC<SecureContentProps> = ({
         );
     }
 
+    console.log('SecureContent - Showing fallback');
     return <>{fallback}</>;
 };
 

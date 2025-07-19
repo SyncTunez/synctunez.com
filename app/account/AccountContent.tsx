@@ -15,15 +15,15 @@ import { PlaylistSection, PlaylistSectionSkeleton } from "@/components/ui/playli
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { FriendsCardSkeleton } from '@/components/ui/friends-card';
-
-const FriendsCard = dynamic(() => import('@/components/ui/friends-card'), { 
-  ssr: false,
-  loading: () => <FriendsCardSkeleton forceFullHeight />
-});
+import FriendsCard from '@/components/ui/friends-card';
 
 export default function AccountContent() {
     const userContext = React.useContext(UserContext) as UserContextType | null;
     const userAccount = userContext?.userAccount;
+    
+    console.log('AccountContent - userContext:', userContext);
+    console.log('AccountContent - userAccount:', userAccount);
+    console.log('AccountContent - userAccount?.username:', userAccount?.username);
     const searchParams = useSearchParams();
     const tabParam = searchParams.get('tab');
     const tabIndex = tabParam === 'billing' ? 1 : 0;
