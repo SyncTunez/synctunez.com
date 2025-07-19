@@ -17,8 +17,9 @@ import { CheckCircle, XCircle } from "lucide-react";
 import { AxiosError } from 'axios';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, SubmitHandler } from "react-hook-form"
-import { z } from "zod"
 import { toast } from "sonner";
+import { RegisterFormSchema } from "@/lib/api/schemas";
+import type { z } from "zod";
 
 import {
   Form,
@@ -31,11 +32,7 @@ import {
 } from "@/components/ui/form"
 import {authorized, buildUrl} from "@/lib/api/apiClient";
 
-const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-});
+
 
 export default function RegisterModal({ userSession, userAccountRaw }: { userSession: string | null; userAccountRaw: string | null; }) {
 
@@ -43,8 +40,8 @@ export default function RegisterModal({ userSession, userAccountRaw }: { userSes
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [dialogErrorMessage, setDialogErrorMessage] = useState<string | null>(null);
   
-  const form = useForm<z.infer<typeof FormSchema>, unknown, z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof RegisterFormSchema>, unknown, z.infer<typeof RegisterFormSchema>>({
+    resolver: zodResolver(RegisterFormSchema),
     defaultValues: {
       username: "",
     },
@@ -52,7 +49,7 @@ export default function RegisterModal({ userSession, userAccountRaw }: { userSes
 
   const username = form.watch("username");
 
-  const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
+  const onSubmit: SubmitHandler<z.infer<typeof RegisterFormSchema>> = async (data) => {
     try {
       const response = await authorized.get(buildUrl("/register", { username: data.username }));
       if (response.status === 200) {

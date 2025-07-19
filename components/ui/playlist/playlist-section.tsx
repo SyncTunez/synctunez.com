@@ -504,7 +504,7 @@ export function PlaylistSection({
                                     </div>
                                 ))
                             ) : !importedView ? (
-                                mainPlaylists.map(playlist => (
+                                mainPlaylists.length > 0 && mainPlaylists.map(playlist => (
                                     <ContextMenu key={playlist.id}>
                                         <ContextMenuTrigger asChild>
                                             <PlaylistRow
@@ -517,6 +517,25 @@ export function PlaylistSection({
                                                 })()}
                                                 selected={selectedMainPlaylistId === playlist.id}
                                                 onClick={() => onMainPlaylistSelect(playlist.id)}
+                                                rightElement={
+                                                    <div 
+                                                        className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center mr-2 flex-shrink-0 cursor-pointer ${
+                                                            selectedMainPlaylistId === playlist.id 
+                                                                ? 'bg-primary' 
+                                                                : 'border-2 border-muted-foreground/30 hover:border-muted-foreground/50'
+                                                        }`}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            onMainPlaylistSelect(playlist.id);
+                                                        }}
+                                                    >
+                                                        {selectedMainPlaylistId === playlist.id && (
+                                                            <svg className="w-3 h-3 sm:w-4 sm:h-4 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        )}
+                                                    </div>
+                                                }
                                             />
                                         </ContextMenuTrigger>
                                         <ContextMenuContent>

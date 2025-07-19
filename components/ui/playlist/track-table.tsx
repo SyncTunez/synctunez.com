@@ -78,13 +78,7 @@ export const TrackTable: React.FC<TrackTableProps> = ({
 
     // Define column widths depending on visible columns, must total <= 100%
     const colGroup = (
-        <colgroup>
-            {showCover && <col style={{ width: '60px' }} />}  {/* Increased from 40px to 60px for more space */}
-            <col style={{ width: showAlbum ? '30%' : '40%' }} />
-            {showArtist && <col style={{ width: '20%' }} />}
-            {showAlbum && <col style={{ width: '30%' }} />}
-            {showDuration && <col style={{ width: '60px' }} />}  {/* Increased from 40px to 60px for more space */}
-        </colgroup>
+        <colgroup>{showCover && <col style={{ width: '60px' }} />}<col style={{ width: showAlbum ? '30%' : '40%' }} />{showArtist && <col style={{ width: '20%' }} />}{showAlbum && <col style={{ width: '30%' }} />}{showDuration && <col style={{ width: '60px' }} />}</colgroup>
     );
 
     return (

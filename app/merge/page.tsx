@@ -1,12 +1,17 @@
 'use client';
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { PlaylistSection } from "@/components/ui/playlist/playlist-section";
+import { MergePlaylistList } from "@/components/ui/playlist/merge-playlist-list";
 import { TrackTable } from "@/components/ui/playlist/track-table";
 import FriendsCard from "@/components/ui/friends-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useLiveResourceJson } from "@/hooks/useLiveResource";
+import { MusicPlaylistImportResult, MusicPlaylistMeta } from "@/lib/api/types";
+import { buildUrl } from "@/lib/api/apiClient";
+import { MusicPlaylistImportResultSchema } from "@/lib/api/schemas";
+import { useServerEvents } from "@/lib/api/ServerEvents";
 
 // Placeholder data
 const myPlaylists = [
@@ -22,16 +27,74 @@ const combinedTracks = [
   { hash: "2", name: "Song 2", album: { name: "Album 2", images: [{ url: "/icon.png" }] }, artists: [{ name: "Artist 2" }], durationMs: 200000 },
 ];
 
+
 export default function MergePlaylistsPage() {
-  const [selectedMyPlaylist, setSelectedMyPlaylist] = useState<number | undefined>(myPlaylists[0]?.id);
-  const [selectedFriendPlaylist, setSelectedFriendPlaylist] = useState<number | undefined>(friendsPlaylists[0]?.id);
+  const [selectedMyPlaylist, setSelectedMyPlaylist] = useState<number | undefined>(undefined);
+  const [selectedFriendPlaylist, setSelectedFriendPlaylist] = useState<number | undefined>(undefined);
   const [playlistName, setPlaylistName] = useState("");
   const [playlistDesc, setPlaylistDesc] = useState("");
   const [playlistImage, setPlaylistImage] = useState<string | undefined>(undefined);
   const [editingTitle, setEditingTitle] = useState(false);
   const [editingDesc, setEditingDesc] = useState(false);
+  const [loadedPlaylists, setLoadedPlaylists] = useState(false);
+  const [hasStartedLoadingMyPlaylists, setHasStartedLoadingMyPlaylists] = useState(false);
   const titleInputRef = useRef(null);
   const descTextareaRef = useRef(null);
+  const [importingPlaylist, setImportingPlaylist] = useState<string | null>(null);
+  const [selectedSpotifyPlaylistId, setSelectedSpotifyPlaylistId] = useState<string | undefined>(undefined);
+
+  const [importedPlaylists, setImportedPlaylists] = useState<Array<MusicPlaylistImportResult>>([]);
+  const [friendsPlaylists, setFriendsPlaylists] = useState<Array<MusicPlaylistImportResult>>([]);
+  
+  const [selectedFriends, setSelectedFriends] = useState<Array<string>>(["jackery"]);
+  const [loadedFriends, setLoadedFriends] = useState<Array<string>>([]);
+  const [hasStartedLoadingFriendPlaylists, setHasStartedLoadingFriendPlaylists] = useState(false);
+
+  // Extract MusicPlaylistMeta from imported playlists
+  const playlistMetas: MusicPlaylistMeta[] = importedPlaylists.map(playlist => playlist.meta);
+  
+
+  useEffect(() => {
+    console.log("Loading playlists");
+    let eventSource: EventSource | null = null;
+    
+    const loadPlaylists = async () => {
+      try {
+        eventSource = await useServerEvents<Array<MusicPlaylistImportResult>>(
+          buildUrl(`music/playlists`), 
+          'ImportedPlaylists', 
+          MusicPlaylistImportResultSchema.array(), 
+          (data) => {
+            console.log("Received playlist data:", data);
+            setImportedPlaylists(data);
+          }
+        );
+      } catch (error) {
+        console.error("Failed to connect to SSE:", error);
+      }
+    };
+  
+    loadPlaylists();
+  
+    // Cleanup function to close the connection when component unmounts
+    return () => {
+      if (eventSource) {
+        console.log("Closing SSE connection");
+        eventSource.close();
+      }
+    };
+  }, []);
+
+
+// useEffect(() => {
+//   selectedFriends.forEach(friend => {
+//       useServerEvents(buildUrl(`music/playlists?friends=${friend}`), 'ImportedPlaylists', MusicPlaylistImportResultSchema.array(), (data) => {
+//         setFriendsPlaylists(previous => [...previous, ...data]);
+//       }).then((eventSource) => {
+//         eventSource.close();
+//       });
+//   });
+// }, [selectedFriends]);
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-[1600px] mx-auto py-8">
@@ -74,7 +137,7 @@ export default function MergePlaylistsPage() {
                       onKeyDown={e => {
                         if (e.key === 'Enter') setEditingTitle(false);
                       }}
-                      className="h-16 text-xl font-semibold w-full"
+                      className="h-16 text-xl font-semibold w-full border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent px-2"
                       autoFocus
                       placeholder="Enter playlist title"
                     />
@@ -126,15 +189,14 @@ export default function MergePlaylistsPage() {
       </div>
       {/* Main content row */}
       <div className="flex flex-1 flex-row gap-6 min-h-[600px]">
-        {/* Left: PlaylistSection only */}
+        {/* Left: My Playlists */}
         <div className="flex-1 min-w-[260px] max-w-xs flex flex-col">
-          <PlaylistSection
-            mainPlaylists={myPlaylists}
-            mainTracks={[]}
-            mainPlaylistsLoading={false}
-            selectedMainPlaylistId={undefined}
-            onMainPlaylistSelect={() => {}}
-            hideTracksSection={true}
+          <MergePlaylistList
+            playlists={playlistMetas}
+            selectedPlaylistId={selectedMyPlaylist}
+            onPlaylistSelect={setSelectedMyPlaylist}
+            title="My Playlists"
+            emptyMessage="No playlists imported yet"
           />
         </div>
         {/* Center: Playlist Preview */}
@@ -151,15 +213,14 @@ export default function MergePlaylistsPage() {
             <Button size="lg" className="w-1/2">Export to Spotify</Button>
           </div>
         </div>
-        {/* Right: PlaylistSection only, match left width */}
+        {/* Right: Friend's Playlists */}
         <div className="flex-1 min-w-[260px] max-w-xs flex flex-col">
-          <PlaylistSection
-            mainPlaylists={friendsPlaylists}
-            mainTracks={[]}
-            mainPlaylistsLoading={false}
-            selectedMainPlaylistId={undefined}
-            onMainPlaylistSelect={() => {}}
-            hideTracksSection={true}
+          <MergePlaylistList
+            playlists={friendsPlaylists.map(playlist => playlist.meta)}
+            selectedPlaylistId={selectedFriendPlaylist}
+            onPlaylistSelect={setSelectedFriendPlaylist}
+            title="Friend's Playlists"
+            emptyMessage="No friend playlists available"
           />
         </div>
       </div>

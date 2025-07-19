@@ -24,7 +24,8 @@ import { IconUserPlus, IconShare, IconHeart, IconChevronDown, IconUser } from "@
 import { toast } from 'sonner'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import * as z from "zod"
+import { AddFriendFormSchema } from "@/lib/api/schemas";
+import type { z } from "zod";
 import {
   CommandDialog,
   CommandInput,
@@ -97,9 +98,7 @@ type FilterMode = typeof FILTER_MODES[keyof typeof FILTER_MODES];
 
 const LOCAL_STORAGE_KEY = 'favoriteFriends';
 
-const formSchema = z.object({
-  username: z.string().min(1, "Username is required").max(50),
-});
+
 
 // Add types for API response and friend entry
 type FriendApiResponse = {
@@ -160,8 +159,8 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
     }
   });
 
-  const form = useForm<z.infer<typeof formSchema>, unknown, z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof AddFriendFormSchema>, unknown, z.infer<typeof AddFriendFormSchema>>({
+    resolver: zodResolver(AddFriendFormSchema),
     defaultValues: { username: '' },
   })
 
@@ -195,7 +194,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
   const openModal = (mode: 'add' | 'remove' | 'share', defaultName = '') => {
     setModalMode(mode);
     if (mode === 'remove') {
-      form.setValue('username' as keyof z.infer<typeof formSchema>, defaultName as z.infer<typeof formSchema>["username"]);
+      form.setValue('username', defaultName);
     } else {
       form.reset();
     }
@@ -214,7 +213,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
     setShowModal(true);
   };
 
-  const handleFriendAction = async (values: z.infer<typeof formSchema>) => {
+  const handleFriendAction = async (values: z.infer<typeof AddFriendFormSchema>) => {
     setProcessing(true);
     let res = undefined;
     let error = undefined;
