@@ -527,32 +527,32 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
               onValueChange={setAddFriendSearch}
               aria-label="Add friend username"
           />
-          <CommandList>
-            <CommandGroup heading="Suggested">
-              {addFriendSearch ? (
-              friendSuggestions.length > 0 ? (
-                  friendSuggestions.map((friend) => (
-                    <CommandItem
-                      key={friend.username}
-                      onSelect={() => setSelectedFriend(friend.username)}
-                      disabled={processing}
-                    >
-                      <Avatar className="h-7 w-7">
-                        <ProfilePicture name={friend.username} profileUrl={friend.profilePicture} />
-                        <AvatarFallback>{friend.username.slice(0, 2).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                      <span className="font-medium text-base truncate">
-                        {friend.username.charAt(0).toUpperCase() + friend.username.slice(1)}
-                      </span>
-                    </CommandItem>
-                  ))
+                      <CommandList>
+              <CommandGroup heading="Suggested">
+                {addFriendSearch ? (
+                  friendSuggestions.length > 0 ? (
+                    friendSuggestions.map((friend) => (
+                      <CommandItem
+                        key={friend.username}
+                        onSelect={() => setSelectedFriend(friend.username)}
+                        disabled={processing}
+                      >
+                        <Avatar className="h-7 w-7">
+                          <ProfilePicture name={friend.username} profileUrl={friend.profilePicture} />
+                          <AvatarFallback>{friend.username.slice(0, 2).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <span className="font-medium text-base truncate">
+                          {friend.username.charAt(0).toUpperCase() + friend.username.slice(1)}
+                        </span>
+                      </CommandItem>
+                    ))
+                  ) : (
+                    <div className="px-4 py-2 text-muted-foreground text-sm">No suggestions</div>
+                  )
                 ) : (
-                  <div className="px-4 py-2 text-muted-foreground text-sm">No suggestions</div>
-                )
-              ) : (
-                <div className="px-4 py-2 text-muted-foreground text-sm">Start typing to find friends...</div>
-              )}
-            </CommandGroup>
+                  <div className="px-4 py-2 text-muted-foreground text-sm">Start typing to find friends...</div>
+                )}
+              </CommandGroup>
           </CommandList>
           {selectedFriend && (
             <div className="flex flex-col items-center gap-2 p-4 border-t">
@@ -566,7 +566,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
                 </span>
               </div>
               <Button
-                className="w-full mt-2"
+                className="w-full mt-2 hover:text-white"
                 disabled={processing}
                 onClick={async () => {
                   if (!selectedFriend) return;
