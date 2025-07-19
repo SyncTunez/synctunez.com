@@ -24,7 +24,7 @@ import { IconUserPlus, IconShare, IconHeart, IconChevronDown, IconUser } from "@
 import { toast } from 'sonner'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { AddFriendFormSchema } from "@/lib/api/schemas";
+import { AddFriendFormSchema, Friend, FriendSchema, MusicPlaylistImportFriendResult } from "@/lib/api/schemas";
 import type { z } from "zod";
 import {
   CommandDialog,
@@ -42,6 +42,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { useLiveResourceJson } from '@/hooks/useLiveResource'
 import QRCodeWithLogo from "@/components/ui/QRCodeWithLogo";
+import { useServerEvents } from '@/lib/api/ServerEvents'
 
 // FriendsCardSkeleton component to prevent layout shifts
 export function FriendsCardSkeleton({ forceFullHeight = false }: { forceFullHeight?: boolean }) {
@@ -114,7 +115,7 @@ type FriendEntry = {
 export default function FriendsCard({ forceFullHeight = false }: { forceFullHeight?: boolean }) {
   const userContext = useContext(UserContext) as UserContextType
 
-  const [friends, setFriends] = useState<Map<string, FriendEntry>>(new Map())
+  const [friends, setFriends] = useState<Array<Friend>>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [processing, setProcessing] = useState(false)
@@ -138,19 +139,53 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
 
 
   // Change friendSuggestions to a map
-  const [friendSuggestions, setFriendSuggestions] = useState<Record<string, string>>({});
+  const [friendSuggestions, setFriendSuggestions] = useState<Array<Friend>>([]);
 
-  useLiveResourceJson<Record<string, string>>({
-    fetchUrl: buildUrl('account/search', { q: debouncedAddFriendSearch }),
-    eventName: 'AccountSearch',
-    reconnectIntervalMs: 5000,
-    shouldProcess: !!debouncedAddFriendSearch && debouncedAddFriendSearch.length > 0,
-    onMessage: (newData) => {
-      if (!newData || typeof newData !== 'object' || Object.keys(newData).length === 0) return;
-      setFriendSuggestions(prev => ({ ...prev, ...newData }));
-    },
-  });
+  // Import friend playlists
+  useEffect(() => {
+    let eventSource: EventSource | null = null;
+    
+    const loadFriends = async () => {
+      console.log("loading friends!")
+        eventSource = await useServerEvents(
+          buildUrl(`account/search?q=${debouncedAddFriendSearch}`), 
+          'AccountSearch', 
+          FriendSchema.array(), 
+          (data) => {
+            setFriendSuggestions(data);
+          }
+        );
+    };
+  
+    loadFriends();
+  
+    // Cleanup function to close the connection when component unmounts
+    return () => { eventSource?.close() };
+  }, [debouncedAddFriendSearch]);
 
+  useEffect(() => {
+    let eventSource: EventSource | null = null;
+    
+    const loadFriends = async () => {
+      console.log("loading friends!")
+        eventSource = await useServerEvents(
+          buildUrl(`account/search?q=${debouncedAddFriendSearch}`), 
+          'AccountSearch', 
+          FriendSchema.array(), 
+          (data) => {
+            console.log("loaded friends!")
+            setFriends((old) => [...old, ...data]);
+            setLoading(false);
+          }
+        );
+    };
+  
+    loadFriends();
+  
+    // Cleanup function to close the connection when component unmounts
+    return () => { eventSource?.close() };
+  }, []);
+  
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
       return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
@@ -166,30 +201,6 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
 
   // State to control when SSE is active for friends
   const [friendsLiveEnabled, setFriendsLiveEnabled] = useState(true);
-
-  // Fetch friends via SSE, only when friendsLiveEnabled is true
-  useLiveResourceJson<FriendApiResponse[]>({
-    fetchUrl: buildUrl('account/friends'),
-    eventName: 'AccountFriends',
-    reconnectIntervalMs: 5000,
-    shouldProcess: friendsLiveEnabled,
-    onMessage: async (friendsArray) => {
-      if (!Array.isArray(friendsArray)) return;
-      const enrichedEntries: [string, FriendEntry][] = await Promise.all(
-        friendsArray.map(async ({ username, addTime }) => {
-          const profileUrl = await buildUrl(`account/profilePicture?profile=${encodeURIComponent(username)}`);
-          return [username, { timestamp: addTime, profileUrl }];
-        })
-      );
-      setFriends(new Map<string, FriendEntry>(enrichedEntries));
-      setLoading(false);
-      setFriendsLiveEnabled(false); // Disable after one fetch
-    },
-    onFail: () => {
-      setLoading(false);
-      setFriendsLiveEnabled(false);
-    },
-  });
 
   const openModal = (mode: 'add' | 'remove' | 'share', defaultName = '') => {
     setModalMode(mode);
@@ -263,20 +274,20 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
   };
 
   // Filtering and sorting friends based on search and filter mode
-  const filteredFriends = Array.from(friends.entries())
-    .filter(([name, _entry]: [string, FriendEntry]) => name.toLowerCase().includes(searchQuery.toLowerCase()))
-    .filter(([name, _entry]: [string, FriendEntry]) => {
+  const filteredFriends = friends
+    .filter((friend) => friend.username.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter((friend) => {
       if (filterMode === FILTER_MODES.FAVORITES) {
-        return favorites.includes(name);
+        return favorites.includes(friend.username);
       }
       return true;
     })
-    .sort(([nameA, a], [nameB, b]) => {
+    .sort((a, b) => {
       switch (filterMode) {
         case FILTER_MODES.RECENT:
-          return b.timestamp - a.timestamp;
+          return b.addTime - a.addTime;
         case FILTER_MODES.ALPHABETICAL:
-          return nameA.localeCompare(nameB);
+          return a.username.localeCompare(b.username);
         default:
           return 0;
       }
@@ -430,18 +441,18 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
           ) : (
               <ScrollArea className="h-full min-h-0 max-h-[450px] sm:max-h-[550px]">
                 <div className="divide-y min-w-0">
-                  {filteredFriends.map(([name, { profileUrl }]) => (
-                      <ContextMenu key={name}>
+                  {filteredFriends.map((friend) => (
+                      <ContextMenu key={friend.username}>
                         <ContextMenuTrigger asChild>
                           <div className="flex items-center justify-between p-4 hover:bg-accent/50 cursor-pointer min-w-0">
                             <div className="flex items-center gap-3 min-w-0 overflow-hidden">
                               <Avatar>
-                                <ProfilePicture name={name} profileUrl={profileUrl} />
-                                <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                                <ProfilePicture name={friend.username} profileUrl={friend.profilePicture} />
+                                <AvatarFallback>{friend.username.slice(0, 2).toUpperCase()}</AvatarFallback>
                               </Avatar>
                               <span className="font-medium truncate">
-                          {name.charAt(0).toUpperCase() + name.slice(1)}
-                        </span>
+                                {friend.username.charAt(0).toUpperCase() + friend.username.slice(1)}
+                              </span>
                             </div>
                             <div className="flex items-center gap-2 flex-shrink-0">
                               <Tooltip>
@@ -449,12 +460,12 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
                                   <Button
                                       variant="ghost"
                                       size="icon"
-                                      onClick={() => toggleFavorite(name)}
-                                      aria-label={favorites.includes(name) ? 'Remove from Favorites' : 'Add to Favorites'}
+                                      onClick={() => toggleFavorite(friend.username)}
+                                      aria-label={favorites.includes(friend.username) ? 'Remove from Favorites' : 'Add to Favorites'}
                                   >
                                     <IconHeart
                                         className={`h-4 w-4 ${
-                                            favorites.includes(name)
+                                            favorites.includes(friend.username)
                                                 ? 'fill-current text-red-500'
                                                 : 'text-muted-foreground'
                                         }`}
@@ -462,7 +473,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  {favorites.includes(name)
+                                  {favorites.includes(friend.username)
                                       ? 'Remove from Favorites'
                                       : 'Add to Favorites'}
                                 </TooltipContent>
@@ -486,7 +497,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
                           </div>
                         </ContextMenuTrigger>
                         <ContextMenuContent>
-                          <ContextMenuItem variant="destructive" onClick={() => openModal('remove', name)}>
+                          <ContextMenuItem variant="destructive" onClick={() => openModal('remove', friend.username)}>
                             Remove Friend
                           </ContextMenuItem>
                         </ContextMenuContent>
@@ -519,19 +530,19 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
           <CommandList>
             <CommandGroup heading="Suggested">
               {addFriendSearch ? (
-                Object.keys(friendSuggestions).length > 0 ? (
-                  Object.entries(friendSuggestions).map(([name, profileUrl]: [string, string]) => (
+              friendSuggestions.length > 0 ? (
+                  friendSuggestions.map((friend) => (
                     <CommandItem
-                      key={name}
-                      onSelect={() => setSelectedFriend(name)}
+                      key={friend.username}
+                      onSelect={() => setSelectedFriend(friend.username)}
                       disabled={processing}
                     >
                       <Avatar className="h-7 w-7">
-                        <ProfilePicture name={name} profileUrl={profileUrl} />
-                        <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                        <ProfilePicture name={friend.username} profileUrl={friend.profilePicture} />
+                        <AvatarFallback>{friend.username.slice(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <span className="font-medium text-base truncate">
-                        {name.charAt(0).toUpperCase() + name.slice(1)}
+                        {friend.username.charAt(0).toUpperCase() + friend.username.slice(1)}
                       </span>
                     </CommandItem>
                   ))
@@ -547,7 +558,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
             <div className="flex flex-col items-center gap-2 p-4 border-t">
               <div className="flex items-center gap-3">
                 <Avatar className="h-8 w-8">
-                  <ProfilePicture name={selectedFriend} profileUrl={friendSuggestions[selectedFriend] || ''} />
+                  <ProfilePicture name={selectedFriend} profileUrl={friendSuggestions.filter(friend => friend.username === selectedFriend)[0].profilePicture || ''} />
                   <AvatarFallback>{selectedFriend.slice(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <span className="font-medium text-base truncate">

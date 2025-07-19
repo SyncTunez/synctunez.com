@@ -73,8 +73,15 @@ export const MusicPlaylistMetaSchema = z.object({
   inSync: z.boolean().optional(),
 });
 
-export const MusicPlaylistImportResultSchema = z.object({
+  export const MusicPlaylistImportResultSchema = z.object({
+    status: z.string(),
+    meta: MusicPlaylistMetaSchema,
+    tracks: z.array(MusicTrackSchema),
+  });
+
+export const MusicPlaylistImportFriendResultSchema = z.object({
   status: z.string(),
+  friend: z.string(),
   meta: MusicPlaylistMetaSchema,
   tracks: z.array(MusicTrackSchema),
 });
@@ -115,6 +122,13 @@ export const FriendApiResponseSchema = z.object({
   addTime: z.number(),
 });
 
+export const FriendSchema = z.object({
+  username: z.string(),
+  profilePicture: z.string(),
+  addTime: z.number(),
+  favourite: z.boolean(),
+});
+
 export const FriendEntrySchema = z.object({
   timestamp: z.number(),
   profileUrl: z.string(),
@@ -133,8 +147,10 @@ export type SpotifyAccount = z.infer<typeof SpotifyAccountSchema>;
 export type MusicTrack = z.infer<typeof MusicTrackSchema>;
 export type MusicPlaylistMeta = z.infer<typeof MusicPlaylistMetaSchema>;
 export type MusicPlaylistImportResult = z.infer<typeof MusicPlaylistImportResultSchema>;
+export type MusicPlaylistImportFriendResult = z.infer<typeof MusicPlaylistImportFriendResultSchema>;
 export type UserAccountProps = z.infer<typeof UserAccountPropsSchema>;
 export type UserAccount = z.infer<typeof UserAccountSchema>;
 export type FriendApiResponse = z.infer<typeof FriendApiResponseSchema>;
+export type Friend = z.infer<typeof FriendSchema>;
 export type FriendEntry = z.infer<typeof FriendEntrySchema>;
 export type AccountSearchResponse = z.infer<typeof AccountSearchResponseSchema>; 

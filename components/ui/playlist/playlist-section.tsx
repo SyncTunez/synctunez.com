@@ -43,6 +43,7 @@ interface PlaylistSectionProps {
     selectedMainPlaylistId: number | undefined;
     onMainPlaylistSelect: (id?: number) => void;
     hideTracksSection?: boolean;
+    showRadioButtons?: boolean;
 }
 
 type Service = 'spotify' | 'apple' | 'youtube' | 'tidal';
@@ -346,6 +347,7 @@ export function PlaylistSection({
                                     selectedMainPlaylistId,
                                     onMainPlaylistSelect,
                                     hideTracksSection = false,
+                                    showRadioButtons = false,
                                 }: PlaylistSectionProps) {
 
     const router = useRouter();
@@ -517,7 +519,7 @@ export function PlaylistSection({
                                                 })()}
                                                 selected={selectedMainPlaylistId === playlist.id}
                                                 onClick={() => onMainPlaylistSelect(playlist.id)}
-                                                rightElement={
+                                                rightElement={showRadioButtons ? (
                                                     <div 
                                                         className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center mr-2 flex-shrink-0 cursor-pointer ${
                                                             selectedMainPlaylistId === playlist.id 
@@ -535,7 +537,7 @@ export function PlaylistSection({
                                                             </svg>
                                                         )}
                                                     </div>
-                                                }
+                                                ) : undefined}
                                             />
                                         </ContextMenuTrigger>
                                         <ContextMenuContent>

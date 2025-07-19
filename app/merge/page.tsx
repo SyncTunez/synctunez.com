@@ -10,18 +10,9 @@ import { Input } from "@/components/ui/input";
 import { useLiveResourceJson } from "@/hooks/useLiveResource";
 import { MusicPlaylistImportResult, MusicPlaylistMeta } from "@/lib/api/types";
 import { buildUrl } from "@/lib/api/apiClient";
-import { MusicPlaylistImportResultSchema } from "@/lib/api/schemas";
+import { MusicPlaylistImportFriendResult, MusicPlaylistImportFriendResultSchema, MusicPlaylistImportResultSchema } from "@/lib/api/schemas";
 import { useServerEvents } from "@/lib/api/ServerEvents";
 
-// Placeholder data
-const myPlaylists = [
-  { id: 1, title: "My Playlist 1", image: { url: "/icon.png" }, from: "spotify" },
-  { id: 2, title: "My Playlist 2", image: { url: "/icon.png" }, from: "spotify" },
-];
-const friendsPlaylists = [
-  { id: 3, title: "Friend's Playlist 1", image: { url: "/icon.png" }, from: "spotify" },
-  { id: 4, title: "Friend's Playlist 2", image: { url: "/icon.png" }, from: "spotify" },
-];
 const combinedTracks = [
   { hash: "1", name: "Song 1", album: { name: "Album 1", images: [{ url: "/icon.png" }] }, artists: [{ name: "Artist 1" }], durationMs: 180000 },
   { hash: "2", name: "Song 2", album: { name: "Album 2", images: [{ url: "/icon.png" }] }, artists: [{ name: "Artist 2" }], durationMs: 200000 },
@@ -45,6 +36,7 @@ export default function MergePlaylistsPage() {
 
   const [importedPlaylists, setImportedPlaylists] = useState<Array<MusicPlaylistImportResult>>([]);
   const [friendsPlaylists, setFriendsPlaylists] = useState<Array<MusicPlaylistImportResult>>([]);
+  const [isLoadingPlaylists, setIsLoadingPlaylists] = useState(true);
   
   const [selectedFriends, setSelectedFriends] = useState<Array<string>>(["jackery"]);
   const [loadedFriends, setLoadedFriends] = useState<Array<string>>([]);
@@ -55,11 +47,11 @@ export default function MergePlaylistsPage() {
   
 
   useEffect(() => {
-    console.log("Loading playlists");
     let eventSource: EventSource | null = null;
     
     const loadPlaylists = async () => {
       try {
+        setIsLoadingPlaylists(true);
         eventSource = await useServerEvents<Array<MusicPlaylistImportResult>>(
           buildUrl(`music/playlists`), 
           'ImportedPlaylists', 
@@ -67,10 +59,12 @@ export default function MergePlaylistsPage() {
           (data) => {
             console.log("Received playlist data:", data);
             setImportedPlaylists(data);
+            setIsLoadingPlaylists(false);
           }
         );
       } catch (error) {
         console.error("Failed to connect to SSE:", error);
+        setIsLoadingPlaylists(false);
       }
     };
   
@@ -80,6 +74,34 @@ export default function MergePlaylistsPage() {
     return () => { eventSource?.close() };
   }, []);
 
+  // Import friend playlists
+  useEffect(() => {
+    let eventSource: EventSource | null = null;
+    
+    const loadPlaylists = async () => {
+      try {
+        setIsLoadingPlaylists(true);
+        eventSource = await useServerEvents<Array<MusicPlaylistImportFriendResult>>(
+          buildUrl(`music/playlists/friends?q=${selectedFriends.join(',')}`), 
+          'ImportedPlaylistFriend', 
+          MusicPlaylistImportFriendResultSchema.array(), 
+          (data) => {
+            console.log("Received friend playlist data:", data);
+            setFriendsPlaylists(data);
+            setIsLoadingPlaylists(false);
+          }
+        );
+      } catch (error) {
+        console.error("Failed to connect to SSE:", error);
+        setIsLoadingPlaylists(false);
+      }
+    };
+  
+    loadPlaylists();
+  
+    // Cleanup function to close the connection when component unmounts
+    return () => { eventSource?.close() };
+  }, [selectedFriends]);
 
 
   return (
@@ -176,13 +198,14 @@ export default function MergePlaylistsPage() {
       {/* Main content row */}
       <div className="flex flex-1 flex-row gap-6 min-h-[600px]">
         {/* Left: My Playlists */}
-        <div className="flex-1 min-w-[260px] max-w-xs flex flex-col">
+        <div className="flex-1 min-w-[360px] max-w-xs flex flex-col">
           <MergePlaylistList
             playlists={playlistMetas}
             selectedPlaylistId={selectedMyPlaylist}
             onPlaylistSelect={setSelectedMyPlaylist}
             title="My Playlists"
             emptyMessage="No playlists imported yet"
+            loading={isLoadingPlaylists}
           />
         </div>
         {/* Center: Playlist Preview */}
@@ -190,17 +213,41 @@ export default function MergePlaylistsPage() {
           <Card className="w-full flex-1 flex flex-col">
             <CardHeader>
               <CardTitle>Playlist Preview</CardTitle>
+              <div className="text-sm text-muted-foreground">
+                {selectedMyPlaylist && selectedFriendPlaylist ? (
+                  <span>Merging 2 playlists</span>
+                ) : selectedMyPlaylist || selectedFriendPlaylist ? (
+                  <span>Select another playlist to merge</span>
+                ) : (
+                  <span>Select playlists to merge</span>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="flex-1">
-              <TrackTable tracks={combinedTracks} isSpotify={true} />
+              {selectedMyPlaylist && selectedFriendPlaylist ? (
+                <TrackTable tracks={combinedTracks} isSpotify={true} />
+              ) : (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  <div className="text-center">
+                    <p className="mb-2">Select playlists from both sides to see the merged preview</p>
+                    <p className="text-sm">The merged playlist will combine tracks from both selected playlists</p>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
           <div className="flex justify-center w-full">
-            <Button size="lg" className="w-1/2">Export to Spotify</Button>
+            <Button 
+              size="lg" 
+              className="w-1/2"
+              disabled={!selectedMyPlaylist || !selectedFriendPlaylist}
+            >
+              Export to Spotify
+            </Button>
           </div>
         </div>
         {/* Right: Friend's Playlists */}
-        <div className="flex-1 min-w-[260px] max-w-xs flex flex-col">
+        <div className="flex-1 min-w-[360px] max-w-xs flex flex-col">
           <MergePlaylistList
             playlists={friendsPlaylists.map(playlist => playlist.meta)}
             selectedPlaylistId={selectedFriendPlaylist}

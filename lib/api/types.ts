@@ -8,8 +8,10 @@ export type {
   SpotifyArtist,
   ApiImage,
   MusicPlaylistImportResult,
+  MusicPlaylistImportFriendResult,
   MusicTrack,
   MusicPlaylistMeta,
+  Friend,
 } from './schemas';
 
 // Import UserAccountProps type for the class
