@@ -146,12 +146,12 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
     let eventSource: EventSource | null = null;
     
     const loadFriends = async () => {
-      console.log("loading friends!")
         eventSource = await useServerEvents(
           buildUrl(`account/search?q=${debouncedAddFriendSearch}`), 
           'AccountSearch', 
           FriendSchema.array(), 
           (data) => {
+            console.log("loaded suggestions! ", data)
             setFriendSuggestions(data);
           }
         );
@@ -169,8 +169,8 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
     const loadFriends = async () => {
       console.log("loading friends!")
         eventSource = await useServerEvents(
-          buildUrl(`account/search?q=${debouncedAddFriendSearch}`), 
-          'AccountSearch', 
+          buildUrl(`account/friends`), 
+          'AccountFriends', 
           FriendSchema.array(), 
           (data) => {
             console.log("loaded friends!")
