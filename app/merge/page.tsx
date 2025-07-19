@@ -77,24 +77,10 @@ export default function MergePlaylistsPage() {
     loadPlaylists();
   
     // Cleanup function to close the connection when component unmounts
-    return () => {
-      if (eventSource) {
-        console.log("Closing SSE connection");
-        eventSource.close();
-      }
-    };
+    return () => { eventSource?.close() };
   }, []);
 
 
-// useEffect(() => {
-//   selectedFriends.forEach(friend => {
-//       useServerEvents(buildUrl(`music/playlists?friends=${friend}`), 'ImportedPlaylists', MusicPlaylistImportResultSchema.array(), (data) => {
-//         setFriendsPlaylists(previous => [...previous, ...data]);
-//       }).then((eventSource) => {
-//         eventSource.close();
-//       });
-//   });
-// }, [selectedFriends]);
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-[1600px] mx-auto py-8">
