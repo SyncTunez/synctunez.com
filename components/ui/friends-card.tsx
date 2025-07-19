@@ -360,23 +360,6 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
                 </TooltipTrigger>
                 <TooltipContent>Share Profile</TooltipContent>
               </Tooltip>
-              {/* Manual Refresh Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                      setLoading(true);
-                      setFriendsLiveEnabled(true);
-                    }}
-                    aria-label="Refresh Friends"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582M20 20v-5h-.581M5.635 19.364A9 9 0 104.582 9.582" /></svg>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Refresh Friends</TooltipContent>
-              </Tooltip>
             </div>
           </div>
 
