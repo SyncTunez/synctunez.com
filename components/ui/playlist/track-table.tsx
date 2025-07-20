@@ -83,7 +83,7 @@ export const TrackTable: React.FC<TrackTableProps> = ({
     // Define column widths depending on visible columns, must total <= 100%
     const colGroup = (
         <colgroup>
-            <col style={{ width: '40px' }} />
+            <col style={{ width: '32px' }} />
             <col style={{ width: '30%' }} />
             <col style={{ width: '20%' }} />
             <col style={{ width: '30%' }} />
@@ -93,16 +93,16 @@ export const TrackTable: React.FC<TrackTableProps> = ({
 
     return (
         <div ref={containerRef} className={className}>
-            <div className="h-[450px] overflow-y-auto overflow-x-hidden pr-4"> {/* Added overflow-x-hidden */}
+            <div className="h-[450px] overflow-y-auto overflow-x-hidden pr-2"> {/* Reduced from pr-4 to pr-2 */}
                 <Table style={tableStyle}>
                     {colGroup}
                     <TableHeader className="sticky top-0 z-20">
                         <TableRow>
-                            {showCover && <TableHead className="p-4 text-center">Cover</TableHead>}
-                            <TableHead className="p-4">Title</TableHead>
-                            {showArtist && <TableHead className="p-4">Artist</TableHead>}
-                            {showAlbum && <TableHead className="p-4">Album</TableHead>}
-                            {showDuration && <TableHead className="p-4 text-center">Duration</TableHead>}
+                            {showCover && <TableHead className="p-2 text-center">Cover</TableHead>}
+                            <TableHead className="p-2">Title</TableHead>
+                            {showArtist && <TableHead className="p-2">Artist</TableHead>}
+                            {showAlbum && <TableHead className="p-2">Album</TableHead>}
+                            {showDuration && <TableHead className="p-2 text-center">Duration</TableHead>}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -111,7 +111,7 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                             return (
                                 <TableRow key={track.hash || idx} className="group">
                                     {showCover && (
-                                        <TableCell className="p-4">
+                                        <TableCell className="p-2">
                                             <div className="relative w-12 h-12 group-hover:scale-105 transition-transform mx-auto">
                                                 <Image
                                                     src={track.images?.[0]?.url || ''}
@@ -123,49 +123,24 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                                             </div>
                                         </TableCell>
                                     )}
-                                    <TableCell className="p-4 truncate">
+                                    <TableCell className="p-2 truncate">
                                         <div className="font-medium truncate">{truncateWords(track.title, 6)}</div>
                                     </TableCell>
                                     {showArtist && (
-                                        <TableCell className="p-4 text-muted-foreground">
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <div className="flex -space-x-2 cursor-pointer">
-                                                        {track.artists.slice(0, 2).map((artist: string, aidx: number) => (
-                                                            <Avatar key={artist + aidx}>
-                                                                <AvatarFallback>
-                                                                    {artist
-                                                                        ? artist.split(' ')
-                                                                            .map((word) => word[0])
-                                                                            .join('')
-                                                                            .slice(0, 2)
-                                                                            .toUpperCase()
-                                                                        : 'NA'}
-                                                                </AvatarFallback>
-                                                            </Avatar>
-                                                        ))}
-                                                        {track.artists.length > 2 && (
-                                                            <Avatar>
-                                                                <AvatarFallback>+{track.artists.length - 2}</AvatarFallback>
-                                                            </Avatar>
-                                                        )}
-                                                    </div>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    {track.artists.map((artist: string, i: number) => (
-                                                        <div key={i}>{artist}</div>
-                                                    ))}
-                                                </TooltipContent>
-                                            </Tooltip>
+                                        <TableCell className="p-2 text-muted-foreground">
+                                            <div className="truncate">
+                                                {track.artists.slice(0, 2).join(', ')}
+                                                {track.artists.length > 2 && ` +${track.artists.length - 2} more`}
+                                            </div>
                                         </TableCell>
                                     )}
                                     {showAlbum && (
-                                        <TableCell className="p-4 text-muted-foreground truncate max-w-xs">
+                                        <TableCell className="p-2 text-muted-foreground truncate max-w-xs">
                                             {truncateWords(track.album, 4)}
                                         </TableCell>
                                     )}
                                     {showDuration && (
-                                        <TableCell className="p-4 text-muted-foreground text-center whitespace-nowrap">
+                                        <TableCell className="p-2 text-muted-foreground text-center whitespace-nowrap">
                                             {formatDuration(track.durationMs)}
                                         </TableCell>
                                     )}

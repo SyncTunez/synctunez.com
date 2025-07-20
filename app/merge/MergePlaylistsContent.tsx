@@ -128,9 +128,10 @@ export default function MergePlaylistsContent() {
     let eventSource: EventSource | null = null;
     
     const loadPlaylists = async () => {
+      console.log("Loading combined tracks ", [...debouncedSelectedMyPlaylists, ...debouncedSelectedFriendPlaylists].join(','));
         setIsLoadingCombinedTracks(true);
         eventSource = await useServerEvents<Array<MusicTrack>>(
-          buildUrl(`music/playlists/merge?playlists=${debouncedSelectedMyPlaylists.join(',') + debouncedSelectedFriendPlaylists.join(',')}`), 
+          buildUrl(`music/playlists/merge?playlists=${([...debouncedSelectedMyPlaylists, ...debouncedSelectedFriendPlaylists].join(','))}`), 
           'ImportedPlaylistTracks', 
           MusicTrackSchema.array(), 
           (data) => {
@@ -316,7 +317,7 @@ export default function MergePlaylistsContent() {
           <CardHeader>
             <CardTitle className="text-lg sm:text-xl">Combined Tracks</CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent className="p-0 -ml-4">
             <TrackTable tracks={combinedTracks} isSpotify={true} />
           </CardContent>
         </Card>
