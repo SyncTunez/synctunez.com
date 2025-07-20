@@ -14,6 +14,7 @@ export interface MergePlaylistListProps {
   emptyMessage?: string;
   className?: string;
   loading?: boolean;
+  filterButton?: React.ReactNode;
 }
 
 /**
@@ -27,6 +28,7 @@ export const MergePlaylistList: React.FC<MergePlaylistListProps> = ({
   emptyMessage = "No playlists found",
   className,
   loading = false,
+  filterButton,
 }) => {
   // Get service icon based on the 'from' field
   const getServiceIcon = (service: string) => {
@@ -50,20 +52,42 @@ export const MergePlaylistList: React.FC<MergePlaylistListProps> = ({
   };
 
   return (
-    <Card className={className}>
-      <CardHeader>
+    <Card className={`${className} h-full flex flex-col`}>
+      <CardHeader className="flex-shrink-0">
         <CardTitle className="text-lg flex items-center justify-between">
-          {title}
-          {selectedPlaylistIds.length > 0 && (
-            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-              Selected ({selectedPlaylistIds.length})
-            </span>
-          )}
+          <span>{title}</span>
+          <div className="flex items-center gap-2">
+            {filterButton && (
+              <div className="flex-shrink-0">
+                {filterButton}
+              </div>
+            )}
+            {playlists.length > 0 && (
+              <Checkbox
+                checked={selectedPlaylistIds.length === playlists.length && playlists.length > 0}
+                indeterminate={selectedPlaylistIds.length > 0 && selectedPlaylistIds.length < playlists.length}
+                onChange={(checked) => {
+                  if (checked) {
+                    onPlaylistSelect(playlists.map(p => p.id));
+                  } else {
+                    onPlaylistSelect([]);
+                  }
+                }}
+                aria-label="Select all playlists"
+                className="flex-shrink-0"
+              />
+            )}
+            {selectedPlaylistIds.length > 0 && (
+              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                {selectedPlaylistIds.length} selected
+              </span>
+            )}
+          </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="p-0 flex-1 min-h-0">
         {loading ? (
-          <div className="max-h-[500px] overflow-y-auto">
+          <div className="h-full overflow-y-auto">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1.5 border-b border-border last:border-b-0">
                 <Skeleton className="w-10 h-10 rounded-sm flex-shrink-0" />
@@ -76,11 +100,11 @@ export const MergePlaylistList: React.FC<MergePlaylistListProps> = ({
             ))}
           </div>
         ) : playlists.length === 0 ? (
-          <div className="flex items-center justify-center h-32 text-muted-foreground px-4">
+          <div className="flex items-center justify-center h-full text-muted-foreground px-4">
             {emptyMessage}
           </div>
         ) : (
-          <div className="max-h-[500px] overflow-y-auto">
+          <div className="h-full overflow-y-auto">
             {playlists.map((playlist) => (
               <PlaylistRow
                 key={playlist.id}

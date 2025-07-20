@@ -13,6 +13,13 @@ import { buildUrl } from "@/lib/api/apiClient";
 import { MusicPlaylistImportFriendResult, MusicPlaylistImportFriendResultSchema, MusicPlaylistImportResultSchema, MusicTrack, MusicTrackSchema } from "@/lib/api/schemas";
 import { useServerEvents } from "@/lib/api/ServerEvents";
 import FriendSelection from "@/components/ui/friend-selection";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { IconFilter } from "@tabler/icons-react";
 
 const combinedTracks = [
   { hash: "1", name: "Song 1", album: { name: "Album 1", images: [{ url: "/icon.png" }] }, artists: [{ name: "Artist 1" }], durationMs: 180000 },
@@ -40,6 +47,7 @@ export default function MergePlaylistsContent() {
   const [selectedFriends, setSelectedFriends] = useState<Array<string>>([]);
   const [loadedFriends, setLoadedFriends] = useState<Array<string>>([]);
   const [hasStartedLoadingFriendPlaylists, setHasStartedLoadingFriendPlaylists] = useState(false);
+  const [filteredFriend, setFilteredFriend] = useState<string | null>(null);
 
   const [combinedTracks, setCombinedTracks] = useState<Array<MusicTrack>>([]);
   const [isLoadingCombinedTracks, setIsLoadingCombinedTracks] = useState(true);
@@ -131,7 +139,7 @@ export default function MergePlaylistsContent() {
       console.log("Loading combined tracks ", [...debouncedSelectedMyPlaylists, ...debouncedSelectedFriendPlaylists].join(','));
         setIsLoadingCombinedTracks(true);
         eventSource = await useServerEvents<Array<MusicTrack>>(
-          buildUrl(`music/playlists/merge?playlists=${([...debouncedSelectedMyPlaylists, ...debouncedSelectedFriendPlaylists].join(','))}`), 
+          buildUrl(`music/playlists/merge?mine=${debouncedSelectedMyPlaylists.join(',')}&friends=${debouncedSelectedFriendPlaylists.join(',')}`), 
           'ImportedPlaylistTracks', 
           MusicTrackSchema.array(), 
           (data) => {
@@ -152,14 +160,14 @@ export default function MergePlaylistsContent() {
       {/* Top row: Options and FriendsCard - Stack vertically on mobile */}
       <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 w-full">
         <Card className="w-full lg:flex-1 lg:min-w-[300px] lg:max-w-xl h-auto lg:h-[300px]">
-          <CardHeader className="pb-3 sm:pb-6">
+          <CardHeader className="pb-1 sm:pb-2 pt-3 sm:pt-4">
             <CardTitle className="text-lg sm:text-xl">Playlist Options</CardTitle>
           </CardHeader>
           <CardContent className="h-full">
             <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 items-start h-full">
               {/* Playlist image area - Center on mobile, left on desktop */}
               <div className="flex justify-center lg:justify-start w-full lg:w-auto">
-                <label className="w-24 h-24 sm:w-32 sm:h-32 lg:w-48 lg:h-48 border-2 border-muted-foreground rounded-md flex items-center justify-center bg-muted cursor-pointer hover:opacity-80 transition-opacity relative overflow-hidden group flex-shrink-0">
+                <label className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 border-2 border-muted-foreground rounded-md flex items-center justify-center bg-muted cursor-pointer hover:opacity-80 transition-opacity relative overflow-hidden group flex-shrink-0">
                   {playlistImage ? (
                     <img src={playlistImage} alt="Playlist" className="w-full h-full object-cover rounded-md" />
                   ) : (
@@ -251,7 +259,7 @@ export default function MergePlaylistsContent() {
       {/* Main content row - Stack vertically on mobile */}
       <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 min-h-[400px] sm:min-h-[600px]">
         {/* My Playlists */}
-        <div className="w-full lg:w-1/3 lg:max-w-[400px] order-1 lg:order-1">
+        <div className="w-full lg:w-1/3 lg:max-w-[400px] order-1 lg:order-1 h-[400px] sm:h-[600px]">
           <MergePlaylistList
             playlists={importedPlaylists.map(playlist => playlist.meta)}
             selectedPlaylistIds={selectedMyPlaylists}
@@ -282,9 +290,14 @@ export default function MergePlaylistsContent() {
         </div>
         
         {/* Friend Playlists - Show before Combined Tracks on mobile */}
-        <div className="w-full lg:w-1/3 lg:max-w-[400px] order-2 lg:order-3">
+        <div className="w-full lg:w-1/3 lg:max-w-[400px] order-2 lg:order-3 h-[400px] sm:h-[600px]">
           <MergePlaylistList
-            playlists={friendsPlaylists.map(playlist => playlist.meta)}
+            playlists={friendsPlaylists
+              .map(playlist => playlist.meta)
+              .filter(playlist => 
+                !filteredFriend || playlist.owner === filteredFriend
+              )
+            }
             selectedPlaylistIds={selectedFriendPlaylists}
             onPlaylistSelect={(playlistIds) => {
               // If playlistIds is empty, it means "Select All" was unchecked
@@ -309,11 +322,46 @@ export default function MergePlaylistsContent() {
             }}
             loading={isLoadingFriendsPlaylists}
             title="Friend Playlists"
+            filterButton={
+              selectedFriends.length > 0 ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-6 px-2">
+                      <IconFilter className="w-3 h-3 mr-1" />
+                      {filteredFriend ? filteredFriend : selectedFriends.length}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <div className="px-2 py-1 text-xs text-muted-foreground">
+                      {filteredFriend ? 'Filtered by:' : 'Filter by friend:'}
+                    </div>
+                    {filteredFriend && (
+                      <DropdownMenuItem 
+                        onClick={() => setFilteredFriend(null)}
+                        className="text-xs text-blue-600"
+                      >
+                        Show All Friends
+                      </DropdownMenuItem>
+                    )}
+                    {selectedFriends.map((friend) => (
+                      <DropdownMenuItem 
+                        key={friend} 
+                        className={`text-xs ${filteredFriend === friend ? 'bg-muted' : ''}`}
+                        onClick={() => setFilteredFriend(filteredFriend === friend ? null : friend)}
+                      >
+                        {friend}
+                        {filteredFriend === friend && ' ✓'}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : null
+            }
           />
         </div>
         
         {/* Combined Tracks - Show after Friend Playlists on mobile */}
-        <Card className="flex-1 min-w-[300px] w-full lg:w-1/3 order-3 lg:order-2">
+        <Card className="flex-1 min-w-[300px] w-full lg:w-1/3 order-3 lg:order-2 overflow-hidden h-[400px] sm:h-[600px]">
           <CardHeader>
             <CardTitle className="text-lg sm:text-xl">Combined Tracks</CardTitle>
           </CardHeader>
