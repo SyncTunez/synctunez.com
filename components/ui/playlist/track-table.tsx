@@ -11,7 +11,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { IconBrandSpotify } from "@tabler/icons-react";
-import type { MusicTrack } from '@/lib/api/types';
+import type { MusicTrack } from '@/lib/api/schemas';
 import { tr } from 'zod/v4/locales';
 
 // Helper to format ms → mm:ss
@@ -118,7 +118,7 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                         {tracks.map((track: any, idx: number) => {
                         
                             return (
-                                <TableRow key={track.hash || idx} className="group">
+                                <TableRow key={track.spotifyId || track.youtubeId || idx} className="group">
                                     {showCover && (
                                         <TableCell className="p-2">
                                             <div className="relative w-12 h-12 group-hover:scale-105 transition-transform mx-auto">
@@ -150,7 +150,7 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                                     )}
                                     {showDuration && (
                                         <TableCell className="p-2 text-muted-foreground text-center whitespace-nowrap">
-                                            {formatDuration(track.durationMs)}
+                                            {formatDuration(track.duration)}
                                         </TableCell>
                                     )}
                                 </TableRow>

@@ -8,7 +8,7 @@ import { Heading } from '@/components/ui/heading';
 import PageContainer from "@/components/layout/page-container";
 import { buildUrl, authorized } from '@/lib/api/apiClient';
 import type { SpotifyAccount, SpotifyTrack, SpotifyPlaylist } from '@/lib/api/types';
-import { MusicPlaylistImportResult, MusicPlaylistImportResultSchema, MusicTrackSchema, MusicTrack } from '@/lib/api/schemas';
+import { MusicPlaylistImportResult, MusicPlaylistImportResultSchema, MusicTrackSchema, MusicTrack, MusicPlaylistMeta } from '@/lib/api/schemas';
 import { useServerEvents } from '@/lib/api/ServerEvents';
 import { useLiveResourceJson } from "@/hooks/useLiveResource";
 import { ServiceCard, serviceIcons } from "@/components/ui/service-card";
@@ -80,9 +80,9 @@ export default function AccountPage() {
     useEffect(() => {
         let eventSource: EventSource | null = null;
         
-        const loadPlaylists = async () => {
+        const loadTracks = async () => {
             try {
-                setIsLoadingImportedPlaylists(true);
+                setIsLoadingTracks(true);
                 eventSource = await useServerEvents<Array<MusicTrack>>(
                     buildUrl(`music/playlists/tracks?id=${selectedPlaylistId}`), 
                     'ImportedPlaylistTracks', 
@@ -98,13 +98,16 @@ export default function AccountPage() {
             }
         };
       
-        if (hasSpotify) {
-            loadPlaylists();
+        if (hasSpotify && selectedPlaylistId !== undefined) {
+            loadTracks();
+        } else {
+            setTracks([]);
+            setIsLoadingTracks(false);
         }
       
         // Cleanup function to close the connection when component unmounts
         return () => { eventSource?.close() };
-    }, [tabIndex]);
+    }, [selectedPlaylistId, hasSpotify]);
 
     React.useEffect(() => {
         setSelectedTab(tabIndex);
