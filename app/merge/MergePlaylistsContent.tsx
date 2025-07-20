@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useLiveResourceJson } from "@/hooks/useLiveResource";
 import { MusicPlaylistImportResult, MusicPlaylistMeta } from "@/lib/api/types";
 import { buildUrl } from "@/lib/api/apiClient";
-import { MusicPlaylistImportFriendResult, MusicPlaylistImportFriendResultSchema, MusicPlaylistImportResultSchema } from "@/lib/api/schemas";
+import { MusicPlaylistImportFriendResult, MusicPlaylistImportFriendResultSchema, MusicPlaylistImportResultSchema, MusicTrack, MusicTrackSchema } from "@/lib/api/schemas";
 import { useServerEvents } from "@/lib/api/ServerEvents";
 import FriendSelection from "@/components/ui/friend-selection";
 
@@ -20,8 +20,6 @@ const combinedTracks = [
 ];
 
 export default function MergePlaylistsContent() {
-  const [selectedMyPlaylists, setSelectedMyPlaylists] = useState<number[]>([]);
-  const [selectedFriendPlaylists, setSelectedFriendPlaylists] = useState<number[]>([]);
   const [playlistName, setPlaylistName] = useState("");
   const [playlistDesc, setPlaylistDesc] = useState("");
   const [playlistImage, setPlaylistImage] = useState<string | undefined>(undefined);
@@ -43,8 +41,36 @@ export default function MergePlaylistsContent() {
   const [loadedFriends, setLoadedFriends] = useState<Array<string>>([]);
   const [hasStartedLoadingFriendPlaylists, setHasStartedLoadingFriendPlaylists] = useState(false);
 
+  const [combinedTracks, setCombinedTracks] = useState<Array<MusicTrack>>([]);
+  const [isLoadingCombinedTracks, setIsLoadingCombinedTracks] = useState(true);
 
+  // Selected Playlists and debounced versions to prevent too many re-renders
+  const [selectedMyPlaylists, setSelectedMyPlaylists] = useState<number[]>([]);
+  const [selectedFriendPlaylists, setSelectedFriendPlaylists] = useState<number[]>([]);
+  
+  // Debounced versions for API calls
+  const [debouncedSelectedMyPlaylists, setDebouncedSelectedMyPlaylists] = useState<number[]>([]);
+  const [debouncedSelectedFriendPlaylists, setDebouncedSelectedFriendPlaylists] = useState<number[]>([]);
 
+  // Debounce selectedMyPlaylists
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSelectedMyPlaylists(selectedMyPlaylists);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [selectedMyPlaylists]);
+
+  // Debounce selectedFriendPlaylists
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSelectedFriendPlaylists(selectedFriendPlaylists);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [selectedFriendPlaylists]);
+
+  // Load my playlists
   useEffect(() => {
     let eventSource: EventSource | null = null;
     
@@ -72,12 +98,11 @@ export default function MergePlaylistsContent() {
     return () => { eventSource?.close() };
   }, []);
 
-  // Import friend playlists
+
+  // Load friends playlists when selectedFriends changes
   useEffect(() => {
     let eventSource: EventSource | null = null;
     
-    console.log("selectedFriends", selectedFriends);
-
     const loadPlaylists = async () => {
         setIsLoadingFriendsPlaylists(true);
         eventSource = await useServerEvents<Array<MusicPlaylistImportFriendResult>>(
@@ -97,6 +122,28 @@ export default function MergePlaylistsContent() {
     // Cleanup function to close the connection when component unmounts
     return () => { eventSource?.close() };
   }, [selectedFriends]);
+
+  // Load combined tracks when selectedMyPlaylists or selectedFriendPlaylists changes
+  useEffect(() => {
+    let eventSource: EventSource | null = null;
+    
+    const loadPlaylists = async () => {
+        setIsLoadingCombinedTracks(true);
+        eventSource = await useServerEvents<Array<MusicTrack>>(
+          buildUrl(`music/playlists/merge?playlists=${debouncedSelectedMyPlaylists.join(',') + debouncedSelectedFriendPlaylists.join(',')}`), 
+          'ImportedPlaylistTracks', 
+          MusicTrackSchema.array(), 
+          (data) => {
+            console.log("data", data);
+            setCombinedTracks(data);
+            setIsLoadingCombinedTracks(false);
+          }
+        );
+    };
+  
+    loadPlaylists();
+    return () => { eventSource?.close() };
+  }, [debouncedSelectedMyPlaylists, debouncedSelectedFriendPlaylists]);
 
 
   return (

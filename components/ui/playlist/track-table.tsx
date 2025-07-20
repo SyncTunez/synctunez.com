@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import {
     Table,
     TableBody,
@@ -10,6 +11,8 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { IconBrandSpotify } from "@tabler/icons-react";
+import type { MusicTrack } from '@/lib/api/types';
+import { tr } from 'zod/v4/locales';
 
 // Helper to format ms → mm:ss
 function formatDuration(ms: number): string {
@@ -20,7 +23,7 @@ function formatDuration(ms: number): string {
 }
 
 export interface TrackTableProps {
-    tracks: any[];
+    tracks: MusicTrack[];
     isSpotify: boolean;
     className?: string;
     emptyLabel?: string;
@@ -59,15 +62,16 @@ export const TrackTable: React.FC<TrackTableProps> = ({
         );
     }
 
-    function truncateWords(text: string, count: number) {
+    function truncateWords(text: string | undefined | null, count: number) {
+        if (!text) return '';
         const words = text.split(" ");
         return words.length > count ? words.slice(0, count).join(" ") + "..." : text;
     }
 
     // Responsive visibility breakpoints
-    const showAlbum = containerWidth > 600;
-    const showDuration = containerWidth > 500;
-    const showArtist = containerWidth > 450;  // Hide artist column below 450px
+    const showAlbum = true;
+    const showDuration = false;
+    const showArtist = true;  // Hide artist column below 450px
     const showCover = true; // Cover always shown
 
     // Table layout fixed for consistent column widths
@@ -79,10 +83,10 @@ export const TrackTable: React.FC<TrackTableProps> = ({
     // Define column widths depending on visible columns, must total <= 100%
     const colGroup = (
         <colgroup>
-            {showCover && <col style={{ width: '50px' }} />}
-            <col style={{ width: showAlbum ? '25%' : '35%' }} />
-            {showArtist && <col style={{ width: '15%' }} />}
-            {showAlbum && <col style={{ width: '25%' }} />}
+            <col style={{ width: '40px' }} />
+            <col style={{ width: '30%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '30%' }} />
             {showDuration && <col style={{ width: '50px' }} />}
         </colgroup>
     );
@@ -103,66 +107,52 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                     </TableHeader>
                     <TableBody>
                         {tracks.map((track: any, idx: number) => {
-                            const coverUrl = isSpotify
-                                ? track.album?.images?.[0]?.url
-                                : track.images?.[0]?.url;
-                            const title = isSpotify ? track.name : track.title;
-                            const albumName = isSpotify ? track.album?.name : track.album;
-                            const artistsArr = isSpotify
-                                ? (track.artists || []).map((a: any) => a.name)
-                                : track.artists || [];
-                            const durationMs = isSpotify ? track.durationMs : track.duration;
-
+                        
                             return (
-                                <TableRow key={track.hash} className="group">
+                                <TableRow key={track.hash || idx} className="group">
                                     {showCover && (
                                         <TableCell className="p-4">
-                                            {coverUrl ? (
-                                                <div className="relative w-12 h-12 group-hover:scale-105 transition-transform mx-auto">
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img
-                                                        src={coverUrl}
-                                                        alt={title}
-                                                        loading="lazy"
-                                                        className="w-full h-full rounded-md object-cover shadow-sm"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <div className="w-12 h-12 rounded-md bg-muted flex items-center justify-center">
-                                                    <IconBrandSpotify className="w-6 h-6 text-muted-foreground" />
-                                                </div>
-                                            )}
+                                            <div className="relative w-12 h-12 group-hover:scale-105 transition-transform mx-auto">
+                                                <Image
+                                                    src={track.images?.[0]?.url || ''}
+                                                    alt={track.title || 'Album cover'}
+                                                    fill
+                                                    sizes="48px"
+                                                    className="rounded-md object-cover shadow-sm"
+                                                />
+                                            </div>
                                         </TableCell>
                                     )}
                                     <TableCell className="p-4 truncate">
-                                        <div className="font-medium truncate">{truncateWords(title, 6)}</div>
+                                        <div className="font-medium truncate">{truncateWords(track.title, 6)}</div>
                                     </TableCell>
                                     {showArtist && (
                                         <TableCell className="p-4 text-muted-foreground">
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
                                                     <div className="flex -space-x-2 cursor-pointer">
-                                                        {artistsArr.slice(0, 2).map((artist: string, aidx: number) => (
+                                                        {track.artists.slice(0, 2).map((artist: string, aidx: number) => (
                                                             <Avatar key={artist + aidx}>
                                                                 <AvatarFallback>
                                                                     {artist
-                                                                        .split(' ')
-                                                                        .map((word) => word[0])
-                                                                        .join('')
-                                                                        .slice(0, 2)
-                                                                        .toUpperCase()}
+                                                                        ? artist.split(' ')
+                                                                            .map((word) => word[0])
+                                                                            .join('')
+                                                                            .slice(0, 2)
+                                                                            .toUpperCase()
+                                                                        : 'NA'}
                                                                 </AvatarFallback>
                                                             </Avatar>
                                                         ))}
-                                                        {artistsArr.length > 2 && (
+                                                        {track.artists.length > 2 && (
                                                             <Avatar>
-                                                                <AvatarFallback>+{artistsArr.length - 2}</AvatarFallback>
+                                                                <AvatarFallback>+{track.artists.length - 2}</AvatarFallback>
                                                             </Avatar>
                                                         )}
                                                     </div>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    {artistsArr.map((artist: string, i: number) => (
+                                                    {track.artists.map((artist: string, i: number) => (
                                                         <div key={i}>{artist}</div>
                                                     ))}
                                                 </TooltipContent>
@@ -171,12 +161,12 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                                     )}
                                     {showAlbum && (
                                         <TableCell className="p-4 text-muted-foreground truncate max-w-xs">
-                                            {truncateWords(albumName, 4)}
+                                            {truncateWords(track.album, 4)}
                                         </TableCell>
                                     )}
                                     {showDuration && (
                                         <TableCell className="p-4 text-muted-foreground text-center whitespace-nowrap">
-                                            {formatDuration(durationMs)}
+                                            {formatDuration(track.durationMs)}
                                         </TableCell>
                                     )}
                                 </TableRow>

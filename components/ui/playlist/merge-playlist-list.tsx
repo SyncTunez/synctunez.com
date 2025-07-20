@@ -53,29 +53,12 @@ export const MergePlaylistList: React.FC<MergePlaylistListProps> = ({
     <Card className={className}>
       <CardHeader>
         <CardTitle className="text-lg flex items-center justify-between">
-          <span>{title}</span>
-          <div className="flex items-center gap-2">
-            {playlists.length > 0 && (
-              <Checkbox
-                checked={selectedPlaylistIds.length === playlists.length && playlists.length > 0}
-                indeterminate={selectedPlaylistIds.length > 0 && selectedPlaylistIds.length < playlists.length}
-                onChange={(checked) => {
-                  if (checked) {
-                    onPlaylistSelect(playlists.map(p => p.id));
-                  } else {
-                    onPlaylistSelect([]);
-                  }
-                }}
-                aria-label="Select all playlists"
-                className="flex-shrink-0"
-              />
-            )}
-            {selectedPlaylistIds.length > 0 && (
-              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                {selectedPlaylistIds.length} selected
-              </span>
-            )}
-          </div>
+          {title}
+          {selectedPlaylistIds.length > 0 && (
+            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+              Selected ({selectedPlaylistIds.length})
+            </span>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
