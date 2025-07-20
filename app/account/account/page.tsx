@@ -118,6 +118,10 @@ export default function AccountPage() {
         await authorized.get(endpoint);
     }
 
+    function handlePlaylistImported(playlist: MusicPlaylistMeta) {
+        setImportedPlaylists(prev => [...prev, playlist]);
+    }
+
     return (
         <PageContainer>
             <div className="flex flex-1 flex-col min-w-0 space-y-4 px-2 sm:px-4">
@@ -192,6 +196,7 @@ export default function AccountPage() {
                                                     mainPlaylistsLoading={isLoadingImportedPlaylists}
                                                     selectedMainPlaylistId={selectedPlaylistId}
                                                     onMainPlaylistSelect={setSelectedPlaylistId}
+                                                    onPlaylistImported={handlePlaylistImported}
                                                 />
                                             )}
                                         </div>

@@ -36,7 +36,7 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useRef, useEffect } from 'react';
 import {Table, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import { MusicPlaylistMeta, MusicTrack, MusicTrackSchema, SpotifyPlaylistSchema, SpotifyTrackSchema } from '@/lib/api/schemas';
+import { MusicPlaylistImportResultSchema, MusicPlaylistMeta, MusicTrack, MusicTrackSchema, SpotifyPlaylistSchema, SpotifyTrackSchema } from '@/lib/api/schemas';
 import { useServerEvents } from "@/lib/api/ServerEvents";
 
 interface PlaylistSectionProps {
@@ -45,6 +45,7 @@ interface PlaylistSectionProps {
     mainPlaylistsLoading?: boolean;
     selectedMainPlaylistId: number | undefined;
     onMainPlaylistSelect: (id?: number) => void;
+    onPlaylistImported?: (playlist: MusicPlaylistMeta) => void;
     hideTracksSection?: boolean;
     showRadioButtons?: boolean;
 }
@@ -349,6 +350,7 @@ export function PlaylistSection({
                                     mainPlaylistsLoading = false,
                                     selectedMainPlaylistId,
                                     onMainPlaylistSelect,
+                                    onPlaylistImported,
                                     hideTracksSection = false,
                                     showRadioButtons = false,
                                 }: PlaylistSectionProps) {
@@ -364,6 +366,7 @@ export function PlaylistSection({
     const [spotifyTracks, setSpotifyTracks] = useState<Array<MusicTrack>>([]);
     const [isLoadingSpotifyPlaylists, setIsLoadingSpotifyPlaylists] = useState(false);
     const [isLoadingSpotifyTracks, setIsLoadingSpotifyTracks] = useState(false);
+    const [importedPlaylistIds, setImportedPlaylistIds] = useState<Set<string>>(new Set());
 
     // Load Spotify playlists when in imported view
     useEffect(() => {
@@ -438,12 +441,35 @@ export function PlaylistSection({
             if (importingPlaylist == null) return;
             
             try {
-                eventSource = await useServerEvents<Array<MusicTrack>>(
+                eventSource = await useServerEvents<MusicPlaylistImportResult>(
                     buildUrl(`spotify/import?id=${importingPlaylist}`), 
                     'SpotifyPlaylistImport', 
-                    MusicTrackSchema.array(), 
+                    MusicPlaylistImportResultSchema, 
                     (data) => {
                         toast.success('Playlist imported successfully!');
+                        
+                        // Find the imported playlist
+                        const importedPlaylist = spotifyPlaylists.find(p => p.id === importingPlaylist);
+                        if (importedPlaylist && onPlaylistImported) {
+                            // Create a MusicPlaylistMeta object from the Spotify playlist
+                            const playlistMeta: MusicPlaylistMeta = {
+                                id: parseInt(importedPlaylist.id), // Convert string ID to number
+                                title: importedPlaylist.name || 'Imported Playlist',
+                                trackNumber: importedPlaylist.tracks?.total || 0,
+                                image: importedPlaylist.images?.[0] || null,
+                                owner: 'Unknown', // Spotify playlist doesn't have owner info in schema
+                                collaborators: [], // No collaborators for imported playlists
+                                from: 'spotify'
+                            };
+                            
+                            // Call the callback to add to main playlists
+                            onPlaylistImported(playlistMeta);
+                        }
+                        
+                        // Mark as imported and remove from Spotify playlists
+                        setImportedPlaylistIds(prev => new Set([...prev, importingPlaylist]));
+                        setSpotifyPlaylists(prev => prev.filter(p => p.id !== importingPlaylist));
+                        
                         setImportingPlaylist(null);
                         setSelectedSpotifyPlaylistId(undefined);
                     }
@@ -650,9 +676,11 @@ export function PlaylistSection({
                                                                     toast.success('Playlist import started!');
                                                                 } else {
                                                                     toast.error('Failed to import playlist.');
+                                                                    setImportingPlaylist(null);
                                                                 }
                                                             } catch (err: any) {
                                                                 toast.error('Failed to import playlist.');
+                                                                setImportingPlaylist(null);
                                                             } 
                                                         }}
                                                     >

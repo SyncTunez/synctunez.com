@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLiveResourceJson } from "@/hooks/useLiveResource";
 import { MusicPlaylistImportResult, MusicPlaylistMeta } from "@/lib/api/types";
-import { buildUrl } from "@/lib/api/apiClient";
+import { buildUrl, authorized } from "@/lib/api/apiClient";
 import { MusicPlaylistImportFriendResult, MusicPlaylistImportFriendResultSchema, MusicPlaylistImportResultSchema, MusicTrack, MusicTrackSchema } from "@/lib/api/schemas";
 import { useServerEvents } from "@/lib/api/ServerEvents";
 import FriendSelection from "@/components/ui/friend-selection";
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IconFilter } from "@tabler/icons-react";
 import { IconBrandSpotify } from "@tabler/icons-react";
+import { toast } from 'sonner';
 
 const combinedTracks = [
   { hash: "1", name: "Song 1", album: { name: "Album 1", images: [{ url: "/icon.png" }] }, artists: [{ name: "Artist 1" }], durationMs: 180000 },
@@ -239,9 +240,41 @@ export default function MergePlaylistsContent() {
                     className="w-[60%] bg-teal-600 hover:bg-teal-700 hover:text-white text-white border-0" 
                     size="sm"
                     disabled={combinedTracks.length === 0}
-                    onClick={() => {
-                      // TODO: Implement save playlist functionality
-                      console.log('Save Playlist clicked');
+                    onClick={async () => {
+                      // Validate required fields
+                      if (!playlistName.trim()) {
+                        toast.error('Please enter a playlist title');
+                        return;
+                      }
+                      
+                      if (selectedMyPlaylists.length === 0 && selectedFriendPlaylists.length === 0) {
+                        toast.error('Please select at least one playlist');
+                        return;
+                      }
+                      
+                      try {
+                        const queryParams = {
+                          friends: selectedFriendPlaylists.join(','),
+                          mine: selectedMyPlaylists.join(','),
+                          title: playlistName,
+                          description: playlistDesc,
+                          collaborators: selectedFriends.join(',')
+                        };
+                        
+                        const url = buildUrl('spotify/playlists/create', queryParams);
+                        const response = await authorized.get(url);
+                        
+                        if (response.status === 200) {
+                          console.log('Playlist created successfully:', response.data);
+                          toast.success('Playlist created successfully!');
+                        } else {
+                          console.error('Failed to create playlist:', response.statusText);
+                          toast.error('Failed to create playlist. Please try again.');
+                        }
+                      } catch (error) {
+                        console.error('Error creating playlist:', error);
+                        toast.error('Error creating playlist. Please try again.');
+                      }
                     }}
                   >
                     Save Playlist
