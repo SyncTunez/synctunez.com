@@ -36,7 +36,7 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useRef, useEffect } from 'react';
 import {Table, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import { MusicPlaylistMeta, MusicTrack, MusicTrackSchema, SpotifyPlaylistSchema } from '@/lib/api/schemas';
+import { MusicPlaylistMeta, MusicTrack, MusicTrackSchema, SpotifyPlaylistSchema, SpotifyTrackSchema } from '@/lib/api/schemas';
 import { useServerEvents } from "@/lib/api/ServerEvents";
 
 interface PlaylistSectionProps {
@@ -360,20 +360,89 @@ export function PlaylistSection({
     const [showNoPlaylists, setShowNoPlaylists] = useState(false);
     const [importingPlaylist, setImportingPlaylist] = useState<string | null>(null);
     const [selectedSpotifyPlaylistId, setSelectedSpotifyPlaylistId] = useState<string | undefined>(undefined);
+    const [spotifyPlaylists, setSpotifyPlaylists] = useState<Array<SpotifyPlaylist>>([]);
+    const [spotifyTracks, setSpotifyTracks] = useState<Array<MusicTrack>>([]);
+    const [isLoadingSpotifyPlaylists, setIsLoadingSpotifyPlaylists] = useState(false);
+    const [isLoadingSpotifyTracks, setIsLoadingSpotifyTracks] = useState(false);
 
+    // Load Spotify playlists when in imported view
     useEffect(() => {
         let eventSource: EventSource | null = null;
         
-        const loadPlaylists = async () => {
-            if(importingPlaylist == null) return;
+        const loadSpotifyPlaylists = async () => {
+            if (!importedView) return;
+            
+            try {
+                setIsLoadingSpotifyPlaylists(true);
+                eventSource = await useServerEvents<Array<SpotifyPlaylist>>(
+                    buildUrl('spotify/playlists'), 
+                    'SpotifyPlaylist', 
+                    SpotifyPlaylistSchema.array(), 
+                    (data) => {
+                        setSpotifyPlaylists(data);
+                        setIsLoadingSpotifyPlaylists(false);
+                    }
+                );
+            } catch (error) {
+                console.error("Failed to connect to SSE:", error);
+                setIsLoadingSpotifyPlaylists(false);
+            }
+        };
+      
+        loadSpotifyPlaylists();
+
+        return () => { eventSource?.close() };
+    }, [importedView]);
+
+    // Load Spotify tracks when a playlist is selected
+    useEffect(() => {
+        let eventSource: EventSource | null = null;
+        
+        const loadSpotifyTracks = async () => {
+            if (!selectedSpotifyPlaylistId) {
+                setSpotifyTracks([]);
+                setIsLoadingSpotifyTracks(false);
+                return;
+            }
+            
+            console.log('Loading Spotify tracks for playlist:', selectedSpotifyPlaylistId);
+            
+            try {
+                setIsLoadingSpotifyTracks(true);
+                eventSource = await useServerEvents<Array<MusicTrack>>(
+                    buildUrl(`spotify/tracks?id=${selectedSpotifyPlaylistId}`), 
+                    'SpotifyPlaylistTracks', 
+                    MusicTrackSchema.array(), 
+                    (data) => {
+                        console.log('Received Spotify tracks:', data);
+                        setSpotifyTracks(data);
+                        setIsLoadingSpotifyTracks(false);
+                    }
+                );
+            } catch (error) {
+                console.error("Failed to connect to SSE:", error);
+                setIsLoadingSpotifyTracks(false);
+            }
+        };
+      
+        loadSpotifyTracks();
+
+        return () => { eventSource?.close() };
+    }, [selectedSpotifyPlaylistId]);
+
+    // Handle playlist import
+    useEffect(() => {
+        let eventSource: EventSource | null = null;
+        
+        const handleImport = async () => {
+            if (importingPlaylist == null) return;
             
             try {
                 eventSource = await useServerEvents<Array<MusicTrack>>(
                     buildUrl(`spotify/import?id=${importingPlaylist}`), 
-                    'ImportedPlaylistTracks', 
+                    'SpotifyPlaylistImport', 
                     MusicTrackSchema.array(), 
                     (data) => {
-                        processedSpotifyTracks = processedSpotifyTracks.filter((playlist) => playlist.id !== importingPlaylist);
                         toast.success('Playlist imported successfully!');
                         setImportingPlaylist(null);
                         setSelectedSpotifyPlaylistId(undefined);
@@ -385,7 +454,7 @@ export function PlaylistSection({
             }
         };
       
-          loadPlaylists();
+        handleImport();
 
         return () => { eventSource?.close() };
     }, [importingPlaylist]);
@@ -409,60 +478,9 @@ export function PlaylistSection({
         }
     }, [mainPlaylists.length, mainPlaylistsLoading]);
 
-    const {
-        data: rawSpotifyPlaylists
-    } = useLiveResourceJson<SpotifyPlaylist>({
-        fetchUrl: buildUrl('spotify/playlists'),
-        eventName: 'SpotifyPlaylist',
-        reconnectIntervalMs: 5000,
-        shouldProcess: importedView,
-    });
-
-    const {
-        data: rawSpotifyTracks
-    } = useLiveResourceJson<SpotifyTrack>({
-        fetchUrl: selectedSpotifyPlaylistId ? buildUrl(`spotify/tracks?id=${selectedSpotifyPlaylistId}`) : "",
-        eventName: 'SpotifyPlaylistTracks',
-        reconnectIntervalMs: 5000,
-        shouldProcess: importedView && !!selectedSpotifyPlaylistId,
-    });
-
-    var processedSpotifyTracks: SpotifyTrack[] = Array.isArray(rawSpotifyTracks)
-        ? rawSpotifyTracks.map((entry: any) => entry.track || entry)
-        : [];
-
-        
-    useEffect(() => {
-        let eventSource: EventSource | null = null;
-        
-        const loadPlaylists = async () => {
-            if(importingPlaylist == null) return;
-            
-            try {
-                eventSource = await useServerEvents<Array<SpotifyPlaylist>>(
-                    buildUrl(`spotify/playlists`), 
-                    'SpotifyPlaylist', 
-                    SpotifyPlaylistSchema.array(), 
-                    (data) => {
-                        setSelectedSpotifyPlaylistId(undefined);
-                        setIsTracksLoading(false);
-                    }
-                );
-            } catch (error) {
-                console.error("Failed to connect to SSE:", error);
-                setIsTracksLoading(false);
-            }
-        };
-      
-          loadPlaylists();
-
-        return () => { eventSource?.close() };
-    }, [importingPlaylist]);
-
-    const [isTracksLoading, setIsTracksLoading] = useState(false);
-
     // Loading states
-    const isSpotifyPlaylistsLoading = importedView && !Array.isArray(rawSpotifyPlaylists);
+    const isSpotifyPlaylistsLoading = isLoadingSpotifyPlaylists;
+    const isTracksLoading = isLoadingSpotifyTracks;
 
 
     const isMobile = useIsMobile();
@@ -593,7 +611,7 @@ export function PlaylistSection({
                                     </ContextMenu>
                                 ))
                             ) : (
-                                Array.isArray(rawSpotifyPlaylists) && rawSpotifyPlaylists.map(playlist => (
+                                spotifyPlaylists.map(playlist => (
                                     <PlaylistRow
                                         key={playlist.id}
                                         imageUrl={playlist.images?.[0]?.url}
@@ -601,7 +619,10 @@ export function PlaylistSection({
                                         title={playlist.name ?? ''}
                                         subtitle={playlist.description || 'No description'}
                                         selected={selectedSpotifyPlaylistId === playlist.id}
-                                        onClick={() => setSelectedSpotifyPlaylistId(playlist.id)}
+                                        onClick={() => {
+                                            console.log('Selected Spotify playlist:', playlist.id);
+                                            setSelectedSpotifyPlaylistId(playlist.id);
+                                        }}
                                         rightElement={
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -660,7 +681,16 @@ export function PlaylistSection({
                                     const isPlaylistMode = !importedView;
                                     const hasSelection = isPlaylistMode ? !!selectedMainPlaylistId : !!selectedSpotifyPlaylistId;
                                     const tracksToShow = isPlaylistMode ? (hasSelection ? mainTracks : [])
-                                        : (hasSelection ? processedSpotifyTracks : []);
+                                        : (hasSelection ? spotifyTracks.map(track => ({
+                                            title: track.title,
+                                            artists: track.artists,
+                                            album: track.album,
+                                            releaseDate: track.releaseDate,
+                                            duration: track.duration,
+                                            spotifyId: track.spotifyId,
+                                            images: track.images,
+                                            albumId: track.albumId
+                                        })) : []);
                                     const emptyLabel = hasSelection ? 'No tracks found' : 'Select a playlist to view tracks';
 
                                     if (isTracksLoading) {

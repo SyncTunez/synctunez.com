@@ -10,7 +10,7 @@ export async function useServerEvents<T = any>(url: string, eventName: string, s
     });
 
     eventSource.onerror = (event: any) => {
-        // Error handling
+        console.error('Event source error:', event);
     }
 
     eventSource.addEventListener(eventName, (event: any) => {
