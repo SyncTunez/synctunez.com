@@ -36,9 +36,11 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useRef, useEffect } from 'react';
 import {Table, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import { MusicPlaylistMeta, MusicTrack } from '@/lib/api/schemas';
+
 interface PlaylistSectionProps {
-    mainPlaylists: any[];
-    mainTracks: any[];
+    mainPlaylists: MusicPlaylistMeta[];
+    mainTracks: MusicTrack[];
     mainPlaylistsLoading?: boolean;
     selectedMainPlaylistId: number | undefined;
     onMainPlaylistSelect: (id?: number) => void;
@@ -643,7 +645,7 @@ export function PlaylistSection({
                                     }
                                     return (
                                         <TrackTable
-                                            tracks={tracksToShow}
+                                            tracks={mainTracks}
                                             isSpotify={!isPlaylistMode}
                                             emptyLabel={emptyLabel}
                                         />

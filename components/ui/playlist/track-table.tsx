@@ -26,14 +26,23 @@ export interface TrackTableProps {
     tracks: MusicTrack[];
     isSpotify: boolean;
     className?: string;
-    emptyLabel?: string;
+    emptyLabel?: React.ReactNode;
+    showTrackCount?: boolean;
+    totalTracks?: number;
 }
 
 export const TrackTable: React.FC<TrackTableProps> = ({
                                                           tracks,
                                                           isSpotify,
                                                           className,
-                                                          emptyLabel = 'No tracks found',
+                                                          emptyLabel = (
+                                                            <div className="text-center">
+                                                              <p className="text-muted-foreground mb-2">No tracks found.</p>
+                                                              <p className="text-sm text-muted-foreground">Select a playlist for you and your friend and any songs in common will appear here.</p>
+                                                            </div>
+                                                          ),
+                                                          showTrackCount = false,
+                                                          totalTracks,
                                                       }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [containerWidth, setContainerWidth] = useState<number>(0);
@@ -149,6 +158,13 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                         })}
                     </TableBody>
                 </Table>
+                {showTrackCount && totalTracks && totalTracks > tracks.length && (
+                    <div className="px-4 py-3 border-t bg-muted/30 mt-2">
+                        <p className="text-xs text-muted-foreground text-center">
+                            Showing {tracks.length} of {totalTracks} tracks
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );

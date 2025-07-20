@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconFilter } from "@tabler/icons-react";
+import { IconBrandSpotify } from "@tabler/icons-react";
 
 const combinedTracks = [
   { hash: "1", name: "Song 1", album: { name: "Album 1", images: [{ url: "/icon.png" }] }, artists: [{ name: "Artist 1" }], durationMs: 180000 },
@@ -167,7 +168,7 @@ export default function MergePlaylistsContent() {
             <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 items-start h-full">
               {/* Playlist image area - Center on mobile, left on desktop */}
               <div className="flex justify-center lg:justify-start w-full lg:w-auto">
-                <label className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 border-2 border-muted-foreground rounded-md flex items-center justify-center bg-muted cursor-pointer hover:opacity-80 transition-opacity relative overflow-hidden group flex-shrink-0">
+                <label className="w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 border-2 border-muted-foreground rounded-md flex items-center justify-center bg-muted cursor-pointer hover:opacity-80 transition-opacity relative overflow-hidden group flex-shrink-0">
                   {playlistImage ? (
                     <img src={playlistImage} alt="Playlist" className="w-full h-full object-cover rounded-md" />
                   ) : (
@@ -186,7 +187,7 @@ export default function MergePlaylistsContent() {
                 </label>
               </div>
               {/* Fields - Full width on mobile */}
-              <div className="flex-1 flex flex-col gap-3 sm:gap-4 w-full h-full">
+              <div className="flex-1 flex flex-col gap-2 sm:gap-3 w-full h-full">
                 {/* Editable Playlist Title */}
                 <div className="w-full">
                   {editingTitle ? (
@@ -198,13 +199,13 @@ export default function MergePlaylistsContent() {
                       onKeyDown={e => {
                         if (e.key === 'Enter') setEditingTitle(false);
                       }}
-                      className="h-10 sm:h-12 lg:h-16 text-base sm:text-lg lg:text-xl font-semibold w-full border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent px-2"
+                      className="h-8 sm:h-10 lg:h-12 text-base sm:text-lg lg:text-xl font-semibold w-full border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent px-2"
                       autoFocus
                       placeholder="Enter playlist title"
                     />
                   ) : (
                     <div
-                      className="h-10 sm:h-12 lg:h-16 text-base sm:text-lg lg:text-xl font-semibold flex items-center cursor-pointer px-2 rounded-md transition hover:bg-muted w-full min-h-[40px] sm:min-h-[48px] lg:min-h-[64px]"
+                      className="h-8 sm:h-10 lg:h-12 text-base sm:text-lg lg:text-xl font-semibold flex items-center cursor-pointer px-2 rounded-md transition hover:bg-muted w-full min-h-[32px] sm:min-h-[40px] lg:min-h-[48px]"
                       onClick={() => setEditingTitle(true)}
                     >
                       {playlistName || <span className="text-muted-foreground">Click to set playlist title</span>}
@@ -212,25 +213,39 @@ export default function MergePlaylistsContent() {
                   )}
                 </div>
                 {/* Editable Playlist Description */}
-                <div className="w-full flex-1 min-h-[60px] sm:min-h-[80px] lg:min-h-[120px]">
+                <div className="w-full h-[32px]">
                   {editingDesc ? (
-                    <textarea
+                    <Input
                       ref={descTextareaRef}
                       defaultValue={playlistDesc}
                       onChange={e => setPlaylistDesc(e.target.value)}
                       onBlur={() => setEditingDesc(false)}
-                      className="h-full text-sm sm:text-base lg:text-xl font-normal w-full rounded-md border border-input bg-background px-3 py-2 resize-none"
+                      className="h-full text-sm font-normal w-full border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent px-2"
                       autoFocus
                       placeholder="Enter playlist description"
                     />
                   ) : (
                     <div
-                      className="h-full text-sm sm:text-base lg:text-xl font-normal flex items-start cursor-pointer px-2 py-2 rounded-md transition hover:bg-muted w-full"
+                      className="h-full text-sm font-normal flex items-center cursor-pointer px-2 rounded-md transition hover:bg-muted w-full"
                       onClick={() => setEditingDesc(true)}
                     >
                       {playlistDesc || <span className="text-muted-foreground">Click to set playlist description</span>}
                     </div>
                   )}
+                </div>
+                {/* Save Playlist Button */}
+                <div className="pt-1">
+                  <Button 
+                    className="w-[60%] bg-teal-600 hover:bg-teal-700 hover:text-white text-white border-0" 
+                    size="sm"
+                    disabled={combinedTracks.length === 0}
+                    onClick={() => {
+                      // TODO: Implement save playlist functionality
+                      console.log('Save Playlist clicked');
+                    }}
+                  >
+                    Save Playlist
+                  </Button>
                 </div>
               </div>
             </div>
@@ -320,8 +335,9 @@ export default function MergePlaylistsContent() {
                   : [...prev, clickedId]
               );
             }}
-            loading={isLoadingFriendsPlaylists}
+            loading={isLoadingFriendsPlaylists && selectedFriends.length > 0}
             title="Friend Playlists"
+            emptyMessage={selectedFriends.length === 0 ? "Select a friend to collaborate with" : "No playlists found"}
             filterButton={
               selectedFriends.length > 0 ? (
                 <DropdownMenu>
@@ -366,7 +382,12 @@ export default function MergePlaylistsContent() {
             <CardTitle className="text-lg sm:text-xl">Combined Tracks</CardTitle>
           </CardHeader>
           <CardContent className="p-0 -ml-4">
-            <TrackTable tracks={combinedTracks} isSpotify={true} />
+            <TrackTable 
+              tracks={combinedTracks.slice(0, 50)} 
+              isSpotify={true} 
+              showTrackCount={true}
+              totalTracks={combinedTracks.length}
+            />
           </CardContent>
         </Card>
       </div>

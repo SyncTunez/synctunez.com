@@ -8,6 +8,8 @@ import { Heading } from '@/components/ui/heading';
 import PageContainer from "@/components/layout/page-container";
 import { buildUrl, authorized } from '@/lib/api/apiClient';
 import type { SpotifyAccount, SpotifyTrack, SpotifyPlaylist } from '@/lib/api/types';
+import { MusicPlaylistImportResult, MusicPlaylistImportResultSchema, MusicTrackSchema, MusicTrack } from '@/lib/api/schemas';
+import { useServerEvents } from '@/lib/api/ServerEvents';
 import { useLiveResourceJson } from "@/hooks/useLiveResource";
 import { ServiceCard, serviceIcons } from "@/components/ui/service-card";
 import { MobileNavigationMenu } from "@/components/ui/mobile-navigation-menu";
@@ -17,7 +19,7 @@ import { useSearchParams } from 'next/navigation';
 import { FriendsCardSkeleton } from '@/components/ui/friends-card';
 import FriendsCard from '@/components/ui/friends-card';
 
-export default function AccountContent() {
+export default function AccountPage() {
     const userContext = React.useContext(UserContext) as UserContextType | null;
     const userAccount = userContext?.userAccount;
     
@@ -27,6 +29,11 @@ export default function AccountContent() {
     const tabIndex = tabParam === 'billing' ? 1 : 0;
     const [selectedTab, setSelectedTab] = React.useState<number>(tabIndex);
     const [selectedPlaylistId, setSelectedPlaylistId] = useState<number | undefined>(undefined);
+    const [importedPlaylists, setImportedPlaylists] = useState<Array<MusicPlaylistMeta>>([]);
+    const [isLoadingImportedPlaylists, setIsLoadingImportedPlaylists] = useState(true);
+
+    const [tracks, setTracks] = useState<Array<MusicTrack>>([]);
+    const [isLoadingTracks, setIsLoadingTracks] = useState(true);
 
     const hasSpotify = !!userAccount?.hasSpotify;
 
@@ -40,37 +47,64 @@ export default function AccountContent() {
         shouldProcess: hasSpotify,
     }) as { data: SpotifyAccount | null, error: any };
 
-    const {
-        data: rawPlaylists,
-        error: musicPlaylistError
-    } = useLiveResourceJson<SpotifyPlaylist>({
-        fetchUrl: buildUrl('music/playlists'),
-        eventName: 'ImportedPlaylists',
-        reconnectIntervalMs: 5000,
-        shouldProcess: hasSpotify,
-    });
+    // Load my playlists using ServerEvents like in merge page
+    useEffect(() => {
+        let eventSource: EventSource | null = null;
+        
+        const loadPlaylists = async () => {
+            try {
+                setIsLoadingImportedPlaylists(true);
+                eventSource = await useServerEvents<Array<MusicPlaylistImportResult>>(
+                    buildUrl(`music/playlists`), 
+                    'ImportedPlaylists', 
+                    MusicPlaylistImportResultSchema.array(), 
+                    (data) => {
+                        setImportedPlaylists(data.map(item => item.meta));
+                        setIsLoadingImportedPlaylists(false);
+                    }
+                );
+            } catch (error) {
+                console.error("Failed to connect to SSE:", error);
+                setIsLoadingImportedPlaylists(false);
+            }
+        };
+      
+        if (hasSpotify) {
+          loadPlaylists();
+        }
+      
+        return () => { eventSource?.close() };
+    }, []);
 
-    const playlistsLoading = rawPlaylists === undefined;
-
-    const playlists: SpotifyPlaylist[] = Array.isArray(rawPlaylists)
-        ? rawPlaylists
-        : rawPlaylists && typeof rawPlaylists === 'object' && 'id' in rawPlaylists
-            ? [rawPlaylists as SpotifyPlaylist]
-            : [];
-
-    const {
-        data: rawSpotifyTracks,
-        error: spotifyTracksError
-    } = useLiveResourceJson<SpotifyTrack>({
-        fetchUrl: selectedPlaylistId !== undefined ? buildUrl(`music/playlists/tracks?id=${selectedPlaylistId}`) : '',
-        eventName: 'ImportedPlaylistTracks',
-        reconnectIntervalMs: 5000,
-        shouldProcess: selectedPlaylistId !== undefined,
-    });
-
-    const tracks: SpotifyTrack[] = Array.isArray(rawSpotifyTracks)
-        ? rawSpotifyTracks.map((entry: any) => entry.track || entry)
-        : [];
+    // Load tracks for the selected playlist
+    useEffect(() => {
+        let eventSource: EventSource | null = null;
+        
+        const loadPlaylists = async () => {
+            try {
+                setIsLoadingImportedPlaylists(true);
+                eventSource = await useServerEvents<Array<MusicTrack>>(
+                    buildUrl(`music/playlists/tracks?id=${selectedPlaylistId}`), 
+                    'ImportedPlaylistTracks', 
+                    MusicTrackSchema.array(), 
+                    (data) => {
+                        setTracks(data);
+                        setIsLoadingTracks(false);
+                    }
+                );
+            } catch (error) {
+                console.error("Failed to connect to SSE:", error);
+                setIsLoadingTracks(false);
+            }
+        };
+      
+        if (hasSpotify) {
+            loadPlaylists();
+        }
+      
+        // Cleanup function to close the connection when component unmounts
+        return () => { eventSource?.close() };
+    }, [tabIndex]);
 
     React.useEffect(() => {
         setSelectedTab(tabIndex);
@@ -146,13 +180,13 @@ export default function AccountContent() {
                                     </div>
                                     {userAccount?.hasSpotify && (
                                         <div className="w-full xl:flex-1">
-                                            {playlistsLoading ? (
+                                            {isLoadingImportedPlaylists ? (
                                                 <PlaylistSectionSkeleton />
                                             ) : (
                                                 <PlaylistSection
-                                                    mainPlaylists={playlists}
+                                                    mainPlaylists={importedPlaylists}
                                                     mainTracks={tracks}
-                                                    mainPlaylistsLoading={playlistsLoading}
+                                                    mainPlaylistsLoading={isLoadingImportedPlaylists}
                                                     selectedMainPlaylistId={selectedPlaylistId}
                                                     onMainPlaylistSelect={setSelectedPlaylistId}
                                                 />

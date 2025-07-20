@@ -1,7 +1,7 @@
 import React from "react";
 import SecureContentWrapper from "@/components/SecureContentWrapper";
 import { Button } from "@/components/ui/button";
-import AccountContent from "./AccountContent";
+import AccountContent from "./account/page";
 import {buildUrl} from "@/lib/api/apiClient";
 
 export default function AccountPage() {
