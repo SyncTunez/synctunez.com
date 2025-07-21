@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IconUserPlus, IconShare, IconCopy, IconCheck, IconMail, IconBrandTwitter, IconQrcode, IconBrandFacebook } from "@tabler/icons-react";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { UserContext, UserContextType } from "@/components/auth/UserContext";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -20,9 +20,15 @@ export function Step4InviteFriends({ onComplete }: Step4InviteFriendsProps) {
   const [email, setEmail] = useState("");
   const [inviteSent, setInviteSent] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
   const router = useRouter();
 
-  const shareUrl = `${window.location.origin}/invite/${userContext?.userAccount?.username || 'demo'}`;
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setShareUrl(`${window.location.origin}/invite/${userContext?.userAccount?.username || 'demo'}`);
+    }
+  }, [userContext?.userAccount?.username]);
+
   const shareText = `Check out SyncTunez! Let's sync our music playlists and find songs we both love. Join me at ${shareUrl}`;
 
   const handleSendInvite = async () => {

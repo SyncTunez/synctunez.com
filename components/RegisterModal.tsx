@@ -144,7 +144,7 @@ export default function RegisterModal({ userSession, userAccountRaw }: { userSes
                   )}
               />
               <Button type="submit" className="w-full">Register</Button>
-              <Link href={buildUrl("/logout")} className="w-full">
+              <Link href="/api/logout" className="w-full">
                 <Button className="w-full" variant="outline">Logout</Button>
               </Link>
             </form>

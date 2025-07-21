@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { buildUrl } from "@/lib/api/apiClient";
 import { useContext } from "react";
 import { UserContext, UserContextType } from "@/components/auth/UserContext";
 import { OnboardingLayout } from "./onboarding-layout";
@@ -38,7 +37,7 @@ export function Step1GoogleSignIn({ onNext }: Step1GoogleSignInProps) {
               size="lg"
               className="bg-card/80 hover:bg-card text-foreground border border-muted-foreground/20 hover:border-muted-foreground/40 px-8 py-6 h-auto text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
             >
-              <a href={buildUrl("/login")}>
+              <a href="/api/login">
                 <GoogleIcon />
                 <span className="ml-3">Sign in with Google</span>
               </a>

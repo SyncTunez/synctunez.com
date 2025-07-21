@@ -12,7 +12,6 @@ import {SidebarMenuButton} from "@/components/ui/sidebar";
 import {UserContext} from "@/components/auth/UserContext";
 import {IconBell, IconCreditCard, IconLogout, IconLogout2, IconUserCircle} from "@tabler/icons-react";
 import {UserAvatarProfile} from "@/components/ui/user-avatar-profile";
-import {buildUrl} from "@/lib/api/apiClient";
 import Link from "next/link";
 import { ChevronsUpDown } from "lucide-react";
 
@@ -56,13 +55,13 @@ export function UserAccountDisplay() {
 
                     <DropdownMenuGroup>
                         <DropdownMenuItem asChild>
-                            <Link href={buildUrl("/profile")}>
+                            <Link href="/api/profile">
                                 <IconUserCircle className='mr-2 h-4 w-4' />
                                 Profile
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                            <Link href={buildUrl("/notifications")}>
+                            <Link href="/api/notifications">
                                 <IconBell className='mr-2 h-4 w-4' />
                                 Notifications
                             </Link>
@@ -70,7 +69,7 @@ export function UserAccountDisplay() {
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                        <a href={buildUrl("/logout")}>
+                        <a href="/api/logout">
                             <IconLogout2 className='mr-2 h-4 w-4' />
                             Sign Out
                         </a>

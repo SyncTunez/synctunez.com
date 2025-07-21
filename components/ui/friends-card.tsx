@@ -604,16 +604,16 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-2 mt-2 items-center">
-                <QRCodeWithLogo url={buildUrl(`/account/invite?refer=${userContext?.userAccount?.username}`)} size={200} />
+                <QRCodeWithLogo url={`/account/invite?refer=${userContext?.userAccount?.username}`} size={200} />
                 <Input
                     readOnly
-                    value={buildUrl(`/account/invite?refer=${userContext?.userAccount?.username}`)}
+                    value={`/account/invite?refer=${userContext?.userAccount?.username}`}
                     className="select-all"
                 />
                 <Button
                     onClick={() => {
                       navigator.clipboard.writeText(
-                          buildUrl(`/account/invite?refer=${userContext?.userAccount?.username}`)
+                          `/account/invite?refer=${userContext?.userAccount?.username}`
                       );
                     }}
                 >

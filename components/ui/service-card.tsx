@@ -57,7 +57,7 @@ export function ServiceCard({
     const isSpotify = service.key === 'hasSpotify';
     const spotifyAuthUrl = isSpotify && userAccount && (userAccount as any).profileUrl
         ? (userAccount as any).profileUrl
-        : buildUrl('/link/spotify');
+        : '/api/link/spotify';
     const spotifyProfileUrl = isSpotify && spotifyAccountData 
         ? `https://open.spotify.com/user/${spotifyAccountData.id}` 
         : undefined;

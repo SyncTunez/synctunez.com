@@ -16,7 +16,6 @@ import {
 import { AppHeaderContent } from "@/components/sidebar/app-header-content";
 import Link from "next/link";
 import SecureContentWrapper from "@/components/SecureContentWrapper";
-import { buildUrl } from "@/lib/api/apiClient";
 import { UserAccountDisplay } from "@/components/auth/UserAccountDisplay";
 import { NAV_PAGES } from "@/lib/navConfig";
 import {
