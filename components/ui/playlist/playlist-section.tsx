@@ -449,22 +449,18 @@ export function PlaylistSection({
                         toast.success('Playlist imported successfully!');
                         
                         // Find the imported playlist
-                        const importedPlaylist = spotifyPlaylists.find(p => p.id === importingPlaylist);
-                        if (importedPlaylist && onPlaylistImported) {
                             // Create a MusicPlaylistMeta object from the Spotify playlist
                             const playlistMeta: MusicPlaylistMeta = {
-                                id: parseInt(importedPlaylist.id), // Convert string ID to number
-                                title: importedPlaylist.name || 'Imported Playlist',
-                                trackNumber: importedPlaylist.tracks?.total || 0,
-                                image: importedPlaylist.images?.[0] || null,
-                                owner: 'Unknown', // Spotify playlist doesn't have owner info in schema
-                                collaborators: [], // No collaborators for imported playlists
-                                from: 'spotify'
-                            };
+                                id: data.meta.id, 
+                                title: data.meta.title,
+                                trackNumber: data.meta.trackNumber,
+                                image: data.meta.image,
+                                owner: data.meta.owner, 
+                                collaborators: data.meta.collaborators,
+                                from: data.meta.from
+                            }
                             
-                            // Call the callback to add to main playlists
-                            onPlaylistImported(playlistMeta);
-                        }
+                        onPlaylistImported?.(playlistMeta);
                         
                         // Mark as imported and remove from Spotify playlists
                         setImportedPlaylistIds(prev => new Set([...prev, importingPlaylist]));
@@ -662,26 +658,8 @@ export function PlaylistSection({
                                                         onClick={async e => {
                                                             e.stopPropagation();
                                                             const playlistId = playlist.id;
-                                                            
                                                             // Set the currently importing playlist
                                                             setImportingPlaylist(playlistId);
-                                                            
-                                                            const url = buildUrl('spotify/import', { id: playlistId });
-                                                            try {
-                                                                const response = await fetch(url, {
-                                                                    method: 'GET',
-                                                                    headers: { 'Content-Type': 'application/json' }
-                                                                });
-                                                                if (response.status === 200) {
-                                                                    toast.success('Playlist import started!');
-                                                                } else {
-                                                                    toast.error('Failed to import playlist.');
-                                                                    setImportingPlaylist(null);
-                                                                }
-                                                            } catch (err: any) {
-                                                                toast.error('Failed to import playlist.');
-                                                                setImportingPlaylist(null);
-                                                            } 
                                                         }}
                                                     >
                                                         {importingPlaylist === playlist.id ? (
