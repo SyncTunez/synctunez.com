@@ -17,6 +17,7 @@ import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
 import PageContainer from '@/components/layout/page-container';
 import Script from 'next/script';
 import ClientRegisterModalWrapper from '@/components/layout/ClientRegisterModalWrapper';
+import { captureComponentError, addBreadcrumb } from '@/lib/sentry';
 
 const META_THEME_COLORS = {
     light: '#ffffff',
@@ -90,79 +91,116 @@ export default async function RootLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const cookieStore = await cookies();
-    const activeThemeValue = cookieStore.get('active_theme')?.value;
-    const isScaled = activeThemeValue?.endsWith('-scaled');
+    try {
+        const cookieStore = await cookies();
+        const activeThemeValue = cookieStore.get('active_theme')?.value;
+        const isScaled = activeThemeValue?.endsWith('-scaled');
 
-    const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
-    const userSession = cookieStore.get("UserSession")?.value ?? null;
-    const userAccountRaw = cookieStore.get("UserAccount")?.value ?? null;
+        const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
+        const userSession = cookieStore.get("UserSession")?.value ?? null;
+        const userAccountRaw = cookieStore.get("UserAccount")?.value ?? null;
 
-    return (
-        <html lang='en' suppressHydrationWarning>
-        <head>
-            <link rel="manifest" href="/manifest.json" />
-            <link rel="icon" href="/favicon.ico" />
-            <script
-                dangerouslySetInnerHTML={{
-                    __html: `
-              try {
-                if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
-                }
-              } catch (_) {}
-            `
-                }}
-            />
-            {/* Google Analytics */}
-            <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX'}`}
-                strategy="afterInteractive"
-            />
-            <Script id="google-analytics" strategy="afterInteractive">
-                {`
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){dataLayer.push(arguments);}
-                    gtag('js', new Date());
-                    gtag('config', '${process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX'}');
-                `}
-            </Script>
-        </head>
-        <body
-            className={cn(
-                'bg-background font-sans antialiased',
-                activeThemeValue ? `theme-${activeThemeValue}` : '',
-                isScaled ? 'theme-scaled' : '',
-                fontVariables
-            )}
-        >
-        <NextTopLoader showSpinner={false}/>
-        <NuqsAdapter>
-            <ThemeProvider
-                attribute='class'
-                defaultTheme='system'
-                enableSystem
-                disableTransitionOnChange
-                enableColorScheme
+        addBreadcrumb('RootLayout initialized', 'layout', {
+            hasActiveTheme: !!activeThemeValue,
+            isScaled,
+            defaultOpen,
+            hasUserSession: !!userSession,
+            hasUserAccountRaw: !!userAccountRaw
+        });
+
+        return (
+            <html lang='en' suppressHydrationWarning>
+            <head>
+                <link rel="manifest" href="/manifest.json" />
+                <link rel="icon" href="/favicon.ico" />
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                  try {
+                    if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                      document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
+                    }
+                  } catch (_) {}
+                `
+                    }}
+                />
+                {/* Google Analytics */}
+                <Script
+                    src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX'}`}
+                    strategy="afterInteractive"
+                />
+                <Script id="google-analytics" strategy="afterInteractive">
+                    {`
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+                        gtag('config', '${process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX'}');
+                    `}
+                </Script>
+            </head>
+            <body
+                className={cn(
+                    'bg-background font-sans antialiased',
+                    activeThemeValue ? `theme-${activeThemeValue}` : '',
+                    isScaled ? 'theme-scaled' : '',
+                    fontVariables
+                )}
             >
-                <Providers activeThemeValue={activeThemeValue as string}>
-                    <ClientToaster />
-                    <SidebarProvider defaultOpen={defaultOpen}>
-                        <div className="flex min-h-svh w-full">
-                            <AppSidebar/>
-                            <FloatingSidebarTrigger />
-                            <main className="flex-1 w-full">
-                                <PageContainer>
-                                    {children}
-                                </PageContainer>
-                            </main>
-                        </div>
-                    </SidebarProvider>
-                    <ClientRegisterModalWrapper userSession={userSession} userAccountRaw={userAccountRaw}/>
-                </Providers>
-            </ThemeProvider>
-        </NuqsAdapter>
-        </body>
-        </html>
-    );
+            <NextTopLoader showSpinner={false}/>
+            <NuqsAdapter>
+                <ThemeProvider
+                    attribute='class'
+                    defaultTheme='system'
+                    enableSystem
+                    disableTransitionOnChange
+                    enableColorScheme
+                >
+                    <Providers activeThemeValue={activeThemeValue as string}>
+                        <ClientToaster />
+                        <SidebarProvider defaultOpen={defaultOpen}>
+                            <div className="flex min-h-svh w-full">
+                                <AppSidebar/>
+                                <FloatingSidebarTrigger />
+                                <main className="flex-1 w-full">
+                                    <PageContainer>
+                                        {children}
+                                    </PageContainer>
+                                </main>
+                            </div>
+                        </SidebarProvider>
+                        <ClientRegisterModalWrapper userSession={userSession} userAccountRaw={userAccountRaw}/>
+                    </Providers>
+                </ThemeProvider>
+            </NuqsAdapter>
+            </body>
+            </html>
+        );
+    } catch (error) {
+        captureComponentError(
+            `RootLayout initialization failed: ${error instanceof Error ? error.message : String(error)}`,
+            {
+                component: 'RootLayout',
+                action: 'initialize',
+                additionalData: {
+                    error: error instanceof Error ? error.message : String(error),
+                    stack: error instanceof Error ? error.stack : undefined
+                }
+            },
+            'error'
+        );
+
+        // Fallback layout in case of error
+        return (
+            <html lang='en'>
+            <body className='bg-background font-sans antialiased'>
+                <div className="flex min-h-screen items-center justify-center">
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold mb-4">Something went wrong</h1>
+                        <p className="text-muted-foreground">Please refresh the page to try again.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        );
+    }
 }

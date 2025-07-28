@@ -27,6 +27,52 @@ Sentry.init({
 
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
   debug: false,
+
+  // Configure beforeSend to filter out certain errors or add context
+  beforeSend(event, hint) {
+    // Add client-specific context
+    event.tags = {
+      ...event.tags,
+      environment: process.env.NODE_ENV || 'development',
+      client: true,
+    };
+
+    // Filter out certain types of errors if needed
+    if (event.exception) {
+      const exception = event.exception.values?.[0];
+      if (exception?.type === 'NetworkError' && exception?.value?.includes('Failed to fetch')) {
+        return null; // Don't send network fetch errors
+      }
+    }
+
+    return event;
+  },
+
+  // Configure beforeSendTransaction for performance monitoring
+  beforeSendTransaction(event) {
+    // Add client-specific context to transactions
+    event.tags = {
+      ...event.tags,
+      environment: process.env.NODE_ENV || 'development',
+      client: true,
+    };
+
+    return event;
+  },
+
+  // Add environment-specific configuration
+  environment: process.env.NODE_ENV || 'development',
+
+  // Configure release tracking
+  release: process.env.npm_package_version || '1.0.0',
+
+  // Add client-specific tags
+  initialScope: {
+    tags: {
+      client: true,
+      platform: 'nextjs',
+    },
+  },
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

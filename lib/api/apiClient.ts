@@ -1,4 +1,5 @@
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance, AxiosError } from 'axios'
+import { captureAPIError, addBreadcrumb } from '@/lib/sentry';
 
 // Axios instance with credentials
 export const apiClient: AxiosInstance = axios.create({
@@ -8,6 +9,77 @@ export const apiClient: AxiosInstance = axios.create({
         'Content-Type': 'application/json',
     },
 })
+
+// Add request interceptor for tracking
+apiClient.interceptors.request.use(
+    (config) => {
+        addBreadcrumb('API request started', 'api', {
+            method: config.method?.toUpperCase(),
+            url: config.url,
+            baseURL: config.baseURL,
+            headers: config.headers
+        });
+        return config;
+    },
+    (error) => {
+        captureAPIError(
+            `API request interceptor error: ${error.message}`,
+            {
+                endpoint: error.config?.url || 'unknown',
+                method: error.config?.method?.toUpperCase() || 'unknown',
+                statusCode: 0,
+                additionalData: {
+                    error: error.message,
+                    stack: error.stack,
+                    config: error.config
+                }
+            },
+            'error'
+        );
+        return Promise.reject(error);
+    }
+);
+
+// Add response interceptor for tracking
+apiClient.interceptors.response.use(
+    (response) => {
+        addBreadcrumb('API response received', 'api', {
+            method: response.config.method?.toUpperCase(),
+            url: response.config.url,
+            status: response.status,
+            statusText: response.statusText
+        });
+        return response;
+    },
+    (error: AxiosError) => {
+        const statusCode = error.response?.status || 0;
+        const endpoint = error.config?.url || 'unknown';
+        const method = error.config?.method?.toUpperCase() || 'unknown';
+        
+        captureAPIError(
+            `API request failed: ${error.message}`,
+            {
+                endpoint,
+                method,
+                statusCode,
+                responseData: error.response?.data,
+                requestData: error.config?.data,
+                headers: error.config?.headers,
+                additionalData: {
+                    error: error.message,
+                    stack: error.stack,
+                    isNetworkError: !error.response,
+                    isTimeout: error.code === 'ECONNABORTED',
+                    timeout: error.config?.timeout,
+                    baseURL: error.config?.baseURL
+                }
+            },
+            statusCode >= 500 ? 'error' : 'warning'
+        );
+        
+        return Promise.reject(error);
+    }
+);
 
 // Build a full URL with optional query parameters
 export function buildUrl(
@@ -58,6 +130,12 @@ export function buildUrl(
 export const authorizedRequest = <T = unknown>(
     options: AxiosRequestConfig
 ): Promise<AxiosResponse<T>> => {
+    addBreadcrumb('Authorized request', 'api', {
+        method: options.method?.toUpperCase(),
+        url: options.url,
+        withCredentials: true
+    });
+    
     return apiClient(options)
 }
 
@@ -65,6 +143,12 @@ export const authorizedRequest = <T = unknown>(
 export const unauthorizedRequest = <T = unknown>(
     options: AxiosRequestConfig
 ): Promise<AxiosResponse<T>> => {
+    addBreadcrumb('Unauthorized request', 'api', {
+        method: options.method?.toUpperCase(),
+        url: options.url,
+        withCredentials: false
+    });
+    
     return axios({
         ...options,
         baseURL: '/api/',
@@ -127,5 +211,6 @@ export const unauthorized = {
 }
 
 export const logout = async () => {
+    addBreadcrumb('Logout request', 'auth', { endpoint: '/logout' });
     return authorized.post('/logout');
 }

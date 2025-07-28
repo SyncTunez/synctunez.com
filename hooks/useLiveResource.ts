@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSSE } from './useSSE';
 import {authorized} from "@/lib/api/apiClient";
+import { captureAPIError, captureSSEError, addBreadcrumb } from '@/lib/sentry';
 
 export interface RawSSEEvent {
   id?: string;
@@ -21,6 +22,14 @@ interface UseLiveResourceOptions<T = any> {
    * activate the live resource logic.
    */
   shouldProcess?: boolean;
+  /**
+   * Component name for error tracking
+   */
+  componentName?: string;
+  /**
+   * User ID for error tracking
+   */
+  userId?: string;
 }
 
 export function useLiveResourceJson<T>(options: Omit<Parameters<typeof useLiveResource<T>>[0], 'responseType'>) {
@@ -39,6 +48,8 @@ export function useLiveResource<T = any>({
   onMessage,
   responseType = 'json',
   shouldProcess = true,
+  componentName = 'useLiveResource',
+  userId,
 }: UseLiveResourceOptions<T>) {
   const [data, setData] = useState<T | RawSSEEvent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,6 +59,11 @@ export function useLiveResource<T = any>({
   React.useEffect(() => {
     if (!shouldProcess || !fetchUrl) {
       setLoading(false);
+      addBreadcrumb('LiveResource fetch skipped', 'live-resource', { 
+        reason: !shouldProcess ? 'shouldProcess=false' : 'no_fetchUrl',
+        fetchUrl,
+        componentName 
+      });
       return;
     }
 
@@ -55,12 +71,43 @@ export function useLiveResource<T = any>({
     setLoading(true);
     setError(null);
     
+    addBreadcrumb('LiveResource fetch started', 'live-resource', { 
+      fetchUrl, 
+      componentName,
+      userId 
+    });
 
     fetch(fetchUrl)
       .then(async (res) => {
         if (!res.ok) {
-          throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+          const errorMessage = `Failed to fetch: ${res.status} ${res.statusText}`;
+          
+          captureAPIError(
+            errorMessage,
+            {
+              endpoint: fetchUrl,
+              method: 'GET',
+              statusCode: res.status,
+              component: componentName,
+              userId,
+              additionalData: {
+                statusText: res.statusText,
+                headers: Object.fromEntries(res.headers.entries()),
+                url: res.url
+              }
+            },
+            'error'
+          );
+          
+          throw new Error(errorMessage);
         }
+        
+        addBreadcrumb('LiveResource fetch successful', 'live-resource', { 
+          fetchUrl, 
+          componentName,
+          status: res.status 
+        });
+        
         setLoading(false);
       })
       .catch((err) => {
@@ -68,14 +115,37 @@ export function useLiveResource<T = any>({
           const errorMsg = err instanceof Error ? err.message : String(err);
           setError(errorMsg);
           setLoading(false);
+          
+          captureAPIError(
+            `LiveResource fetch failed: ${errorMsg}`,
+            {
+              endpoint: fetchUrl,
+              method: 'GET',
+              statusCode: 0, // Network error
+              component: componentName,
+              userId,
+              additionalData: {
+                error: err instanceof Error ? err.message : String(err),
+                stack: err instanceof Error ? err.stack : undefined,
+                cancelled
+              }
+            },
+            'error'
+          );
+          
           if (onFail) onFail(errorMsg);
         }
       });
 
     return () => {
       cancelled = true;
+      addBreadcrumb('LiveResource fetch cleanup', 'live-resource', { 
+        fetchUrl, 
+        componentName,
+        cancelled 
+      });
     };
-  }, [fetchUrl, onFail, shouldProcess]);
+  }, [fetchUrl, onFail, shouldProcess, componentName, userId]);
 
   // Construct SSE URL only when eventName is provided
   const eventUrl = shouldProcess && eventName ? `http://localhost:8080/events/${eventName}` : '';
@@ -84,23 +154,72 @@ export function useLiveResource<T = any>({
     eventUrl,
     shouldProcess ? eventName : null,
     (newData, event) => {
-      if (responseType === 'raw') {
-        // Try to extract id/event/data from the event
-        let raw: RawSSEEvent = {
-          id: (event as any).lastEventId,
-          event: event.type,
-          data: undefined,
-        };
-        try {
-          raw.data = typeof newData === 'string' ? JSON.parse(newData) : newData;
-        } catch {
-          raw.data = newData;
+      try {
+        addBreadcrumb('LiveResource SSE message received', 'live-resource', {
+          eventUrl,
+          eventName,
+          componentName,
+          userId,
+          eventType: event.type,
+          dataType: typeof newData
+        });
+
+        if (responseType === 'raw') {
+          // Try to extract id/event/data from the event
+          let raw: RawSSEEvent = {
+            id: (event as any).lastEventId,
+            event: event.type,
+            data: undefined,
+          };
+          try {
+            raw.data = typeof newData === 'string' ? JSON.parse(newData) : newData;
+          } catch (parseError) {
+            captureSSEError(
+              `Failed to parse SSE data in LiveResource: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
+              {
+                sseEventName: eventName || 'default',
+                sseUrl: eventUrl,
+                eventType: event.type,
+                lastEventId: (event as any).lastEventId,
+                eventData: newData,
+                component: componentName,
+                userId,
+                additionalData: {
+                  rawData: newData,
+                  parseError: parseError instanceof Error ? parseError.message : String(parseError),
+                  responseType
+                }
+              },
+              'warning'
+            );
+            raw.data = newData;
+          }
+          setData(raw);
+          if (onMessage) onMessage(raw as any, event);
+        } else {
+          setData(newData);
+          if (onMessage) onMessage(newData, event);
         }
-        setData(raw);
-        if (onMessage) onMessage(raw as any, event);
-      } else {
-        setData(newData);
-        if (onMessage) onMessage(newData, event);
+      } catch (error) {
+        captureSSEError(
+          `LiveResource SSE message processing failed: ${error instanceof Error ? error.message : String(error)}`,
+          {
+            sseEventName: eventName || 'default',
+            sseUrl: eventUrl,
+            eventType: event.type,
+            lastEventId: (event as any).lastEventId,
+            eventData: newData,
+            component: componentName,
+            userId,
+            additionalData: {
+              error: error instanceof Error ? error.message : String(error),
+              stack: error instanceof Error ? error.stack : undefined,
+              responseType,
+              newData
+            }
+          },
+          'error'
+        );
       }
     },
     { reconnectIntervalMs }

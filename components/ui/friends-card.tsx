@@ -1,85 +1,47 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { UserContext, UserContextType } from "@/components/auth/UserContext"
-import { authorized, buildUrl } from '@/lib/api/apiClient'
-import { IconUserPlus, IconShare, IconHeart, IconChevronDown, IconUser } from "@tabler/icons-react"
-import { toast } from 'sonner'
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { AddFriendFormSchema, Friend, FriendSchema, MusicPlaylistImportFriendResult } from "@/lib/api/schemas";
-import type { z } from "zod";
-import {
-  CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandItem,
-  CommandGroup,
-} from "@/components/ui/command"
-import {
-  ContextMenu,
-  ContextMenuTrigger,
-  ContextMenuContent,
-  ContextMenuItem,
-} from "@/components/ui/context-menu"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useLiveResourceJson } from '@/hooks/useLiveResource'
-import QRCodeWithLogo from "@/components/ui/QRCodeWithLogo";
-import { useServerEvents } from '@/lib/api/ServerEvents'
+import React, { useState, useEffect, useContext } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { toast } from 'sonner';
+import { IconUserPlus, IconUserMinus, IconShare, IconSearch, IconHeart, IconHeartFilled } from '@tabler/icons-react';
+import { UserContext, UserContextType } from '@/components/auth/UserContext';
+import { buildUrl } from '@/lib/api/apiClient';
+import { FriendSchema, AddFriendFormSchema, Friend } from '@/lib/api/schemas';
+import { useServerEvents } from '@/lib/api/ServerEvents';
+import { captureComponentError, captureAPIError, addBreadcrumb } from '@/lib/sentry';
 
-// FriendsCardSkeleton component to prevent layout shifts
+const LOCAL_STORAGE_KEY = 'favorite_friends';
+
 export function FriendsCardSkeleton({ forceFullHeight = false }: { forceFullHeight?: boolean }) {
-  const cardClassName = forceFullHeight
-    ? 'flex flex-col sm:h-[600px] sm:min-h-0'
-    : 'flex flex-col';
-
   return (
-    <Card className={cardClassName}>
-      <CardHeader className="space-y-2 flex-none px-4 py-2 sm:py-3">
-        {/* Header skeleton */}
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-6 w-20" />
-          <div className="flex gap-2">
-            <Skeleton className="h-8 w-8 rounded-md" />
-            <Skeleton className="h-8 w-8 rounded-md" />
-          </div>
-        </div>
-
-        {/* Search and filter skeleton */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2">
-          <Skeleton className="h-10 flex-grow max-w-full sm:max-w-xs" />
-          <Skeleton className="h-10 w-full sm:w-[110px]" />
-        </div>
+    <Card className={`${forceFullHeight ? 'h-full' : ''}`}>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Skeleton className="h-6 w-6" />
+          <Skeleton className="h-6 w-24" />
+        </CardTitle>
       </CardHeader>
-
-      {/* Content skeleton */}
-      <CardContent className="flex-1 p-0 min-h-0 overflow-hidden">
-        <div className="h-full flex flex-col gap-2 p-4">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="flex items-center gap-3 py-2">
+      <CardContent className="space-y-4">
+        <div className="flex gap-2">
+          <Skeleton className="h-10 flex-1" />
+          <Skeleton className="h-10 w-10" />
+        </div>
+        <div className="space-y-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3">
               <Skeleton className="h-10 w-10 rounded-full" />
-              <div className="flex-1 min-w-0">
-                <Skeleton className="h-4 w-1/3 mb-2" />
-                <Skeleton className="h-3 w-1/4" />
+              <div className="flex-1">
+                <Skeleton className="h-4 w-24 mb-1" />
+                <Skeleton className="h-3 w-16" />
               </div>
-              <Skeleton className="h-6 w-6 rounded-md ml-auto" />
+              <Skeleton className="h-8 w-16" />
             </div>
           ))}
         </div>
@@ -90,18 +52,12 @@ export function FriendsCardSkeleton({ forceFullHeight = false }: { forceFullHeig
 
 const FILTER_MODES = {
   ALL: 'all',
-  RECENT: 'recent',
   FAVORITES: 'favorites',
-  ALPHABETICAL: 'alphabetical',
+  RECENT: 'recent',
 } as const;
 
 type FilterMode = typeof FILTER_MODES[keyof typeof FILTER_MODES];
 
-const LOCAL_STORAGE_KEY = 'favoriteFriends';
-
-
-
-// Add types for API response and friend entry
 type FriendApiResponse = {
   username: string;
   addTime: number;
@@ -127,7 +83,6 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
   const [showAddCommand, setShowAddCommand] = useState(false)
   const [addFriendSearch, setAddFriendSearch] = useState('')
   const [debouncedAddFriendSearch, setDebouncedAddFriendSearch] = useState('')
-  const [selectedFriend, setSelectedFriend] = useState<string | null>(null)
 
   // Debounce addFriendSearch
   useEffect(() => {
@@ -151,45 +106,151 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
         return;
       }
       
-      eventSource = await useServerEvents(
-        buildUrl(`account/search?q=${debouncedAddFriendSearch}`), 
-        'AccountSearch', 
-        FriendSchema.array(), 
-        (data) => {
-          setFriendSuggestions(data);
-        }
-      );
+             addBreadcrumb('Friend search started', 'friends', {
+         query: debouncedAddFriendSearch,
+         userId: userContext?.userAccount?.username
+       });
+      
+      try {
+        eventSource = await useServerEvents(
+          buildUrl(`account/search?q=${debouncedAddFriendSearch}`), 
+          'AccountSearch', 
+          FriendSchema.array(), 
+          (data) => {
+            setFriendSuggestions(data);
+                         addBreadcrumb('Friend search results received', 'friends', {
+               query: debouncedAddFriendSearch,
+               resultCount: data.length,
+               userId: userContext?.userAccount?.username
+             });
+          }
+        );
+      } catch (error) {
+        captureComponentError(
+          `Failed to load friend suggestions: ${error instanceof Error ? error.message : String(error)}`,
+          {
+            component: 'FriendsCard',
+            action: 'load_friend_suggestions',
+            userId: userContext?.userAccount?.id,
+            additionalData: {
+              query: debouncedAddFriendSearch,
+              error: error instanceof Error ? error.message : String(error),
+              stack: error instanceof Error ? error.stack : undefined
+            }
+          },
+          'error'
+        );
+      }
     };
   
     loadSuggestions();
   
     // Cleanup function to close the connection when component unmounts
-    return () => { eventSource?.close() };
-  }, [debouncedAddFriendSearch]);
+    return () => { 
+      if (eventSource) {
+        eventSource.close();
+                 addBreadcrumb('Friend search SSE cleanup', 'friends', {
+           query: debouncedAddFriendSearch,
+           userId: userContext?.userAccount?.username
+         });
+      }
+    };
+  }, [debouncedAddFriendSearch, userContext?.userAccount?.id]);
 
 
   // Fetch friends - using regular fetch instead of SSE
   useEffect(() => {
     const loadFriends = async () => {
+      addBreadcrumb('Loading friends list', 'friends', {
+        userId: userContext?.userAccount?.id
+      });
+      
       try {
         const res = await fetch(buildUrl(`account/friends`))
+        
+        if (!res.ok) {
+          captureAPIError(
+            `Failed to fetch friends: ${res.status} ${res.statusText}`,
+            {
+              endpoint: 'account/friends',
+              method: 'GET',
+              statusCode: res.status,
+              component: 'FriendsCard',
+              userId: userContext?.userAccount?.id,
+              additionalData: {
+                statusText: res.statusText,
+                headers: Object.fromEntries(res.headers.entries())
+              }
+            },
+            'error'
+          );
+          throw new Error(`Failed to fetch friends: ${res.status} ${res.statusText}`);
+        }
+        
         const json = await res.json()
         const parsed = FriendSchema.array().safeParse(json)
+        
         if (parsed.success) {
           setFriends(parsed.data)
+          addBreadcrumb('Friends list loaded successfully', 'friends', {
+            friendCount: parsed.data.length,
+            userId: userContext?.userAccount?.id
+          });
+        } else {
+          captureComponentError(
+            `Failed to parse friends data: ${parsed.error.message}`,
+            {
+              component: 'FriendsCard',
+              action: 'parse_friends_data',
+              userId: userContext?.userAccount?.id,
+              additionalData: {
+                rawData: json,
+                parseError: parsed.error.message,
+                issues: parsed.error.issues
+              }
+            },
+            'error'
+          );
         }
+      } catch (error) {
+        captureComponentError(
+          `Failed to load friends: ${error instanceof Error ? error.message : String(error)}`,
+          {
+            component: 'FriendsCard',
+            action: 'load_friends',
+            userId: userContext?.userAccount?.id,
+            additionalData: {
+              error: error instanceof Error ? error.message : String(error),
+              stack: error instanceof Error ? error.stack : undefined
+            }
+          },
+          'error'
+        );
       } finally {
         setLoading(false)
       }
     };
   
     loadFriends();
-  }, []);
+  }, [userContext?.userAccount?.id]);
   
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
       return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
-    } catch {
+    } catch (error) {
+      captureComponentError(
+        `Failed to parse favorites from localStorage: ${error instanceof Error ? error.message : String(error)}`,
+        {
+          component: 'FriendsCard',
+          action: 'parse_favorites',
+          userId: userContext?.userAccount?.id,
+          additionalData: {
+            localStorageValue: localStorage.getItem(LOCAL_STORAGE_KEY),
+            error: error instanceof Error ? error.message : String(error)
+          }
+        },
+        'warning'
+      );
       return [];
     }
   });
@@ -222,12 +283,25 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
     }
 
     setShowModal(true);
+    
+    addBreadcrumb('Friend modal opened', 'friends', {
+      mode,
+      defaultName,
+      userId: userContext?.userAccount?.id
+    });
   };
 
   const handleFriendAction = async (values: z.infer<typeof AddFriendFormSchema>) => {
     setProcessing(true);
     let res = undefined;
     let error = undefined;
+    
+    addBreadcrumb('Friend action started', 'friends', {
+      mode: modalMode,
+      username: values.username,
+      userId: userContext?.userAccount?.id
+    });
+    
     try {
       const endpoint =
         modalMode === 'add'
@@ -237,6 +311,12 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
       res = await fetch(buildUrl(endpoint));
 
       if (res.ok) {
+        addBreadcrumb('Friend action successful', 'friends', {
+          mode: modalMode,
+          username: values.username,
+          userId: userContext?.userAccount?.id
+        });
+        
         toast.success(
           modalMode === 'add'
             ? 'Friend added successfully'
@@ -250,10 +330,60 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
           const friendsParsed = FriendSchema.array().safeParse(friendsJson);
           if (friendsParsed.success) {
             setFriends(friendsParsed.data);
+          } else {
+            captureComponentError(
+              `Failed to parse refreshed friends data: ${friendsParsed.error.message}`,
+              {
+                component: 'FriendsCard',
+                action: 'parse_refreshed_friends',
+                userId: userContext?.userAccount?.id,
+                additionalData: {
+                  rawData: friendsJson,
+                  parseError: friendsParsed.error.message
+                }
+              },
+              'warning'
+            );
           }
+        } else {
+          captureAPIError(
+            `Failed to refresh friends list: ${friendsRes.status} ${friendsRes.statusText}`,
+            {
+              endpoint: 'account/friends',
+              method: 'GET',
+              statusCode: friendsRes.status,
+              component: 'FriendsCard',
+              userId: userContext?.userAccount?.id,
+              additionalData: {
+                originalAction: modalMode,
+                originalUsername: values.username
+              }
+            },
+            'warning'
+          );
         }
       } else {
-        toast.error(`Failed to ${modalMode} friend. Please try again.`);
+        const errorMessage = `Failed to ${modalMode} friend. Please try again.`;
+        
+        captureAPIError(
+          `Friend action failed: ${res.status} ${res.statusText}`,
+          {
+            endpoint,
+            method: 'GET',
+            statusCode: res.status,
+            component: 'FriendsCard',
+            userId: userContext?.userAccount?.id,
+            additionalData: {
+              action: modalMode,
+              username: values.username,
+              statusText: res.statusText,
+              responseData: await res.text().catch(() => 'Unable to read response')
+            }
+          },
+          'error'
+        );
+        
+        toast.error(errorMessage);
       }
 
       setShowModal(false);
@@ -313,9 +443,9 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
   const handleAddFriend = async (username: string) => {
     setProcessing(true);
     try {
-      const res = await authorized.get(`account/friends/add?friend=${encodeURIComponent(username)}`);
+      const res = await fetch(buildUrl(`account/friends/add?friend=${encodeURIComponent(username)}`));
 
-      if(res.status === 200) {
+      if(res.ok) {
         // fetchFriends(); // Removed, SSE will update friends
         toast.success('Friend added successfully');
       } else {

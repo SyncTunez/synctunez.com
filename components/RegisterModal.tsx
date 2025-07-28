@@ -31,8 +31,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import {authorized, buildUrl} from "@/lib/api/apiClient";
-
-
+import { captureAuthError, captureValidationError, captureComponentError, addBreadcrumb } from "@/lib/sentry";
 
 export default function RegisterModal({ userSession, userAccountRaw }: { userSession: string | null; userAccountRaw: string | null; }) {
 
@@ -50,43 +49,187 @@ export default function RegisterModal({ userSession, userAccountRaw }: { userSes
   const username = form.watch("username");
 
   const onSubmit: SubmitHandler<z.infer<typeof RegisterFormSchema>> = async (data) => {
+    addBreadcrumb('Registration attempt started', 'auth', {
+      username: data.username,
+      userSession: !!userSession
+    });
+
     try {
       const response = await authorized.get(buildUrl("/register", { username: data.username }));
       if (response.status === 200) {
+        addBreadcrumb('Registration successful', 'auth', {
+          username: data.username,
+          status: response.status
+        });
         toast.success("Registration successful! Redirecting...");
         window.location.reload();
       } else {
+        captureAuthError(
+          `Registration failed with unexpected status: ${response.status}`,
+          {
+            component: 'RegisterModal',
+            action: 'registration',
+            authProvider: 'google',
+            authStep: 'username_registration',
+            statusCode: response.status,
+            responseData: response.data,
+            additionalData: {
+              username: data.username,
+              userSession: !!userSession
+            }
+          },
+          'error'
+        );
         toast.error("Registration failed. Please try again.");
       }
     } catch (error: unknown) {
       setUsernameError(null);
       setDialogErrorMessage(null);
+      
       if (error instanceof AxiosError && error.response) {
-        switch (error.response.status) {
+        const statusCode = error.response.status;
+        const responseData = error.response.data;
+        
+        captureAuthError(
+          `Registration failed with status ${statusCode}: ${responseData}`,
+          {
+            component: 'RegisterModal',
+            action: 'registration',
+            authProvider: 'google',
+            authStep: 'username_registration',
+            statusCode,
+            responseData,
+            requestData: { username: data.username },
+            additionalData: {
+              username: data.username,
+              userSession: !!userSession,
+              error: error.message,
+              stack: error.stack
+            }
+          },
+          statusCode >= 500 ? 'error' : 'warning'
+        );
+
+        switch (statusCode) {
           case 400:
-            if (error.response.data === "Username is missing or invalid") {
+            if (responseData === "Username is missing or invalid") {
               setUsernameError("Username is missing or invalid.");
+              captureValidationError(
+                "Username validation failed: missing or invalid",
+                {
+                  component: 'RegisterModal',
+                  action: 'username_validation',
+                  formName: 'registration',
+                  fieldName: 'username',
+                  validationRule: 'required_and_valid',
+                  additionalData: {
+                    username: data.username,
+                    responseData
+                  }
+                },
+                'warning'
+              );
             } else {
-              setUsernameError("Bad Request: " + error.response.data);
+              setUsernameError("Bad Request: " + responseData);
             }
             break;
           case 401:
+            captureAuthError(
+              "Registration failed: Could not find Google authentication",
+              {
+                component: 'RegisterModal',
+                action: 'registration',
+                authProvider: 'google',
+                authStep: 'authentication_check',
+                statusCode,
+                responseData,
+                additionalData: {
+                  username: data.username,
+                  userSession: !!userSession
+                }
+              },
+              'error'
+            );
             toast.error("Registration failed: Could not find Google authentication.");
             break;
           case 409:
-            if (error.response.data === "Username already exists") {
+            if (responseData === "Username already exists") {
               setDialogErrorMessage("Username already exists.");
+              captureValidationError(
+                "Username already exists",
+                {
+                  component: 'RegisterModal',
+                  action: 'username_validation',
+                  formName: 'registration',
+                  fieldName: 'username',
+                  validationRule: 'unique',
+                  additionalData: {
+                    username: data.username,
+                    responseData
+                  }
+                },
+                'warning'
+              );
             } else {
-              setDialogErrorMessage("Conflict: " + error.response.data);
+              setDialogErrorMessage("Conflict: " + responseData);
             }
             break;
           case 502:
+            captureAuthError(
+              "Registration failed: Failed to retrieve user information from Google",
+              {
+                component: 'RegisterModal',
+                action: 'registration',
+                authProvider: 'google',
+                authStep: 'google_api_call',
+                statusCode,
+                responseData,
+                additionalData: {
+                  username: data.username,
+                  userSession: !!userSession
+                }
+              },
+              'error'
+            );
             toast.error("Registration failed: Failed to retrieve user information from Google.");
             break;
           default:
+            captureAuthError(
+              `Unexpected registration error: ${statusCode}`,
+              {
+                component: 'RegisterModal',
+                action: 'registration',
+                authProvider: 'google',
+                authStep: 'unknown',
+                statusCode,
+                responseData,
+                additionalData: {
+                  username: data.username,
+                  userSession: !!userSession
+                }
+              },
+              'error'
+            );
             toast.error("An unexpected error occurred during registration.");
         }
       } else {
+        captureAuthError(
+          `Registration network error: ${error instanceof Error ? error.message : String(error)}`,
+          {
+            component: 'RegisterModal',
+            action: 'registration',
+            authProvider: 'google',
+            authStep: 'network_request',
+            additionalData: {
+              username: data.username,
+              userSession: !!userSession,
+              error: error instanceof Error ? error.message : String(error),
+              stack: error instanceof Error ? error.stack : undefined,
+              isNetworkError: true
+            }
+          },
+          'error'
+        );
         toast.error("Network error or no response. Please check your internet connection.");
       }
     }
@@ -98,10 +241,42 @@ export default function RegisterModal({ userSession, userAccountRaw }: { userSes
   useEffect(() => {
     if (userSession !== null && userAccountRaw === null) {
       setIsRegisterModalOpen(true);
+      addBreadcrumb('Register modal opened', 'auth', {
+        userSession: !!userSession,
+        userAccountRaw: !!userAccountRaw
+      });
     } else {
       setIsRegisterModalOpen(false);
     }
   }, [userSession, userAccountRaw]);
+
+  // Track form validation errors
+  useEffect(() => {
+    const subscription = form.watch((value, { name, type }) => {
+      if (type === 'change' && name === 'username') {
+        const username = value.username || '';
+        if (username.length > 0 && username.length < 2) {
+          captureValidationError(
+            "Username too short",
+            {
+              component: 'RegisterModal',
+              action: 'username_validation',
+              formName: 'registration',
+              fieldName: 'username',
+              validationRule: 'min_length',
+              additionalData: {
+                username,
+                length: username.length,
+                minLength: 2
+              }
+            },
+            'info'
+          );
+        }
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   return (
       <Dialog open={isRegisterModalOpen}>
@@ -111,7 +286,7 @@ export default function RegisterModal({ userSession, userAccountRaw }: { userSes
             showCloseButton={false}
         >
           <DialogHeader>
-            <DialogTitle>Register for SyncTunez</DialogTitle>
+            <DialogTitle>Register for SyncTuneZ</DialogTitle>
             <DialogDescription>
               Create an account to manage your music and connect with others.
             </DialogDescription>
