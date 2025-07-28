@@ -10,12 +10,19 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { IconUserPlus, IconUserMinus, IconShare, IconSearch, IconHeart, IconHeartFilled } from '@tabler/icons-react';
+import { IconUserPlus, IconUserMinus, IconShare, IconSearch, IconHeart, IconHeartFilled, IconUser, IconChevronDown } from '@tabler/icons-react';
 import { UserContext, UserContextType } from '@/components/auth/UserContext';
 import { buildUrl } from '@/lib/api/apiClient';
 import { FriendSchema, AddFriendFormSchema, Friend } from '@/lib/api/schemas';
 import { useServerEvents } from '@/lib/api/ServerEvents';
 import { captureComponentError, captureAPIError, addBreadcrumb } from '@/lib/sentry';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { CommandDialog, CommandInput, CommandList, CommandGroup, CommandItem } from '@/components/ui/command';
+import QRCodeWithLogo from '@/components/ui/QRCodeWithLogo';
 
 const LOCAL_STORAGE_KEY = 'favorite_friends';
 
@@ -83,6 +90,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
   const [showAddCommand, setShowAddCommand] = useState(false)
   const [addFriendSearch, setAddFriendSearch] = useState('')
   const [debouncedAddFriendSearch, setDebouncedAddFriendSearch] = useState('')
+  const [selectedFriend, setSelectedFriend] = useState<string | null>(null)
 
   // Debounce addFriendSearch
   useEffect(() => {
@@ -106,7 +114,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
         return;
       }
       
-             addBreadcrumb('Friend search started', 'friends', {
+        addBreadcrumb('Friend search started', 'friends', {
          query: debouncedAddFriendSearch,
          userId: userContext?.userAccount?.username
        });
@@ -131,7 +139,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
           {
             component: 'FriendsCard',
             action: 'load_friend_suggestions',
-            userId: userContext?.userAccount?.id,
+            userId: userContext?.userAccount?.username,
             additionalData: {
               query: debouncedAddFriendSearch,
               error: error instanceof Error ? error.message : String(error),
@@ -155,14 +163,14 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
          });
       }
     };
-  }, [debouncedAddFriendSearch, userContext?.userAccount?.id]);
+  }, [debouncedAddFriendSearch, userContext?.userAccount?.username]);
 
 
   // Fetch friends - using regular fetch instead of SSE
   useEffect(() => {
     const loadFriends = async () => {
       addBreadcrumb('Loading friends list', 'friends', {
-        userId: userContext?.userAccount?.id
+        userId: userContext?.userAccount?.username
       });
       
       try {
@@ -176,7 +184,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
               method: 'GET',
               statusCode: res.status,
               component: 'FriendsCard',
-              userId: userContext?.userAccount?.id,
+              userId: userContext?.userAccount?.username,
               additionalData: {
                 statusText: res.statusText,
                 headers: Object.fromEntries(res.headers.entries())
@@ -194,7 +202,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
           setFriends(parsed.data)
           addBreadcrumb('Friends list loaded successfully', 'friends', {
             friendCount: parsed.data.length,
-            userId: userContext?.userAccount?.id
+            userId: userContext?.userAccount?.username
           });
         } else {
           captureComponentError(
@@ -202,7 +210,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
             {
               component: 'FriendsCard',
               action: 'parse_friends_data',
-              userId: userContext?.userAccount?.id,
+              userId: userContext?.userAccount?.username,
               additionalData: {
                 rawData: json,
                 parseError: parsed.error.message,
@@ -218,7 +226,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
           {
             component: 'FriendsCard',
             action: 'load_friends',
-            userId: userContext?.userAccount?.id,
+            userId: userContext?.userAccount?.username,
             additionalData: {
               error: error instanceof Error ? error.message : String(error),
               stack: error instanceof Error ? error.stack : undefined
@@ -232,18 +240,30 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
     };
   
     loadFriends();
-  }, [userContext?.userAccount?.id]);
+  }, [userContext?.userAccount?.username]);
   
-  const [favorites, setFavorites] = useState<string[]>(() => {
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  // Load favorites from localStorage on client side only
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') {
+      return;
+    }
+    
     try {
-      return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+      const storedFavorites = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (storedFavorites) {
+        const parsed = JSON.parse(storedFavorites);
+        setFavorites(parsed);
+      }
     } catch (error) {
       captureComponentError(
         `Failed to parse favorites from localStorage: ${error instanceof Error ? error.message : String(error)}`,
         {
           component: 'FriendsCard',
           action: 'parse_favorites',
-          userId: userContext?.userAccount?.id,
+          userId: userContext?.userAccount?.username,
           additionalData: {
             localStorageValue: localStorage.getItem(LOCAL_STORAGE_KEY),
             error: error instanceof Error ? error.message : String(error)
@@ -251,9 +271,8 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
         },
         'warning'
       );
-      return [];
     }
-  });
+  }, [userContext?.userAccount?.username]);
 
   const form = useForm<z.infer<typeof AddFriendFormSchema>, unknown, z.infer<typeof AddFriendFormSchema>>({
     resolver: zodResolver(AddFriendFormSchema),
@@ -287,7 +306,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
     addBreadcrumb('Friend modal opened', 'friends', {
       mode,
       defaultName,
-      userId: userContext?.userAccount?.id
+      userId: userContext?.userAccount?.username
     });
   };
 
@@ -299,7 +318,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
     addBreadcrumb('Friend action started', 'friends', {
       mode: modalMode,
       username: values.username,
-      userId: userContext?.userAccount?.id
+      userId: userContext?.userAccount?.username
     });
     
     try {
@@ -314,7 +333,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
         addBreadcrumb('Friend action successful', 'friends', {
           mode: modalMode,
           username: values.username,
-          userId: userContext?.userAccount?.id
+          userId: userContext?.userAccount?.username
         });
         
         toast.success(
@@ -336,7 +355,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
               {
                 component: 'FriendsCard',
                 action: 'parse_refreshed_friends',
-                userId: userContext?.userAccount?.id,
+                userId: userContext?.userAccount?.username,
                 additionalData: {
                   rawData: friendsJson,
                   parseError: friendsParsed.error.message
@@ -353,7 +372,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
               method: 'GET',
               statusCode: friendsRes.status,
               component: 'FriendsCard',
-              userId: userContext?.userAccount?.id,
+              userId: userContext?.userAccount?.username,
               additionalData: {
                 originalAction: modalMode,
                 originalUsername: values.username
@@ -372,7 +391,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
             method: 'GET',
             statusCode: res.status,
             component: 'FriendsCard',
-            userId: userContext?.userAccount?.id,
+            userId: userContext?.userAccount?.username,
             additionalData: {
               action: modalMode,
               username: values.username,
@@ -427,8 +446,8 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
       switch (filterMode) {
         case FILTER_MODES.RECENT:
           return b.addTime - a.addTime;
-        case FILTER_MODES.ALPHABETICAL:
-          return a.username.localeCompare(b.username);
+        case FILTER_MODES.FAVORITES:
+          return a.favourite ? 1 : -1;
         default:
           return 0;
       }
@@ -522,7 +541,6 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
                   {filterMode === FILTER_MODES.ALL && "All"}
                   {filterMode === FILTER_MODES.RECENT && "Recent"}
                   {filterMode === FILTER_MODES.FAVORITES && "Favorites"}
-                  {filterMode === FILTER_MODES.ALPHABETICAL && "A-Z"}
                   <IconChevronDown className="h-4 w-4 ml-2"/>
                 </Button>
               </DropdownMenuTrigger>
