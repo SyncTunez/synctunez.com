@@ -71,12 +71,6 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
           setIsImporting(false);
           onNext();
         }
-
-      if (data?.status === "success") {
-        toast.success('Playlist imported successfully!');
-        setIsImporting(false);
-        onNext();
-      }
     }
   });
 

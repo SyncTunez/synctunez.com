@@ -16,7 +16,7 @@ import {AppSidebar} from "@/components/sidebar/app-sidebar";
 import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
 import PageContainer from '@/components/layout/page-container';
 import Script from 'next/script';
-import RegisterModalWrapper from '@/components/RegisterModalWrapper';
+import ClientRegisterModalWrapper from '@/components/layout/ClientRegisterModalWrapper';
 
 const META_THEME_COLORS = {
     light: '#ffffff',
@@ -158,7 +158,7 @@ export default async function RootLayout({
                             </main>
                         </div>
                     </SidebarProvider>
-                    <RegisterModalWrapper userSession={userSession} userAccountRaw={userAccountRaw}/>
+                    <ClientRegisterModalWrapper userSession={userSession} userAccountRaw={userAccountRaw}/>
                 </Providers>
             </ThemeProvider>
         </NuqsAdapter>
