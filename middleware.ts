@@ -3,9 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 // Routes that require authentication
 const protectedRoutes = ['/account', '/merge'];
 
-// Routes that should redirect to home if already authenticated
-const authRoutes = ['/onboarding'];
-
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
@@ -18,13 +15,6 @@ export function middleware(request: NextRequest) {
   if (protectedRoutes.some(route => pathname.startsWith(route))) {
     if (!isAuthenticated) {
       return NextResponse.redirect(new URL('/?error=auth_required', request.url));
-    }
-  }
-
-  // Handle auth routes (redirect if already authenticated)
-  if (authRoutes.some(route => pathname.startsWith(route))) {
-    if (isAuthenticated) {
-      return NextResponse.redirect(new URL('/account', request.url));
     }
   }
 

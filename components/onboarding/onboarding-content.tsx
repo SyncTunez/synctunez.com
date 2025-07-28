@@ -49,6 +49,7 @@ export function OnboardingContent() {
     }
   }, [userContext, currentStep]);
 
+
   const handleNext = () => {
     setCurrentStep(prev => Math.min(prev + 1, 4));
   };
@@ -73,6 +74,7 @@ export function OnboardingContent() {
     }
   };
 
+  console.log("currentStep", currentStep);
   return (
     <div className="bg-[#134e4a]/5 flex flex-col min-h-screen w-full">
       {/* Progress indicator */}
