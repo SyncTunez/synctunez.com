@@ -1,5 +1,3 @@
-import Providers from '@/components/layout/Providers';
-import ClientToaster from '@/components/ClientToaster';
 import {fontVariables} from '@/lib/font';
 import ThemeProvider from '@/components/layout/theme-provider';
 import {cn} from '@/lib/utils';
@@ -9,15 +7,7 @@ import NextTopLoader from 'nextjs-toploader';
 import {NuqsAdapter} from 'nuqs/adapters/next/app';
 import './globals.css';
 import './theme.css';
-import {Toaster} from "sonner";
-import dynamic from 'next/dynamic';
-import {SidebarProvider} from "@/components/ui/sidebar";
-import {AppSidebar} from "@/components/sidebar/app-sidebar";
-import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
-import PageContainer from '@/components/layout/page-container';
 import Script from 'next/script';
-import ClientRegisterModalWrapper from '@/components/layout/ClientRegisterModalWrapper';
-import { captureComponentError, addBreadcrumb } from '@/lib/sentry';
 
 const META_THEME_COLORS = {
     light: '#ffffff',
@@ -96,18 +86,6 @@ export default async function RootLayout({
         const activeThemeValue = cookieStore.get('active_theme')?.value;
         const isScaled = activeThemeValue?.endsWith('-scaled');
 
-        const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
-        const userSession = cookieStore.get("UserSession")?.value ?? null;
-        const userAccountRaw = cookieStore.get("UserAccount")?.value ?? null;
-
-        addBreadcrumb('RootLayout initialized', 'layout', {
-            hasActiveTheme: !!activeThemeValue,
-            isScaled,
-            defaultOpen,
-            hasUserSession: !!userSession,
-            hasUserAccountRaw: !!userAccountRaw
-        });
-
         return (
             <html lang='en' suppressHydrationWarning>
             <head>
@@ -122,6 +100,37 @@ export default async function RootLayout({
                     }
                   } catch (_) {}
                 `
+                    }}
+                />
+                {/* Structured Data */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "WebApplication",
+                            "name": "SyncTuneZ",
+                            "description": "Create collaborative playlists with friends by comparing and syncing your music preferences",
+                            "url": "https://synctunez.com",
+                            "applicationCategory": "MusicApplication",
+                            "operatingSystem": "Web Browser",
+                            "offers": {
+                                "@type": "Offer",
+                                "price": "0",
+                                "priceCurrency": "USD"
+                            },
+                            "featureList": [
+                                "Playlist comparison",
+                                "Collaborative playlist creation",
+                                "Spotify integration",
+                                "Music discovery",
+                                "Friend sharing"
+                            ],
+                            "creator": {
+                                "@type": "Organization",
+                                "name": "SyncTuneZ"
+                            }
+                        })
                     }}
                 />
                 {/* Google Analytics */}
@@ -146,49 +155,24 @@ export default async function RootLayout({
                     fontVariables
                 )}
             >
-            <NextTopLoader showSpinner={false}/>
-            <NuqsAdapter>
-                <ThemeProvider
-                    attribute='class'
-                    defaultTheme='system'
-                    enableSystem
-                    disableTransitionOnChange
-                    enableColorScheme
-                >
-                    <Providers activeThemeValue={activeThemeValue as string}>
-                        <ClientToaster />
-                        <SidebarProvider defaultOpen={defaultOpen}>
-                            <div className="flex min-h-svh w-full">
-                                <AppSidebar/>
-                                <FloatingSidebarTrigger />
-                                <main className="flex-1 w-full">
-                                    <PageContainer>
-                                        {children}
-                                    </PageContainer>
-                                </main>
-                            </div>
-                        </SidebarProvider>
-                        <ClientRegisterModalWrapper userSession={userSession} userAccountRaw={userAccountRaw}/>
-                    </Providers>
-                </ThemeProvider>
-            </NuqsAdapter>
+                <NextTopLoader showSpinner={false}/>
+                <NuqsAdapter>
+                    <ThemeProvider
+                        attribute='class'
+                        defaultTheme='system'
+                        enableSystem
+                        disableTransitionOnChange
+                        enableColorScheme
+                    >
+                        <div className="min-h-screen">
+                            {children}
+                        </div>
+                    </ThemeProvider>
+                </NuqsAdapter>
             </body>
             </html>
         );
     } catch (error) {
-        captureComponentError(
-            `RootLayout initialization failed: ${error instanceof Error ? error.message : String(error)}`,
-            {
-                component: 'RootLayout',
-                action: 'initialize',
-                additionalData: {
-                    error: error instanceof Error ? error.message : String(error),
-                    stack: error instanceof Error ? error.stack : undefined
-                }
-            },
-            'error'
-        );
-
         // Fallback layout in case of error
         return (
             <html lang='en'>
