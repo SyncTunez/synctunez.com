@@ -311,9 +311,13 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
   };
 
   const handleFriendAction = async (values: z.infer<typeof AddFriendFormSchema>) => {
+console.log("handleFriendAction", values);
+
     setProcessing(true);
     let res = undefined;
     let error = undefined;
+
+    console.log("handleFriendAction", values);
     
     addBreadcrumb('Friend action started', 'friends', {
       mode: modalMode,
@@ -344,6 +348,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
         
         // Refresh friends list after adding/removing
         const friendsRes = await fetch(buildUrl('account/friends'));
+        console.log('friendsRes', friendsRes);
         if (friendsRes.ok) {
           const friendsJson = await friendsRes.json();
           const friendsParsed = FriendSchema.array().safeParse(friendsJson);
@@ -460,19 +465,66 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
 
   // Add friend handler for CommandDialog
   const handleAddFriend = async (username: string) => {
+    console.log("handleAddFriend called with username:", username);
     setProcessing(true);
     try {
       const res = await fetch(buildUrl(`account/friends/add?friend=${encodeURIComponent(username)}`));
+      console.log("Add friend response:", res);
 
       if(res.ok) {
-        // fetchFriends(); // Removed, SSE will update friends
+        console.log("Friend added successfully, refreshing list...");
+        // Refresh friends list after adding
+        const friendsRes = await fetch(buildUrl('account/friends'));
+        console.log('friendsRes', friendsRes);
+        if (friendsRes.ok) {
+          const friendsJson = await friendsRes.json();
+          const friendsParsed = FriendSchema.array().safeParse(friendsJson);
+          if (friendsParsed.success) {
+            setFriends(friendsParsed.data);
+            console.log("Friends list updated:", friendsParsed.data);
+          } else {
+            console.error("Failed to parse refreshed friends data:", friendsParsed.error);
+            captureComponentError(
+              `Failed to parse refreshed friends data: ${friendsParsed.error.message}`,
+              {
+                component: 'FriendsCard',
+                action: 'parse_refreshed_friends',
+                userId: userContext?.userAccount?.username,
+                additionalData: {
+                  rawData: friendsJson,
+                  parseError: friendsParsed.error.message
+                }
+              },
+              'warning'
+            );
+          }
+        } else {
+          console.error("Failed to refresh friends list:", friendsRes.status, friendsRes.statusText);
+          captureAPIError(
+            `Failed to refresh friends list: ${friendsRes.status} ${friendsRes.statusText}`,
+            {
+              endpoint: 'account/friends',
+              method: 'GET',
+              statusCode: friendsRes.status,
+              component: 'FriendsCard',
+              userId: userContext?.userAccount?.username,
+              additionalData: {
+                originalAction: 'add',
+                originalUsername: username
+              }
+            },
+            'warning'
+          );
+        }
         toast.success('Friend added successfully');
       } else {
+        console.error("Failed to add friend:", res.status, res.statusText);
         toast.error('Failed to add friend.');
       }
 
       setShowAddCommand(false);
-    } catch {
+    } catch (error) {
+      console.error("Error adding friend:", error);
       toast.error('Failed to add friend. Please try again.');
     } finally {
       setProcessing(false);
