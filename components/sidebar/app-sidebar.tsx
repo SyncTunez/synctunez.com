@@ -15,13 +15,11 @@ import {
 } from "@tabler/icons-react";
 import { AppHeaderContent } from "@/components/sidebar/app-header-content";
 import Link from "next/link";
-import SecureContentWrapper from "@/components/SecureContentWrapper";
 import { UserAccountDisplay } from "@/components/auth/UserAccountDisplay";
 import { NAV_PAGES } from "@/lib/navConfig";
 import {
     Collapsible, CollapsibleContent, CollapsibleTrigger
 } from "@/components/ui/collapsible";
-import {cookies} from "next/headers";
 import {cn} from "@/lib/utils";
 import {RegisterButton} from "@/components/sidebar/RegisterButton";
 import {
@@ -33,8 +31,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {UserAvatarProfile} from "@/components/ui/user-avatar-profile";
 import React from "react";
+import type { UserAccountProps } from '@/lib/api/types';
 
-export function AppSidebar() {
+interface AppSidebarProps {
+    userSession: string | null;
+    userAccount: UserAccountProps | null;
+}
+
+export function AppSidebar({ userSession, userAccount }: AppSidebarProps) {
 
     const renderNavIcons = (filterAuthed: boolean) =>
         NAV_PAGES
@@ -114,9 +118,7 @@ export function AppSidebar() {
                     <SidebarGroup>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                <SecureContentWrapper fallback={renderNavIcons(true)}>
-                                    {renderNavIcons(false)}
-                                </SecureContentWrapper>
+                                {userSession && userAccount ? renderNavIcons(false) : renderNavIcons(true)}
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>
@@ -137,13 +139,7 @@ export function AppSidebar() {
                                 >
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                            <SecureContentWrapper
-                                fallback={
-                                    <RegisterButton/>
-                                }
-                            >
-                                <UserAccountDisplay/>
-                            </SecureContentWrapper>
+                            {userSession && userAccount ? <UserAccountDisplay/> : <RegisterButton/>}
                         </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarFooter>

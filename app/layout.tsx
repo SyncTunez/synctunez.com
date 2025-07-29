@@ -1,5 +1,6 @@
 import {fontVariables} from '@/lib/font';
 import ThemeProvider from '@/components/layout/theme-provider';
+import Providers from '@/components/layout/Providers';
 import {cn} from '@/lib/utils';
 import type {Metadata, Viewport} from 'next';
 import {cookies} from 'next/headers';
@@ -8,6 +9,7 @@ import {NuqsAdapter} from 'nuqs/adapters/next/app';
 import './globals.css';
 import './theme.css';
 import Script from 'next/script';
+import ClientLayoutWrapper from '@/components/layout/ClientLayoutWrapper';
 
 const META_THEME_COLORS = {
     light: '#ffffff',
@@ -85,6 +87,9 @@ export default async function RootLayout({
         const cookieStore = await cookies();
         const activeThemeValue = cookieStore.get('active_theme')?.value;
         const isScaled = activeThemeValue?.endsWith('-scaled');
+        const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+        const userSession = cookieStore.get("UserSession")?.value ?? null;
+        const userAccountRaw = cookieStore.get("UserAccount")?.value ?? null;
 
         return (
             <html lang='en' suppressHydrationWarning>
@@ -164,9 +169,15 @@ export default async function RootLayout({
                         disableTransitionOnChange
                         enableColorScheme
                     >
-                        <div className="min-h-screen">
-                            {children}
-                        </div>
+                        <Providers activeThemeValue={activeThemeValue as string}>
+                            <ClientLayoutWrapper 
+                                defaultOpen={defaultOpen}
+                                userSession={userSession}
+                                userAccountRaw={userAccountRaw}
+                            >
+                                {children}
+                            </ClientLayoutWrapper>
+                        </Providers>
                     </ThemeProvider>
                 </NuqsAdapter>
             </body>

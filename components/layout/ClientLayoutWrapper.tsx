@@ -5,6 +5,7 @@ import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
 import PageContainer from '@/components/layout/page-container';
 import ClientRegisterModalWrapper from '@/components/layout/ClientRegisterModalWrapper';
+import type { UserAccountProps } from '@/lib/api/types';
 
 interface ClientLayoutWrapperProps {
   defaultOpen: boolean;
@@ -19,11 +20,22 @@ export default function ClientLayoutWrapper({
   userAccountRaw,
   children
 }: ClientLayoutWrapperProps) {
+  // Parse userAccountRaw to UserAccountProps
+  let userAccount: UserAccountProps | null = null;
+  if (userAccountRaw) {
+    try {
+      userAccount = JSON.parse(userAccountRaw) as UserAccountProps;
+    } catch (error) {
+      console.error('Failed to parse userAccountRaw:', error);
+      userAccount = null;
+    }
+  }
+
   return (
     <>
       <SidebarProvider defaultOpen={defaultOpen}>
         <div className="flex min-h-svh w-full">
-          <AppSidebar/>
+          <AppSidebar userSession={userSession} userAccount={userAccount} />
           <FloatingSidebarTrigger />
           <main className="flex-1 w-full">
             <PageContainer>

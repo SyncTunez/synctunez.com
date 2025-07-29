@@ -34,15 +34,14 @@ export function useServerEvents<T = any>(
         url,
         eventName,
         schema,
-        onEvent,
-        serverEventsOptions
+        onEvent
       );
     } catch (error) {
       console.error('Failed to establish SSE connection:', error);
     } finally {
       isConnectingRef.current = false;
     }
-  }, [url, eventName, schema, onEvent, enabled, serverEventsOptions]);
+  }, [url, eventName, schema, onEvent, enabled]);
 
   const disconnect = useCallback(() => {
     if (eventSourceRef.current) {
