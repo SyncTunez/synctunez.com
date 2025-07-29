@@ -531,6 +531,72 @@ console.log("handleFriendAction", values);
     }
   };
 
+  // Add this function after handleAddFriend
+  const handleRemoveFriend = async (username: string) => {
+    console.log("handleRemoveFriend called with username:", username);
+    setProcessing(true);
+    try {
+      const res = await fetch(buildUrl(`account/friends/remove?friend=${encodeURIComponent(username)}`));
+      console.log("Remove friend response:", res);
+
+      if(res.ok) {
+        console.log("Friend removed successfully, refreshing list...");
+        // Refresh friends list after removing
+        const friendsRes = await fetch(buildUrl('account/friends'));
+        console.log('friendsRes', friendsRes);
+        if (friendsRes.ok) {
+          const friendsJson = await friendsRes.json();
+          const friendsParsed = FriendSchema.array().safeParse(friendsJson);
+          if (friendsParsed.success) {
+            setFriends(friendsParsed.data);
+            console.log("Friends list updated:", friendsParsed.data);
+          } else {
+            console.error("Failed to parse refreshed friends data:", friendsParsed.error);
+            captureComponentError(
+              `Failed to parse refreshed friends data: ${friendsParsed.error.message}`,
+              {
+                component: 'FriendsCard',
+                action: 'parse_refreshed_friends',
+                userId: userContext?.userAccount?.username,
+                additionalData: {
+                  rawData: friendsJson,
+                  parseError: friendsParsed.error.message
+                }
+              },
+              'warning'
+            );
+          }
+        } else {
+          console.error("Failed to refresh friends list:", friendsRes.status, friendsRes.statusText);
+          captureAPIError(
+            `Failed to refresh friends list: ${friendsRes.status} ${friendsRes.statusText}`,
+            {
+              endpoint: 'account/friends',
+              method: 'GET',
+              statusCode: friendsRes.status,
+              component: 'FriendsCard',
+              userId: userContext?.userAccount?.username,
+              additionalData: {
+                originalAction: 'remove',
+                originalUsername: username
+              }
+            },
+            'warning'
+          );
+        }
+        toast.success('Friend removed successfully');
+      } else {
+        console.error("Failed to remove friend:", res.status, res.statusText);
+        toast.error('Failed to remove friend.');
+      }
+    } catch (error) {
+      console.error("Error removing friend:", error);
+      toast.error('Failed to remove friend. Please try again.');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   // Define class for container height constraints
   const cardClassName = forceFullHeight
       ? 'flex flex-col w-full h-full sm:h-[600px] sm:min-h-0'
@@ -687,6 +753,21 @@ console.log("handleFriendAction", values);
                                   <TooltipContent>View Profile</TooltipContent>
                                 </Tooltip>
                               </Button>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => handleRemoveFriend(friend.username)}
+                                      disabled={processing}
+                                      aria-label="Remove Friend"
+                                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                  >
+                                    <IconUserMinus className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>Remove Friend</TooltipContent>
+                              </Tooltip>
                             </div>
                           </div>
                         </ContextMenuTrigger>
