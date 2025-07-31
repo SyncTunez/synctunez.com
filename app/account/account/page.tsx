@@ -79,7 +79,8 @@ export default function AccountPage() {
     // Load tracks for the selected playlist
     useEffect(() => {
         let eventSource: EventSource | null = null;
-        
+        setTracks([]);
+
         const loadTracks = async () => {
             try {
                 setIsLoadingTracks(true);
@@ -88,7 +89,7 @@ export default function AccountPage() {
                     'ImportedPlaylistTracks', 
                     MusicTrackSchema.array(), 
                     (data) => {
-                        setTracks(data);
+                        setTracks((oldData) => [...oldData, ...data]);
                         setIsLoadingTracks(false);
                     }
                 );

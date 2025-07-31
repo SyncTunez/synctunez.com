@@ -397,9 +397,12 @@ export function PlaylistSection({
                 return;
             }
             
+            // Reset tracks when a new playlist is selected
+            setSpotifyTracks([]);
             console.log('Loading Spotify tracks for playlist:', selectedSpotifyPlaylistId);
             
             try {
+                const lastPlaylistId = selectedSpotifyPlaylistId;
                 setIsLoadingSpotifyTracks(true);
                 eventSource = await useServerEvents<Array<MusicTrack>>(
                     buildUrl(`spotify/tracks?id=${selectedSpotifyPlaylistId}`), 
@@ -407,7 +410,7 @@ export function PlaylistSection({
                     MusicTrackSchema.array(), 
                     (data) => {
                         console.log('Received Spotify tracks:', data);
-                        setSpotifyTracks(data);
+                        setSpotifyTracks(oldData => [...oldData, ...data]);
                         setIsLoadingSpotifyTracks(false);
                     }
                 );
