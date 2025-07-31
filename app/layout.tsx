@@ -107,6 +107,19 @@ export default async function RootLayout({
                 `
                     }}
                 />
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                  try {
+                    // Store home URL for backend login callbacks (only in production)
+                    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                      const homeUrl = window.location.protocol + '//' + window.location.host;
+                      document.cookie = 'synctunez_home_url=' + encodeURIComponent(homeUrl) + '; path=/; max-age=31536000; SameSite=Lax; ' + (window.location.protocol === 'https:' ? 'Secure;' : '');
+                    }
+                  } catch (_) {}
+                `
+                    }}
+                />
                 {/* Structured Data */}
                 <script
                     type="application/ld+json"

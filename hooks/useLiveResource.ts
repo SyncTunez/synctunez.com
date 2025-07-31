@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSSE } from './useSSE';
 import {authorized} from "@/lib/api/apiClient";
 import { captureAPIError, captureSSEError, addBreadcrumb } from '@/lib/sentry';
+import { getLocalApiUrl } from '@/lib/utils';
 
 export interface RawSSEEvent {
   id?: string;
@@ -148,7 +149,7 @@ export function useLiveResource<T = any>({
   }, [fetchUrl, onFail, shouldProcess, componentName, userId]);
 
   // Construct SSE URL only when eventName is provided
-  const eventUrl = shouldProcess && eventName ? `http://localhost:8080/events/${eventName}` : '';
+  const eventUrl = shouldProcess && eventName ? `${getLocalApiUrl()}/events/${eventName}` : '';
 
   useSSE<any>(
     eventUrl,

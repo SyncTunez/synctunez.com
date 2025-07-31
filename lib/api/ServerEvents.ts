@@ -2,10 +2,11 @@
 
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { z } from 'zod';
+import { getLocalApiUrl } from '@/lib/utils';
 
 export async function useServerEvents<T = any>(url: string, eventName: string, shema: z.ZodSchema<T>, onEvent: (data: T) => void) {
 
-    const eventSource = new EventSourcePolyfill('http://localhost:8080/events/'+eventName, {
+    const eventSource = new EventSourcePolyfill(`${getLocalApiUrl()}/events/${eventName}`, {
         withCredentials: true
     });
 

@@ -4,6 +4,11 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
+// Get API URL from environment or fallback to localhost
+const getApiUrl = () => {
+  return process.env.API_URL || 'http://localhost:8080';
+};
+
 const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
@@ -23,7 +28,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:8080/:path*',
+        destination: `${getApiUrl()}/:path*`,
       },
     ];
   },
