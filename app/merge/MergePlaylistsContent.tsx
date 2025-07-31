@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { MergePlaylistList } from "@/components/ui/playlist/merge-playlist-list";
-import { TrackTable } from "@/components/ui/playlist/track-table";
+import { TrackTable, TrackTableSkeleton } from "@/components/ui/playlist/track-table";
 import FriendsCard from "@/components/ui/friends-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,7 +52,7 @@ export default function MergePlaylistsContent() {
   const [filteredFriend, setFilteredFriend] = useState<string | null>(null);
 
   const [combinedTracks, setCombinedTracks] = useState<Array<MusicTrack>>([]);
-  const [isLoadingCombinedTracks, setIsLoadingCombinedTracks] = useState(true);
+  const [isLoadingCombinedTracks, setIsLoadingCombinedTracks] = useState(false);
 
   // Selected Playlists and debounced versions to prevent too many re-renders
   const [selectedMyPlaylists, setSelectedMyPlaylists] = useState<number[]>([]);
@@ -137,19 +137,30 @@ export default function MergePlaylistsContent() {
   useEffect(() => {
     let eventSource: EventSource | null = null;
     
+    // Only load tracks if there are selected playlists from both sides
+    const hasSelectedMyPlaylists = debouncedSelectedMyPlaylists.length > 0;
+    const hasSelectedFriendPlaylists = debouncedSelectedFriendPlaylists.length > 0;
+    const hasSelectedPlaylistsFromBothSides = hasSelectedMyPlaylists && hasSelectedFriendPlaylists;
+    
+    if (!hasSelectedPlaylistsFromBothSides) {
+      setCombinedTracks([]);
+      setIsLoadingCombinedTracks(false);
+      return;
+    }
+    
     const loadPlaylists = async () => {
       console.log("Loading combined tracks ", [...debouncedSelectedMyPlaylists, ...debouncedSelectedFriendPlaylists].join(','));
-        setIsLoadingCombinedTracks(true);
-        eventSource = await useServerEvents<Array<MusicTrack>>(
-          buildUrl(`music/playlists/merge?mine=${debouncedSelectedMyPlaylists.join(',')}&friends=${debouncedSelectedFriendPlaylists.join(',')}`), 
-          'ImportedPlaylistTracks', 
-          MusicTrackSchema.array(), 
-          (data) => {
-            console.log("data", data);
-            setCombinedTracks(data);
-            setIsLoadingCombinedTracks(false);
-          }
-        );
+      setIsLoadingCombinedTracks(true);
+      eventSource = await useServerEvents<Array<MusicTrack>>(
+        buildUrl(`music/playlists/merge?mine=${debouncedSelectedMyPlaylists.join(',')}&friends=${debouncedSelectedFriendPlaylists.join(',')}`), 
+        'ImportedPlaylistTracks', 
+        MusicTrackSchema.array(), 
+        (data) => {
+          console.log("data", data);
+          setCombinedTracks(data);
+          setIsLoadingCombinedTracks(false);
+        }
+      );
     };
   
     loadPlaylists();
@@ -414,14 +425,24 @@ export default function MergePlaylistsContent() {
           <CardHeader>
             <CardTitle className="text-lg sm:text-xl">Combined Tracks</CardTitle>
           </CardHeader>
-          <CardContent className="p-0 -ml-4">
-            <TrackTable 
-              tracks={combinedTracks.slice(0, 50)} 
-              isSpotify={true} 
-              showTrackCount={true}
-              totalTracks={combinedTracks.length}
-            />
-          </CardContent>
+                     <CardContent className="p-0 -ml-4">
+             {isLoadingCombinedTracks ? (
+               <TrackTableSkeleton />
+             ) : (
+               <TrackTable 
+                 tracks={combinedTracks.slice(0, 50)} 
+                 isSpotify={true} 
+                 showTrackCount={true}
+                 totalTracks={combinedTracks.length}
+                 emptyLabel={
+                   <div className="text-center">
+                     <p className="text-muted-foreground mb-2">No tracks found.</p>
+                     <p className="text-sm text-muted-foreground">Select playlists from you and your friends to see combined tracks here.</p>
+                   </div>
+                 }
+               />
+             )}
+           </CardContent>
         </Card>
       </div>
     </div>

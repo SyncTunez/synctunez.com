@@ -11,6 +11,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { IconBrandSpotify } from "@tabler/icons-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { MusicTrack } from '@/lib/api/schemas';
 import { tr } from 'zod/v4/locales';
 
@@ -116,9 +117,11 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                     </TableHeader>
                     <TableBody>
                         {tracks.map((track: any, idx: number) => {
-                        
+                            // Create a unique key combining multiple identifiers to avoid duplicates
+                            const uniqueKey = `${track.spotifyId || 'no-spotify'}_${track.youtubeId || 'no-youtube'}_${track.title}_${track.artists.join('_')}_${idx}`;
+                            
                             return (
-                                <TableRow key={track.spotifyId || track.youtubeId || idx} className="group">
+                                <TableRow key={uniqueKey} className="group">
                                     {showCover && (
                                         <TableCell className="p-2">
                                             <div className="relative w-12 h-12 group-hover:scale-105 transition-transform mx-auto">
@@ -165,6 +168,85 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                         </p>
                     </div>
                 )}
+            </div>
+        </div>
+    );
+};
+
+// TrackTableSkeleton component that matches the actual track table structure
+export const TrackTableSkeleton: React.FC<{ className?: string }> = ({ className }) => {
+    // Responsive visibility breakpoints (same as actual component)
+    const showAlbum = true;
+    const showDuration = false;
+    const showArtist = true;
+    const showCover = true;
+
+    // Table layout fixed for consistent column widths (same as actual component)
+    const tableStyle: React.CSSProperties = {
+        width: '100%',
+        tableLayout: 'fixed'
+    };
+
+    // Define column widths depending on visible columns (same as actual component)
+    const colGroup = (
+        <colgroup>
+            <col style={{ width: '32px' }} />
+            <col style={{ width: '30%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '30%' }} />
+            {showDuration && <col style={{ width: '50px' }} />}
+        </colgroup>
+    );
+
+    return (
+        <div className={className}>
+            <div className="h-[450px] overflow-y-auto overflow-x-hidden pr-2">
+                <Table style={tableStyle}>
+                    {colGroup}
+                    <TableHeader className="sticky top-0 z-20">
+                        <TableRow>
+                            {showCover && <TableHead className="p-2 text-center">Cover</TableHead>}
+                            <TableHead className="p-2">Title</TableHead>
+                            {showArtist && <TableHead className="p-2">Artist</TableHead>}
+                            {showAlbum && <TableHead className="p-2">Album</TableHead>}
+                            {showDuration && <TableHead className="p-2 text-center">Duration</TableHead>}
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {Array.from({ length: 10 }).map((_, idx) => (
+                            <TableRow key={idx} className="group">
+                                {showCover && (
+                                    <TableCell className="p-2">
+                                        <div className="relative w-12 h-12 mx-auto">
+                                            <Skeleton className="w-12 h-12 rounded-md" />
+                                        </div>
+                                    </TableCell>
+                                )}
+                                <TableCell className="p-2">
+                                    <div className="font-medium">
+                                        <Skeleton className="h-4 w-3/4 mb-1" />
+                                        <Skeleton className="h-3 w-1/2" />
+                                    </div>
+                                </TableCell>
+                                {showArtist && (
+                                    <TableCell className="p-2 text-muted-foreground">
+                                        <Skeleton className="h-4 w-2/3" />
+                                    </TableCell>
+                                )}
+                                {showAlbum && (
+                                    <TableCell className="p-2 text-muted-foreground">
+                                        <Skeleton className="h-4 w-4/5" />
+                                    </TableCell>
+                                )}
+                                {showDuration && (
+                                    <TableCell className="p-2 text-muted-foreground text-center">
+                                        <Skeleton className="h-4 w-12 mx-auto" />
+                                    </TableCell>
+                                )}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
             </div>
         </div>
     );

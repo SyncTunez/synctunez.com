@@ -7,7 +7,7 @@ import {
     CardContent,
 } from "@/components/ui/card";
 // Removed direct Table imports as TrackTable now handles table rendering
-import { TrackTable } from "@/components/ui/playlist/track-table";
+import { TrackTable, TrackTableSkeleton } from "@/components/ui/playlist/track-table";
 import { PlaylistRow } from "@/components/ui/playlist/playlist-row";
 import { Button } from "@/components/ui/button";
 import {
@@ -325,18 +325,7 @@ export function PlaylistSectionSkeleton() {
 
                     {/* Tracks table skeleton */}
                     <div className="flex-1 pl-0">
-                        <div className="space-y-2 p-4">
-                            {Array.from({ length: 8 }).map((_, idx) => (
-                                <div key={idx} className="flex items-center gap-3">
-                                    <Skeleton className="h-10 w-10 rounded-md" />
-                                    <div className="flex-1 min-w-0">
-                                        <Skeleton className="h-4 w-2/3 mb-1" />
-                                        <Skeleton className="h-3 w-1/3" />
-                                    </div>
-                                    <Skeleton className="h-4 w-16" />
-                                </div>
-                            ))}
-                        </div>
+                        <TrackTableSkeleton />
                     </div>
                 </div>
             </CardContent>
@@ -700,13 +689,7 @@ export function PlaylistSection({
                                     const emptyLabel = hasSelection ? 'No tracks found' : 'Select a playlist to view tracks';
 
                                     if (isTracksLoading) {
-                                        return (
-                                            <div className="space-y-2">
-                                                {Array.from({ length: 6 }).map((_, idx) => (
-                                                    <Skeleton key={idx} className="h-12 w-full" />
-                                                ))}
-                                            </div>
-                                        );
+                                        return <TrackTableSkeleton />;
                                     }
                                     return (
                                         <TrackTable
