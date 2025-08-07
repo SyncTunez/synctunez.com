@@ -116,7 +116,6 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
 
   const handleImport = async () => {
     if (!selectedPlaylist) return;
-    
     setIsImporting(true);
   };
 

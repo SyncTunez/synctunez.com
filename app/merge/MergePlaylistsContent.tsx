@@ -114,6 +114,7 @@ export default function MergePlaylistsContent() {
     let eventSource: EventSource | null = null;
     
     const loadPlaylists = async () => {
+      console.log("Loading friends playlists", selectedFriends);
         setIsLoadingFriendsPlaylists(true);
         eventSource = await useServerEvents<Array<MusicPlaylistImportFriendResult>>(
           buildUrl(`music/playlists/friends?q=${selectedFriends.join(',')}`), 
@@ -125,6 +126,8 @@ export default function MergePlaylistsContent() {
             setIsLoadingFriendsPlaylists(false);
           }
         );
+
+        console.log("eventSource", eventSource);
     };
   
     loadPlaylists();
