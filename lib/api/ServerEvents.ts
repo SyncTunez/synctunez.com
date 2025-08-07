@@ -79,7 +79,10 @@ export async function useServerEvents<T = any>(
     const response = await fetch(url);
 
     if (response.status !== 200) {
-      const apiError = new Error(`Failed to connect to SSE: ${response.status} ${response.statusText}`);
+      const responseBody = await response.text().catch(() => 'Unable to read response body');
+      const apiError = new Error(
+        `Failed to connect to SSE: ${response.status} ${response.statusText} (url: ${url}) body: ${responseBody}`
+      );
       
       captureSSEError(apiError, {
         sseEventName: eventName,
@@ -87,10 +90,15 @@ export async function useServerEvents<T = any>(
         component: 'ServerEvents',
         action: 'initiate_stream',
         statusCode: response.status,
-        responseData: await response.text().catch(() => 'Unable to read response body')
+        responseData: responseBody
       });
 
-      console.error("Failed to connect to SSE:", response);
+      console.error("Failed to connect to SSE:", {
+        status: response.status,
+        statusText: response.statusText,
+        url,
+        body: responseBody
+      });
     }
 
     addBreadcrumb(`SSE connection established successfully`, 'sse', {

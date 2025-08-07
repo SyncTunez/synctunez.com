@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { MergePlaylistList } from "@/components/ui/playlist/merge-playlist-list";
 import { TrackTable, TrackTableSkeleton } from "@/components/ui/playlist/track-table";
@@ -36,8 +36,8 @@ export default function MergePlaylistsContent() {
   const [editingDesc, setEditingDesc] = useState(false);
   const [loadedPlaylists, setLoadedPlaylists] = useState(false);
   const [hasStartedLoadingMyPlaylists, setHasStartedLoadingMyPlaylists] = useState(false);
-  const titleInputRef = useRef(null);
-  const descTextareaRef = useRef(null);
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const descTextareaRef = useRef<HTMLInputElement | null>(null);
   const [importingPlaylist, setImportingPlaylist] = useState<string | null>(null);
   const [selectedSpotifyPlaylistId, setSelectedSpotifyPlaylistId] = useState<string | undefined>(undefined);
 
@@ -53,6 +53,23 @@ export default function MergePlaylistsContent() {
 
   const [combinedTracks, setCombinedTracks] = useState<Array<MusicTrack>>([]);
   const [isLoadingCombinedTracks, setIsLoadingCombinedTracks] = useState(false);
+
+  // Memoized derived data to keep props stable across unrelated re-renders
+  const myPlaylistsMeta = useMemo(
+    () => importedPlaylists.map((playlist) => playlist.meta),
+    [importedPlaylists]
+  );
+
+  const friendsPlaylistsMetaFiltered = useMemo(() => {
+    const metas = friendsPlaylists.map((playlist) => playlist.meta);
+    if (!filteredFriend) return metas;
+    return metas.filter((playlist) => playlist.owner === filteredFriend);
+  }, [friendsPlaylists, filteredFriend]);
+
+  const top50CombinedTracks = useMemo(
+    () => combinedTracks.slice(0, 50),
+    [combinedTracks]
+  );
 
   // Selected Playlists and debounced versions to prevent too many re-renders
   const [selectedMyPlaylists, setSelectedMyPlaylists] = useState<number[]>([]);
@@ -114,20 +131,25 @@ export default function MergePlaylistsContent() {
     let eventSource: EventSource | null = null;
     
     const loadPlaylists = async () => {
+      if (selectedFriends.length === 0) {
+        setFriendsPlaylists([]);
+        setIsLoadingFriendsPlaylists(false);
+        return;
+      }
       console.log("Loading friends playlists", selectedFriends);
-        setIsLoadingFriendsPlaylists(true);
-        eventSource = await useServerEvents<Array<MusicPlaylistImportFriendResult>>(
-          buildUrl(`music/playlists/friends?q=${selectedFriends.join(',')}`), 
-          'ImportedPlaylistFriend', 
-          MusicPlaylistImportFriendResultSchema.array(), 
-          (data) => {
-            console.log("data", data);
-            setFriendsPlaylists(data);
-            setIsLoadingFriendsPlaylists(false);
-          }
-        );
+      setIsLoadingFriendsPlaylists(true);
+      eventSource = await useServerEvents<Array<MusicPlaylistImportFriendResult>>(
+        buildUrl(`music/playlists/friends?q=${selectedFriends.join(',')}`), 
+        'ImportedPlaylistFriend', 
+        MusicPlaylistImportFriendResultSchema.array(), 
+        (data) => {
+          console.log("data", data);
+          setFriendsPlaylists(data);
+          setIsLoadingFriendsPlaylists(false);
+        }
+      );
 
-        console.log("eventSource", eventSource);
+      console.log("eventSource", eventSource);
     };
   
     loadPlaylists();
@@ -209,10 +231,15 @@ export default function MergePlaylistsContent() {
                     <Input
                       ref={titleInputRef}
                       defaultValue={playlistName}
-                      onChange={e => setPlaylistName(e.target.value)}
-                      onBlur={() => setEditingTitle(false)}
-                      onKeyDown={e => {
-                        if (e.key === 'Enter') setEditingTitle(false);
+                      onBlur={(e) => {
+                        setPlaylistName(e.currentTarget.value);
+                        setEditingTitle(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setPlaylistName((e.currentTarget as HTMLInputElement).value);
+                          setEditingTitle(false);
+                        }
                       }}
                       className="h-8 sm:h-10 lg:h-12 text-base sm:text-lg lg:text-xl font-semibold w-full border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent px-2"
                       autoFocus
@@ -233,8 +260,10 @@ export default function MergePlaylistsContent() {
                     <Input
                       ref={descTextareaRef}
                       defaultValue={playlistDesc}
-                      onChange={e => setPlaylistDesc(e.target.value)}
-                      onBlur={() => setEditingDesc(false)}
+                      onBlur={(e) => {
+                        setPlaylistDesc(e.currentTarget.value);
+                        setEditingDesc(false);
+                      }}
                       className="h-full text-sm font-normal w-full border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent px-2"
                       autoFocus
                       placeholder="Enter playlist description"
@@ -255,8 +284,16 @@ export default function MergePlaylistsContent() {
                     size="sm"
                     disabled={combinedTracks.length === 0}
                     onClick={async () => {
+                      // Ensure latest edits are captured even if input hasn't blurred
+                      const effectiveTitle = editingTitle && titleInputRef.current
+                        ? titleInputRef.current.value
+                        : playlistName;
+                      const effectiveDesc = editingDesc && descTextareaRef.current
+                        ? descTextareaRef.current.value
+                        : playlistDesc;
+
                       // Validate required fields
-                      if (!playlistName.trim()) {
+                      if (!effectiveTitle.trim()) {
                         toast.error('Please enter a playlist title');
                         return;
                       }
@@ -270,8 +307,8 @@ export default function MergePlaylistsContent() {
                         const queryParams = {
                           friends: selectedFriendPlaylists.join(','),
                           mine: selectedMyPlaylists.join(','),
-                          title: playlistName,
-                          description: playlistDesc,
+                          title: effectiveTitle,
+                          description: effectiveDesc,
                           collaborators: selectedFriends.join(',')
                         };
                         
@@ -322,70 +359,55 @@ export default function MergePlaylistsContent() {
       <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 min-h-[400px] sm:min-h-[600px]">
         {/* My Playlists */}
         <div className="w-full lg:w-1/3 lg:max-w-[400px] order-1 lg:order-1 h-[400px] sm:h-[600px]">
-          <MergePlaylistList
-            playlists={importedPlaylists.map(playlist => playlist.meta)}
-            selectedPlaylistIds={selectedMyPlaylists}
-            onPlaylistSelect={(playlistIds) => {
-              // If playlistIds is empty, it means "Select All" was unchecked
+          {useMemo(() => {
+            const handleSelectMyPlaylists = (playlistIds: number[]) => {
               if (playlistIds.length === 0) {
                 setSelectedMyPlaylists([]);
                 return;
               }
-              
-              // If playlistIds has all playlists, it means "Select All" was checked
               if (playlistIds.length === importedPlaylists.length) {
                 setSelectedMyPlaylists(playlistIds);
                 return;
               }
-              
-              // Otherwise, it's an individual playlist toggle
               const clickedId = playlistIds[0];
-              setSelectedMyPlaylists(prev => 
-                prev.includes(clickedId) 
-                  ? prev.filter(id => id !== clickedId)
+              setSelectedMyPlaylists((prev) =>
+                prev.includes(clickedId)
+                  ? prev.filter((id) => id !== clickedId)
                   : [...prev, clickedId]
               );
-            }}
-            loading={isLoadingImportedPlaylists}
-            title="My Playlists"
-          />
+            };
+            return (
+              <MergePlaylistList
+                playlists={myPlaylistsMeta}
+                selectedPlaylistIds={selectedMyPlaylists}
+                onPlaylistSelect={handleSelectMyPlaylists}
+                loading={isLoadingImportedPlaylists}
+                title="My Playlists"
+              />
+            );
+          }, [myPlaylistsMeta, selectedMyPlaylists, isLoadingImportedPlaylists, importedPlaylists.length])}
         </div>
         
         {/* Friend Playlists - Show before Combined Tracks on mobile */}
         <div className="w-full lg:w-1/3 lg:max-w-[400px] order-2 lg:order-3 h-[400px] sm:h-[600px]">
-          <MergePlaylistList
-            playlists={friendsPlaylists
-              .map(playlist => playlist.meta)
-              .filter(playlist => 
-                !filteredFriend || playlist.owner === filteredFriend
-              )
-            }
-            selectedPlaylistIds={selectedFriendPlaylists}
-            onPlaylistSelect={(playlistIds) => {
-              // If playlistIds is empty, it means "Select All" was unchecked
+          {useMemo(() => {
+            const handleSelectFriendPlaylists = (playlistIds: number[]) => {
               if (playlistIds.length === 0) {
                 setSelectedFriendPlaylists([]);
                 return;
               }
-              
-              // If playlistIds has all playlists, it means "Select All" was checked
               if (playlistIds.length === friendsPlaylists.length) {
                 setSelectedFriendPlaylists(playlistIds);
                 return;
               }
-              
-              // Otherwise, it's an individual playlist toggle
               const clickedId = playlistIds[0];
-              setSelectedFriendPlaylists(prev => 
-                prev.includes(clickedId) 
-                  ? prev.filter(id => id !== clickedId)
+              setSelectedFriendPlaylists((prev) =>
+                prev.includes(clickedId)
+                  ? prev.filter((id) => id !== clickedId)
                   : [...prev, clickedId]
               );
-            }}
-            loading={isLoadingFriendsPlaylists && selectedFriends.length > 0}
-            title="Friend Playlists"
-            emptyMessage={selectedFriends.length === 0 ? "Select a friend to collaborate with" : "No playlists found"}
-            filterButton={
+            };
+            const filterButton =
               selectedFriends.length > 0 ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -399,7 +421,7 @@ export default function MergePlaylistsContent() {
                       {filteredFriend ? 'Filtered by:' : 'Filter by friend:'}
                     </div>
                     {filteredFriend && (
-                      <DropdownMenuItem 
+                      <DropdownMenuItem
                         onClick={() => setFilteredFriend(null)}
                         className="text-xs text-blue-600"
                       >
@@ -407,8 +429,8 @@ export default function MergePlaylistsContent() {
                       </DropdownMenuItem>
                     )}
                     {selectedFriends.map((friend) => (
-                      <DropdownMenuItem 
-                        key={friend} 
+                      <DropdownMenuItem
+                        key={friend}
                         className={`text-xs ${filteredFriend === friend ? 'bg-muted' : ''}`}
                         onClick={() => setFilteredFriend(filteredFriend === friend ? null : friend)}
                       >
@@ -418,34 +440,57 @@ export default function MergePlaylistsContent() {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-              ) : null
-            }
-          />
+              ) : null;
+
+            return (
+              <MergePlaylistList
+                playlists={friendsPlaylistsMetaFiltered}
+                selectedPlaylistIds={selectedFriendPlaylists}
+                onPlaylistSelect={handleSelectFriendPlaylists}
+                loading={isLoadingFriendsPlaylists && selectedFriends.length > 0}
+                title="Friend Playlists"
+                emptyMessage={
+                  selectedFriends.length === 0
+                    ? 'Select a friend to collaborate with'
+                    : 'No playlists found'
+                }
+                filterButton={filterButton}
+              />
+            );
+          }, [
+            friendsPlaylistsMetaFiltered,
+            selectedFriendPlaylists,
+            isLoadingFriendsPlaylists,
+            selectedFriends,
+            filteredFriend,
+            friendsPlaylists.length,
+          ])}
         </div>
         
         {/* Combined Tracks - Show after Friend Playlists on mobile */}
-        <Card className="flex-1 min-w-[300px] w-full lg:w-1/3 order-3 lg:order-2 overflow-hidden h-[400px] sm:h-[600px]">
+         <Card className="flex-1 min-w-[300px] w-full lg:w-1/3 order-3 lg:order-2 overflow-hidden h-[400px] sm:h-[600px]">
           <CardHeader>
             <CardTitle className="text-lg sm:text-xl">Combined Tracks</CardTitle>
           </CardHeader>
-                     <CardContent className="p-0 -ml-4">
-             {isLoadingCombinedTracks ? (
-               <TrackTableSkeleton />
-             ) : (
-               <TrackTable 
-                 tracks={combinedTracks.slice(0, 50)} 
-                 isSpotify={true} 
-                 showTrackCount={true}
-                 totalTracks={combinedTracks.length}
-                 emptyLabel={
-                   <div className="text-center">
-                     <p className="text-muted-foreground mb-2">No tracks found.</p>
-                     <p className="text-sm text-muted-foreground">Select playlists from you and your friends to see combined tracks here.</p>
-                   </div>
-                 }
-               />
-             )}
-           </CardContent>
+          <CardContent className="p-0 -ml-4">
+            {useMemo(() => {
+              if (isLoadingCombinedTracks) return <TrackTableSkeleton />;
+              return (
+                <TrackTable
+                  tracks={top50CombinedTracks}
+                  isSpotify={true}
+                  showTrackCount={true}
+                  totalTracks={combinedTracks.length}
+                  emptyLabel={
+                    <div className="text-center">
+                      <p className="text-muted-foreground mb-2">No tracks found.</p>
+                      <p className="text-sm text-muted-foreground">Select playlists from you and your friends to see combined tracks here.</p>
+                    </div>
+                  }
+                />
+              );
+            }, [isLoadingCombinedTracks, top50CombinedTracks, combinedTracks.length])}
+          </CardContent>
         </Card>
       </div>
     </div>
