@@ -8,9 +8,10 @@ import { OnboardingCard } from "./onboarding-card";
 import { IconMusic, IconBrandSpotify } from "@tabler/icons-react";
 import { PlaylistRow } from "@/components/ui/playlist/playlist-row";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useLiveResourceJson } from "@/hooks/useLiveResource";
-import type { MusicPlaylistImportResult, SpotifyPlaylist, SpotifyTrack } from "@/lib/api/types";
-import { buildUrl, authorized } from "@/lib/api/apiClient";
+import { useServerEvents } from "@/lib/api/ServerEvents";
+import type { MusicPlaylistImportResult, SpotifyPlaylist } from "@/lib/api/types";
+import { SpotifyPlaylistSchema, MusicPlaylistImportResultSchema } from "@/lib/api/schemas";
+import { buildUrl } from "@/lib/api/apiClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
@@ -24,6 +25,8 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
   const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [loadingDots, setLoadingDots] = useState('');
+  const [spotifyPlaylists, setSpotifyPlaylists] = useState<SpotifyPlaylist[]>([]);
+  const [isLoadingPlaylists, setIsLoadingPlaylists] = useState(false);
 
   // Animate loading dots
   useEffect(() => {
@@ -42,43 +45,66 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
     return () => clearInterval(interval);
   }, [isImporting]);
 
-  const {
-    data: rawSpotifyPlaylists,
-    error: spotifyPlaylistsError
-  } = useLiveResourceJson<SpotifyPlaylist>({
-    fetchUrl: buildUrl('spotify/playlists'),
-    eventName: 'SpotifyPlaylist',
-    reconnectIntervalMs: 5000,
-    shouldProcess: hasSpotify,
-  });
+  // Load Spotify playlists using useServerEvents
+  useEffect(() => {
+    if (!hasSpotify) return;
 
-  // Listen for import completion events
-  const {
-    data: importedPlaylist
-  } = useLiveResourceJson<MusicPlaylistImportResult>({
-    fetchUrl: selectedPlaylist !== undefined ? buildUrl(`spotify/import?id=${selectedPlaylist}`) : '', 
-    eventName: 'SpotifyPlaylistImport',
-    reconnectIntervalMs: 5000,
-    shouldProcess: isImporting,
-    onMessage: (data) => {
-      const response = typeof data === 'object' && data.status === 'success'
-        ? [data as MusicPlaylistImportResult]
-        : [];
+    let eventSource: EventSource | null = null;
+    
+    const loadSpotifyPlaylists = async () => {
+      try {
+        setIsLoadingPlaylists(true);
+        eventSource = await useServerEvents<SpotifyPlaylist[]>(
+          buildUrl('spotify/playlists'),
+          'SpotifyPlaylist',
+          SpotifyPlaylistSchema.array(),
+          (data) => {
+            console.log('Received Spotify playlists:', data);
+            const newPlaylists = data.filter(playlist => !spotifyPlaylists.some(p => p.id === playlist.id));
+            setSpotifyPlaylists((oldData) => [...oldData, ...newPlaylists]);
+            setIsLoadingPlaylists(false);
+          }
+        );
+      } catch (error) {
+        console.error("Failed to connect to SSE:", error);
+        setIsLoadingPlaylists(false);
+      }
+    };
+    
+    loadSpotifyPlaylists();
 
-        //todo: wait until the entire playlist is imported
-        if(response.length > 0) {
-          toast.success('Playlist imported successfully!');
-          setIsImporting(false);
-          onNext();
-        }
-    }
-  });
+    return () => { eventSource?.close() };
+  }, [hasSpotify]);
 
-  const playlists: SpotifyPlaylist[] = Array.isArray(rawSpotifyPlaylists)
-    ? rawSpotifyPlaylists
-    : rawSpotifyPlaylists && typeof rawSpotifyPlaylists === 'object' && 'id' in rawSpotifyPlaylists
-      ? [rawSpotifyPlaylists as SpotifyPlaylist]
-      : [];
+  // Handle playlist import using useServerEvents
+  useEffect(() => {
+    if (!isImporting || !selectedPlaylist) return;
+
+    let eventSource: EventSource | null = null;
+    
+    const handleImport = async () => {
+      try {
+        eventSource = await useServerEvents<MusicPlaylistImportResult>(
+          buildUrl(`spotify/import?id=${selectedPlaylist}`),
+          'SpotifyPlaylistImport',
+          MusicPlaylistImportResultSchema,
+          (data) => {
+            console.log('Playlist import completed:', data);
+            toast.success('Playlist imported successfully!');
+            setIsImporting(false);
+            onNext();
+          }
+        );
+      } catch (error) {
+        console.error("Failed to connect to SSE:", error);
+        setIsImporting(false);
+      }
+    };
+    
+    handleImport();
+
+    return () => { eventSource?.close() };
+  }, [isImporting, selectedPlaylist, onNext]);
 
   const SpotifyIcon = () => (
     <IconBrandSpotify className="w-10 h-10 text-[#1DB954]" />
@@ -92,19 +118,11 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
     if (!selectedPlaylist) return;
     
     setIsImporting(true);
-    try {
-
-
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to import playlist. Please try again.');
-      setIsImporting(false);
-    }
   };
 
   const renderContent = () => {
     // Show skeletons while loading or if no data yet
-    if (!rawSpotifyPlaylists) {
+    if (isLoadingPlaylists || spotifyPlaylists.length === 0 && hasSpotify) {
       return (
         <div className="py-2">
           {[...Array(5)].map((_, i) => (
@@ -122,7 +140,7 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
     }
 
     // Show empty state if we have data but no playlists
-    if (playlists.length === 0) {
+    if (spotifyPlaylists.length === 0) {
       return (
         <div className="p-8 text-center text-muted-foreground">
           <IconMusic className="w-8 h-8 mx-auto mb-2" />
@@ -134,7 +152,7 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
     // Show playlists if we have them
     return (
       <div className="py-2">
-        {playlists.map((playlist: SpotifyPlaylist) => (
+        {spotifyPlaylists.map((playlist: SpotifyPlaylist) => (
           <PlaylistRow
             key={playlist.id}
             imageUrl={playlist.images?.[0]?.url}
@@ -197,7 +215,6 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
               )}
             </Button>
           </div>
-
 
           {/* Helper Text */}
           <p className="text-sm text-muted-foreground text-center">
