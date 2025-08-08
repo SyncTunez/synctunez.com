@@ -40,7 +40,6 @@ export default function PlaylistPage() {
 
       setIsLoading(true);
       try {
-        console.log("Loading tracks for playlistId", playlistId);
         eventSource = await useServerEvents<Array<MusicTrack>>(
           buildUrl(`music/playlists/tracks?id=${playlistId}`),
           "ImportedPlaylistTracks",

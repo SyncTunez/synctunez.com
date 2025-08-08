@@ -89,6 +89,7 @@ export default function AccountPage() {
                     'ImportedPlaylistTracks', 
                     MusicTrackSchema.array(), 
                     (data) => {
+                        console.log("Loaded tracks for playlistId", selectedPlaylistId, data);
                         setTracks((oldData) => [...oldData, ...data]);
                         setIsLoadingTracks(false);
                     }
