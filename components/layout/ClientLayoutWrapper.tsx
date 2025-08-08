@@ -6,6 +6,7 @@ import FloatingSidebarTrigger from "@/components/FloatingSidebarTrigger";
 import PageContainer from '@/components/layout/page-container';
 import ClientRegisterModalWrapper from '@/components/layout/ClientRegisterModalWrapper';
 import type { UserAccountProps } from '@/lib/api/types';
+import { ClientToaster } from '@/components/layout/Providers';
 
 interface ClientLayoutWrapperProps {
   defaultOpen: boolean;
@@ -33,6 +34,7 @@ export default function ClientLayoutWrapper({
 
   return (
     <>
+      <ClientToaster />
       <SidebarProvider defaultOpen={defaultOpen}>
         <div className="flex min-h-svh w-full">
           <AppSidebar userSession={userSession} userAccount={userAccount} />

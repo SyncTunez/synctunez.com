@@ -35,6 +35,8 @@ export async function useServerEvents<T = any>(
       });
 
       console.error('Event source error:', event);
+      // Let consumers optionally catch this by throwing; this will be captured by the caller's try/catch
+      throw error;
     };
 
     eventSource.addEventListener(eventName, (event: any) => {
@@ -99,6 +101,9 @@ export async function useServerEvents<T = any>(
         url,
         body: responseBody
       });
+
+      // Propagate the error to the caller so it can be handled upstream
+      throw apiError;
     }
 
     addBreadcrumb(`SSE connection established successfully`, 'sse', {

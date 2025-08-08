@@ -15,10 +15,12 @@ import { IconBrandSpotify, IconBrandApple, IconBrandYoutube, IconBrandTidal } fr
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 export default function PlaylistPage() {
   const searchParams = useSearchParams();
   const idParam = searchParams.get("id");
+  const createdParam = searchParams.get("created");
   const isNumericId = idParam != null && /^-?\d+$/.test(idParam);
   const playlistId = isNumericId ? Number(idParam) : undefined;
 
@@ -26,6 +28,15 @@ export default function PlaylistPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedMeta, setSelectedMeta] = useState<MusicPlaylistMeta | null>(null);
   const [loadingMeta, setLoadingMeta] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (createdParam === 'true') {
+      // Defer until after paint to ensure the Toaster is mounted
+      setTimeout(() => {
+        toast.success('Playlist created successfully!');
+      }, 0);
+    }
+  }, [createdParam]);
 
   useEffect(() => {
     let eventSource: EventSource | null = null;

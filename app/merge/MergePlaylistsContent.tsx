@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLiveResourceJson } from "@/hooks/useLiveResource";
 import { MusicPlaylistImportResult, MusicPlaylistMeta } from "@/lib/api/types";
-import { buildUrl, authorized } from "@/lib/api/apiClient";
-import { MusicPlaylistImportFriendResult, MusicPlaylistImportFriendResultSchema, MusicPlaylistImportResultSchema, MusicTrack, MusicTrackSchema } from "@/lib/api/schemas";
+import { buildUrl } from "@/lib/api/apiClient";
+import { MusicPlaylistImportFriendResult, MusicPlaylistImportFriendResultSchema, MusicPlaylistImportResultSchema, MusicPlaylistMetaSchema, MusicTrack, MusicTrackSchema, SpotifyPlaylist, SpotifyPlaylistSchema } from "@/lib/api/schemas";
 import { useServerEvents } from "@/lib/api/ServerEvents";
 import FriendSelection from "@/components/ui/friend-selection";
 import {
@@ -22,6 +22,7 @@ import {
 import { IconFilter } from "@tabler/icons-react";
 import { IconBrandSpotify } from "@tabler/icons-react";
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 const combinedTracks = [
   { hash: "1", name: "Song 1", album: { name: "Album 1", images: [{ url: "/icon.png" }] }, artists: [{ name: "Artist 1" }], durationMs: 180000 },
@@ -29,6 +30,7 @@ const combinedTracks = [
 ];
 
 export default function MergePlaylistsContent() {
+  const router = useRouter();
   const [playlistName, setPlaylistName] = useState("");
   const [playlistDesc, setPlaylistDesc] = useState("");
   const [playlistImage, setPlaylistImage] = useState<string | undefined>(undefined);
@@ -53,6 +55,7 @@ export default function MergePlaylistsContent() {
 
   const [combinedTracks, setCombinedTracks] = useState<Array<MusicTrack>>([]);
   const [isLoadingCombinedTracks, setIsLoadingCombinedTracks] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   // Memoized derived data to keep props stable across unrelated re-renders
   const myPlaylistsMeta = useMemo(
@@ -194,7 +197,7 @@ export default function MergePlaylistsContent() {
 
 
   return (
-    <div className="flex flex-col gap-4 sm:gap-6 w-full max-w-[1600px] mx-auto py-4 sm:py-8 px-4 sm:px-0">
+      <div className={`flex flex-col gap-4 sm:gap-6 w-full max-w-[1600px] mx-auto py-4 sm:py-8 px-4 sm:px-0 ${isCreating ? 'opacity-80 pointer-events-none' : ''}`}>
       {/* Top row: Options and FriendsCard - Stack vertically on mobile */}
       <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 w-full">
         <Card className="w-full lg:flex-1 lg:min-w-[300px] lg:max-w-xl h-auto lg:h-[300px]">
@@ -282,7 +285,7 @@ export default function MergePlaylistsContent() {
                   <Button 
                     className="w-[60%] bg-teal-600 hover:bg-teal-700 hover:text-white text-white border-0" 
                     size="sm"
-                    disabled={combinedTracks.length === 0}
+                    disabled={combinedTracks.length === 0 || isCreating}
                     onClick={async () => {
                       // Ensure latest edits are captured even if input hasn't blurred
                       const effectiveTitle = editingTitle && titleInputRef.current
@@ -304,6 +307,7 @@ export default function MergePlaylistsContent() {
                       }
                       
                       try {
+                        setIsCreating(true);
                         const queryParams = {
                           friends: selectedFriendPlaylists.join(','),
                           mine: selectedMyPlaylists.join(','),
@@ -311,24 +315,31 @@ export default function MergePlaylistsContent() {
                           description: effectiveDesc,
                           collaborators: selectedFriends.join(',')
                         };
-                        
                         const url = buildUrl('spotify/playlists/create', queryParams);
-                        const response = await authorized.get(url);
-                        
-                        if (response.status === 200) {
-                          console.log('Playlist created successfully:', response.data);
-                          toast.success('Playlist created successfully!');
-                        } else {
-                          console.error('Failed to create playlist:', response.statusText);
-                          toast.error('Failed to create playlist. Please try again.');
-                        }
+
+                        // Start SSE to listen for creation completion
+                        let eventSource: EventSource | null = null;
+                        eventSource = await useServerEvents<MusicPlaylistMeta>(
+                          url,
+                          'SpotifyPlaylistCreate',
+                          MusicPlaylistMetaSchema,
+                          (created) => {
+                            console.log("Playlist created", created);
+                            setIsCreating(false);
+                            eventSource?.close();
+                            if (created?.id != null) {
+                              router.push(`/playlist?id=${created.id}&created=true`);
+                            }
+                          }
+                        );
                       } catch (error) {
                         console.error('Error creating playlist:', error);
+                        setIsCreating(false);
                         toast.error('Error creating playlist. Please try again.');
                       }
                     }}
                   >
-                    Save Playlist
+                    {isCreating ? 'Creating…' : 'Save Playlist'}
                   </Button>
                 </div>
               </div>
