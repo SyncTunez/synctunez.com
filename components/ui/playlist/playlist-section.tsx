@@ -696,6 +696,7 @@ export function PlaylistSection({
                                     }
                                     return (
                                         <TrackTable
+                                            key={isPlaylistMode ? `main-${selectedMainPlaylistId ?? 'none'}` : `spotify-${selectedSpotifyPlaylistId ?? 'none'}`}
                                             tracks={tracksToShow}
                                             isSpotify={!isPlaylistMode}
                                             emptyLabel={emptyLabel}

@@ -7,10 +7,9 @@ import { UserContext, UserContextType } from "@/components/auth/UserContext";
 import { Heading } from '@/components/ui/heading';
 import PageContainer from "@/components/layout/page-container";
 import { buildUrl, authorized } from '@/lib/api/apiClient';
-import type { SpotifyAccount, SpotifyTrack, SpotifyPlaylist } from '@/lib/api/types';
-import { MusicPlaylistImportResult, MusicPlaylistImportResultSchema, MusicTrackSchema, MusicTrack, MusicPlaylistMeta } from '@/lib/api/schemas';
+import type { SpotifyAccount } from '@/lib/api/types';
+import { MusicPlaylistImportResult, MusicPlaylistImportResultSchema, MusicTrackSchema, MusicTrack, MusicPlaylistMeta, SpotifyAccountSchema } from '@/lib/api/schemas';
 import { useServerEvents } from '@/lib/api/ServerEvents';
-import { useLiveResourceJson } from "@/hooks/useLiveResource";
 import { ServiceCard, serviceIcons } from "@/components/ui/service-card";
 import { MobileNavigationMenu } from "@/components/ui/mobile-navigation-menu";
 import { PlaylistSection, PlaylistSectionSkeleton } from "@/components/ui/playlist/playlist-section";
@@ -37,15 +36,31 @@ export default function AccountPage() {
 
     const hasSpotify = !!userAccount?.hasSpotify;
 
-    const {
-        data: spotifyAccountData,
-        error: spotifyError
-    } = useLiveResourceJson<SpotifyAccount>({
-        fetchUrl: buildUrl('spotify/account'),
-        eventName: 'SpotifyAccount',
-        reconnectIntervalMs: 5000,
-        shouldProcess: hasSpotify,
-    }) as { data: SpotifyAccount | null, error: any };
+    // Spotify account via SSE
+    const [spotifyAccountData, setSpotifyAccountData] = useState<SpotifyAccount | null>(null);
+    const [spotifyError, setSpotifyError] = useState<any>(null);
+    useEffect(() => {
+        let eventSource: EventSource | null = null;
+        async function loadSpotifyAccount() {
+            setSpotifyError(null);
+            setSpotifyAccountData(null);
+            if (!hasSpotify) return;
+            try {
+                eventSource = await useServerEvents<SpotifyAccount>(
+                    buildUrl('spotify/account'),
+                    'SpotifyAccount',
+                    SpotifyAccountSchema,
+                    (data) => {
+                        setSpotifyAccountData(data);
+                    }
+                );
+            } catch (err) {
+                setSpotifyError(err);
+            }
+        }
+        loadSpotifyAccount();
+        return () => { eventSource?.close(); };
+    }, [hasSpotify]);
 
     // Load my playlists using ServerEvents like in merge page
     useEffect(() => {
