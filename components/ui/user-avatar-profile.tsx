@@ -34,6 +34,8 @@ export function UserAvatarProfile({
         return () => clearTimeout(timeout);
     }, [profilePicture]);
 
+    console.log("Profile Picture, username", profilePicture, username);
+
     return (
         <div className='flex items-center gap-2'>
             <Avatar className={className}>

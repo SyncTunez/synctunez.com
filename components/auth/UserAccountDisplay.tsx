@@ -18,6 +18,8 @@ import { ChevronsUpDown } from "lucide-react";
 export function UserAccountDisplay() {
     const userContext = useContext(UserContext);
 
+    console.log("User Context", userContext);
+
     return (
         <>
             <DropdownMenu>

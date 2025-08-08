@@ -7,6 +7,7 @@ import PageContainer from '@/components/layout/page-container';
 import ClientRegisterModalWrapper from '@/components/layout/ClientRegisterModalWrapper';
 import type { UserAccountProps } from '@/lib/api/types';
 import { ClientToaster } from '@/components/layout/Providers';
+import { UserContext } from '@/components/auth/UserContext';
 
 interface ClientLayoutWrapperProps {
   defaultOpen: boolean;
@@ -32,7 +33,7 @@ export default function ClientLayoutWrapper({
     }
   }
 
-  return (
+  const content = (
     <>
       <ClientToaster />
       <SidebarProvider defaultOpen={defaultOpen}>
@@ -49,4 +50,15 @@ export default function ClientLayoutWrapper({
       <ClientRegisterModalWrapper userSession={userSession} userAccountRaw={userAccountRaw}/>
     </>
   );
+
+  // Only provide context when we have both session and account
+  if (userSession && userAccount) {
+    return (
+      <UserContext.Provider value={{ userSession, userAccount }}>
+        {content}
+      </UserContext.Provider>
+    );
+  }
+
+  return content;
 } 
