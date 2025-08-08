@@ -2,6 +2,7 @@ import React from "react";
 import SecureContentWrapper from "@/components/SecureContentWrapper";
 import { Button } from "@/components/ui/button";
 import MergePlaylistsContent from "./MergePlaylistsContent";
+import LoginLink from "@/components/auth/LoginLink";
 
 export default function MergePlaylistsPage() {
   return (
@@ -11,7 +12,7 @@ export default function MergePlaylistsPage() {
           <h2 className="text-2xl font-semibold mb-2">Sign in required</h2>
           <p className="text-muted-foreground mb-4">Please sign in to merge playlists.</p>
           <Button asChild>
-            <a href="/api/login">Sign In</a>
+            <LoginLink href="/api/login">Sign In</LoginLink>
           </Button>
         </div>
       }
