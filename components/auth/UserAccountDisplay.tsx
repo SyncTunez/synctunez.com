@@ -18,8 +18,6 @@ import { ChevronsUpDown } from "lucide-react";
 export function UserAccountDisplay() {
     const userContext = useContext(UserContext);
 
-    console.log("User Context", userContext);
-
     const formatUsernameFirstWord = (name?: string) => {
         if (!name) return '';
         const parts = name.trim().split(/\s+/);
