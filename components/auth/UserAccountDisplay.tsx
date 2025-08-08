@@ -20,6 +20,16 @@ export function UserAccountDisplay() {
 
     console.log("User Context", userContext);
 
+    const formatUsernameFirstWord = (name?: string) => {
+        if (!name) return '';
+        const parts = name.trim().split(/\s+/);
+        if (parts.length === 0) return '';
+        parts[0] = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+        return parts.join(' ');
+    };
+
+    const displayUsername = formatUsernameFirstWord(userContext?.userAccount.username);
+
     return (
         <>
             <DropdownMenu>
@@ -31,7 +41,7 @@ export function UserAccountDisplay() {
                         <UserAvatarProfile
                             className='h-8 w-8 rounded-lg'
                             showInfo
-                            username={userContext?.userAccount.username}
+                            username={displayUsername}
                             profilePicture={userContext?.userAccount.profilePicture}
                         />
                         <ChevronsUpDown className='ml-auto size-4' />
@@ -48,7 +58,7 @@ export function UserAccountDisplay() {
                             <UserAvatarProfile
                                 className='h-8 w-8 rounded-lg'
                                 showInfo
-                                username={userContext?.userAccount.username}
+                                username={displayUsername}
                                 profilePicture={userContext?.userAccount.profilePicture}
                             />
                         </div>

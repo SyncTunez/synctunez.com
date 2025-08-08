@@ -29,7 +29,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import {UserAvatarProfile} from "@/components/ui/user-avatar-profile";
 import React from "react";
 import type { UserAccountProps } from '@/lib/api/types';
 
