@@ -59,9 +59,62 @@ export function Step3ChoosePlaylist({ onNext }: Step3ChoosePlaylistProps) {
           'SpotifyPlaylist',
           SpotifyPlaylistSchema.array(),
           (data) => {
-            console.log('Received Spotify playlists:', data);
-            const newPlaylists = data.filter(playlist => !spotifyPlaylists.some(p => p.id === playlist.id));
-            setSpotifyPlaylists((oldData) => [...oldData, ...newPlaylists]);
+            // Merge with existing ensuring uniqueness first by id for rendering stability,
+            // then by the pair of name + description (collapse duplicates to a single entry).
+            setSpotifyPlaylists((prev) => {
+              const makeKey = (p: SpotifyPlaylist) => `${p.name ?? ''}||${p.description ?? ''}`;
+
+              // 1) Dedupe existing by id to avoid React key collisions
+              const seenIds = new Set<string>();
+              const dedupPrevById: SpotifyPlaylist[] = [];
+              for (const p of prev) {
+                const id = p.id;
+                if (id && !seenIds.has(id)) {
+                  seenIds.add(id);
+                  dedupPrevById.push(p);
+                }
+              }
+
+              // 2) Collapse existing by name+description
+              const seenNameDesc = new Set<string>();
+              const dedupPrev: SpotifyPlaylist[] = [];
+              for (const p of dedupPrevById) {
+                const k = makeKey(p);
+                if (seenNameDesc.has(k)) continue;
+                seenNameDesc.add(k);
+                dedupPrev.push(p);
+              }
+
+              // 3) Prepare incoming data: first dedupe within the batch by id, then by name+description
+              const batchSeenIds = new Set<string>();
+              const batchDedupById: SpotifyPlaylist[] = [];
+              for (const p of data) {
+                const id = p.id;
+                if (id && batchSeenIds.has(id)) continue;
+                batchSeenIds.add(id);
+                batchDedupById.push(p);
+              }
+
+              const batchSeenNameDesc = new Set<string>();
+              const batchDedup: SpotifyPlaylist[] = [];
+              for (const p of batchDedupById) {
+                const k = makeKey(p);
+                if (batchSeenNameDesc.has(k)) continue;
+                batchSeenNameDesc.add(k);
+                batchDedup.push(p);
+              }
+
+              // 4) From incoming batch, add only those whose name+description is not already present
+              const toAdd: SpotifyPlaylist[] = [];
+              for (const p of batchDedup) {
+                const k = makeKey(p);
+                if (seenNameDesc.has(k)) continue; // skip if same name+description already in state
+                seenNameDesc.add(k);
+                toAdd.push(p);
+              }
+
+              return [...dedupPrev, ...toAdd];
+            });
             setIsLoadingPlaylists(false);
           }
         );
