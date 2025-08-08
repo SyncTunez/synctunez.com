@@ -70,18 +70,18 @@ export function AppSidebar({ userSession, userAccount }: AppSidebarProps) {
                                     </button>
                                 </CollapsibleTrigger>
                                 <CollapsibleContent className="pl-4">
-                                    {children.map((child) => (
-                                        <SidebarMenuItem key={child.label}>
-                                            <Link
-                                                href={child.path}
-                                                className="peer/menu-button flex w-full items-center gap-4 overflow-hidden rounded-md p-4 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0 h-12 text-base font-medium min-w-8 duration-200 ease-linear"
-                                                aria-label={child.label}
-                                            >
-                                                {child.icon}
-                                                <span className="ml-1">{child.label}</span>
-                                            </Link>
-                                        </SidebarMenuItem>
-                                    ))}
+                                    <SidebarMenuSub>
+                                        {children.map((child) => (
+                                            <SidebarMenuSubItem key={child.label}>
+                                                <SidebarMenuSubButton asChild>
+                                                    <Link href={child.path} aria-label={child.label}>
+                                                        {child.icon}
+                                                        <span className="ml-1">{child.label}</span>
+                                                    </Link>
+                                                </SidebarMenuSubButton>
+                                            </SidebarMenuSubItem>
+                                        ))}
+                                    </SidebarMenuSub>
                                 </CollapsibleContent>
                             </SidebarMenuItem>
                         </Collapsible>
