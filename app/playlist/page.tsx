@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import PageContainer from "@/components/layout/page-container";
 import { TrackTable, TrackTableSkeleton } from "@/components/ui/playlist/track-table";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { buildUrl } from "@/lib/api/apiClient";
 import { useServerEvents } from "@/lib/api/ServerEvents";
 import { MusicPlaylistImportResult, MusicPlaylistImportResultSchema, MusicPlaylistMeta, MusicTrack, MusicTrackSchema } from "@/lib/api/schemas";
@@ -19,6 +19,7 @@ import { toast } from "sonner";
 
 export default function PlaylistPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const idParam = searchParams.get("id");
   const createdParam = searchParams.get("created");
   const isNumericId = idParam != null && /^-?\d+$/.test(idParam);
@@ -28,15 +29,23 @@ export default function PlaylistPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedMeta, setSelectedMeta] = useState<MusicPlaylistMeta | null>(null);
   const [loadingMeta, setLoadingMeta] = useState<boolean>(false);
+  const hasShownCreatedToast = useRef(false);
 
   useEffect(() => {
-    if (createdParam === 'true') {
+    if (createdParam === 'true' && !hasShownCreatedToast.current) {
+      hasShownCreatedToast.current = true;
       // Defer until after paint to ensure the Toaster is mounted
       setTimeout(() => {
         toast.success('Playlist created successfully!');
       }, 0);
+
+      // Remove the created flag from the URL to prevent duplicate toasts on re-renders
+      const nextParams = new URLSearchParams(searchParams.toString());
+      nextParams.delete('created');
+      const nextQuery = nextParams.toString();
+      router.replace(`/playlist${nextQuery ? `?${nextQuery}` : ''}`);
     }
-  }, [createdParam]);
+  }, [createdParam, router, searchParams]);
 
   useEffect(() => {
     let eventSource: EventSource | null = null;

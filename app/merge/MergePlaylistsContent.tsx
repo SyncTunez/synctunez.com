@@ -242,6 +242,11 @@ export default function MergePlaylistsContent() {
                         if (e.key === 'Enter') {
                           setPlaylistName((e.currentTarget as HTMLInputElement).value);
                           setEditingTitle(false);
+                        } else if (e.key === 'Tab' && !e.shiftKey) {
+                          e.preventDefault();
+                          setPlaylistName((e.currentTarget as HTMLInputElement).value);
+                          setEditingTitle(false);
+                          setEditingDesc(true);
                         }
                       }}
                       className="h-8 sm:h-10 lg:h-12 text-base sm:text-lg lg:text-xl font-semibold w-full border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent px-2"
