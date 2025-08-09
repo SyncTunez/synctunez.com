@@ -69,7 +69,7 @@ export default function PlaylistPage() {
     return () => {
       eventSource?.close();
     };
-  }, [playlistId]);
+  }, []);
 
   // Load metadata for imported playlist ids by listening to imported playlists and selecting the matching id
   useEffect(() => {

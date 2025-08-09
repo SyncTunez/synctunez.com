@@ -325,7 +325,6 @@ export default function MergePlaylistsContent() {
                           MusicPlaylistMetaSchema,
                           (created) => {
                             console.log("Playlist created", created);
-                            setIsCreating(false);
                             eventSource?.close();
                             if (created?.id != null) {
                               router.push(`/playlist?id=${created.id}&created=true`);

@@ -91,39 +91,59 @@ export default function AccountPage() {
         return () => { eventSource?.close() };
     }, []);
 
-    // Load tracks for the selected playlist
+    // Open a single SSE stream for ImportedPlaylistTracks on mount
     useEffect(() => {
         let eventSource: EventSource | null = null;
-        setTracks([]);
 
-        const loadTracks = async () => {
+        const openTracksStream = async () => {
+            if (!hasSpotify) {
+                setTracks([]);
+                setIsLoadingTracks(false);
+                return;
+            }
+
             try {
-                setIsLoadingTracks(true);
+                // Use a benign endpoint that returns 200 to establish the SSE connection once
+                // Actual track loading will be triggered via GET requests on selection
                 eventSource = await useServerEvents<Array<MusicTrack>>(
-                    buildUrl(`music/playlists/tracks?id=${selectedPlaylistId}`), 
-                    'ImportedPlaylistTracks', 
-                    MusicTrackSchema.array(), 
+                    buildUrl('music/playlists'),
+                    'ImportedPlaylistTracks',
+                    MusicTrackSchema.array(),
                     (data) => {
-                        console.log("Loaded tracks for playlistId", selectedPlaylistId, data);
                         setTracks((oldData) => [...oldData, ...data]);
                         setIsLoadingTracks(false);
                     }
                 );
             } catch (error) {
-                console.error("Failed to connect to SSE:", error);
+                console.error('Failed to open ImportedPlaylistTracks stream:', error);
                 setIsLoadingTracks(false);
             }
         };
-      
-        if (hasSpotify && selectedPlaylistId !== undefined) {
-            loadTracks();
-        } else {
+
+        openTracksStream();
+        return () => { eventSource?.close(); };
+    }, [hasSpotify]);
+
+    // Trigger a fetch to request tracks for the selected playlist; SSE delivers the data
+    useEffect(() => {
+        if (!hasSpotify) {
             setTracks([]);
             setIsLoadingTracks(false);
+            return;
         }
-      
-        // Cleanup function to close the connection when component unmounts
-        return () => { eventSource?.close() };
+
+        if (selectedPlaylistId === undefined) {
+            setTracks([]);
+            setIsLoadingTracks(false);
+            return;
+        }
+
+        // Reset and request new tracks for the selected playlist
+        setTracks([]);
+        setIsLoadingTracks(true);
+        authorized.get(buildUrl(`music/playlists/tracks?id=${selectedPlaylistId}`)).catch(() => {
+            setIsLoadingTracks(false);
+        });
     }, [selectedPlaylistId, hasSpotify]);
 
     React.useEffect(() => {
