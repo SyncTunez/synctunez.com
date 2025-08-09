@@ -35,6 +35,7 @@ export interface TrackTableProps {
     onRemoveTrack?: (track: MusicTrack, key: string) => void;
     scrollClassName?: string; // controls the scroll container height/behavior
     onBlockArtist?: (artistName: string) => void;
+    onReachEnd?: () => void; // called when scrolled near the end of the list
 }
 
 export const TrackTable: React.FC<TrackTableProps> = ({
@@ -52,8 +53,11 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                                                           onRemoveTrack,
                                                           scrollClassName,
                                                            onBlockArtist,
+                                                          onReachEnd,
                                                       }) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const endTriggeredRef = useRef<boolean>(false);
     const [containerWidth, setContainerWidth] = useState<number>(0);
 
     useEffect(() => {
@@ -71,6 +75,27 @@ export const TrackTable: React.FC<TrackTableProps> = ({
             resizeObserver.disconnect();
         };
     }, []);
+
+    // Reset the end trigger when the list length changes
+    useEffect(() => {
+        endTriggeredRef.current = false;
+    }, [tracks.length]);
+
+    const handleScroll = () => {
+        if (!onReachEnd || !scrollRef.current) return;
+        const el = scrollRef.current;
+        const threshold = 64; // px from bottom
+        const distanceFromBottom = el.scrollHeight - (el.scrollTop + el.clientHeight);
+        if (distanceFromBottom <= threshold) {
+            if (!endTriggeredRef.current) {
+                endTriggeredRef.current = true;
+                onReachEnd();
+            }
+        } else {
+            // allow triggering again after user scrolls up
+            endTriggeredRef.current = false;
+        }
+    };
 
     if (!Array.isArray(tracks) || tracks.length === 0) {
         return (
@@ -117,7 +142,11 @@ export const TrackTable: React.FC<TrackTableProps> = ({
 
     return (
         <div ref={containerRef} className={className}>
-            <div className={scrollClassName || "h-[450px] overflow-y-auto overflow-x-hidden pr-2"}> {/* Reduced from pr-4 to pr-2 */}
+            <div
+                className={scrollClassName || "h-[450px] overflow-y-auto overflow-x-hidden pr-2"}
+                ref={scrollRef}
+                onScroll={handleScroll}
+            > {/* Reduced from pr-4 to pr-2 */}
                 <Table style={tableStyle}>
                     {colGroup}
                     <TableHeader className="sticky top-0 z-20">

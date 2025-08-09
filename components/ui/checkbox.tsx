@@ -6,7 +6,7 @@ interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ className, indeterminate = false, ...props }, ref) => {
+  ({ className, indeterminate = false, style, ...props }, ref) => {
     const internalRef = React.useRef<HTMLInputElement>(null)
     const resolvedRef = (ref || internalRef) as React.RefObject<HTMLInputElement>
 
@@ -15,6 +15,26 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         resolvedRef.current.indeterminate = indeterminate
       }
     }, [indeterminate, resolvedRef])
+
+    const baseStyle: React.CSSProperties = {
+      accentColor: "var(--primary)",
+      color: "var(--primary-foreground)",
+      ...(style || {}),
+    }
+
+    const indeterminateStyle: React.CSSProperties = indeterminate
+      ? {
+          // Custom appearance so the hyphen is always visible (white) over theme teal
+          WebkitAppearance: 'none',
+          appearance: 'none' as any,
+          backgroundColor: 'var(--primary)',
+          backgroundImage: 'linear-gradient(var(--primary-foreground), var(--primary-foreground))',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          backgroundSize: '12px 2px',
+          borderRadius: '0.25rem',
+        }
+      : {}
 
     return (
       <input
@@ -25,6 +45,8 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           "h-4 w-4 shrink-0 align-middle disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
+        // The base style sets theme colors; indeterminate adds a white hyphen overlay
+        style={{ ...baseStyle, ...indeterminateStyle }}
         {...props}
       />
     )

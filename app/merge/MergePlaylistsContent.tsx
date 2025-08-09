@@ -23,6 +23,7 @@ import { IconFilter } from "@tabler/icons-react";
 import { IconBrandSpotify } from "@tabler/icons-react";
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import md5 from 'blueimp-md5';
 
 const combinedTracks = [
   { hash: "1", name: "Song 1", album: { name: "Album 1", images: [{ url: "/icon.png" }] }, artists: [{ name: "Artist 1" }], durationMs: 180000 },
@@ -60,6 +61,7 @@ export default function MergePlaylistsContent() {
   const [excludedArtists, setExcludedArtists] = useState<Array<string>>([]);
   const [removedTrackKeys, setRemovedTrackKeys] = useState<Set<string>>(new Set());
   const filterBadgeClass = "inline-flex items-center gap-2 px-3 py-1 text-xs rounded-full border border-destructive/80 bg-destructive/70 text-white hover:bg-destructive/80 focus-visible:outline-none";
+  const [visibleCount, setVisibleCount] = useState<number>(50);
 
   // Memoized derived data to keep props stable across unrelated re-renders
   const myPlaylistsMeta = useMemo(
@@ -89,10 +91,95 @@ export default function MergePlaylistsContent() {
       if (!removedTrackKeys.has(key)) {
         result.push(t);
       }
-      if (result.length >= 50) break;
+      if (result.length >= visibleCount) break;
     }
     return result;
+  }, [filteredTracks, removedTrackKeys, visibleCount]);
+
+  // Count of tracks remaining after filters and removals (ignores visibleCount)
+  const filteredRemainingCount = useMemo(() => {
+    let count = 0;
+    for (const t of filteredTracks) {
+      const key = `${t.spotifyId || 'no-spotify'}|${t.youtubeId || 'no-youtube'}|${t.title}|${(t.artists || []).join(',')}`;
+      if (!removedTrackKeys.has(key)) count++;
+    }
+    return count;
   }, [filteredTracks, removedTrackKeys]);
+
+  // Reset or clamp visible count when filters or data change
+  useEffect(() => {
+    setVisibleCount((prev) => Math.min(Math.max(50, prev), filteredTracks.length));
+  }, [filteredTracks.length]);
+  useEffect(() => {
+    // when clearing removed or artists change, ensure at least baseline
+    setVisibleCount((prev) => Math.max(50, prev));
+  }, [excludedArtists, removedTrackKeys.size]);
+
+  const handleSavePlaylist = async () => {
+    // Ensure latest edits are captured even if input hasn't blurred
+    const effectiveTitle = editingTitle && titleInputRef.current
+      ? titleInputRef.current.value
+      : playlistName;
+    const effectiveDesc = editingDesc && descTextareaRef.current
+      ? descTextareaRef.current.value
+      : playlistDesc;
+
+    // Validate required fields
+    if (!effectiveTitle.trim()) {
+      toast.error('Please enter a playlist title');
+      return;
+    }
+
+    if (selectedMyPlaylists.length === 0 && selectedFriendPlaylists.length === 0) {
+      toast.error('Please select at least one playlist');
+      return;
+    }
+
+    try {
+      setIsCreating(true);
+      // Build list of removed tracks as md5(title|artist|album)
+      const removedHashes: string[] = [];
+      for (const t of combinedTracks) {
+        const key = `${t.spotifyId || 'no-spotify'}|${t.youtubeId || 'no-youtube'}|${t.title}|${(t.artists || []).join(',')}`;
+        if (removedTrackKeys.has(key)) {
+          const base = `${t.title}|${(t.artists || [""])[0]}|${t.album}`;
+          removedHashes.push(md5(base));
+        }
+      }
+
+      const removedArtistHashes = Array.from(new Set(excludedArtists)).map((name) => md5(name));
+
+      const queryParams = {
+        friends: selectedFriendPlaylists.join(','),
+        mine: selectedMyPlaylists.join(','),
+        title: effectiveTitle,
+        description: effectiveDesc,
+        collaborators: selectedFriends.join(','),
+        removedTracks: removedHashes.join(','),
+        removedArtists: removedArtistHashes.join(',')
+      };
+      const url = buildUrl('spotify/playlists/create', queryParams);
+
+      // Start SSE to listen for creation completion
+      let eventSource: EventSource | null = null;
+      eventSource = await useServerEvents<MusicPlaylistMeta>(
+        url,
+        'SpotifyPlaylistCreate',
+        MusicPlaylistMetaSchema,
+        (created) => {
+          console.log("Playlist created", created);
+          eventSource?.close();
+          if (created?.id != null) {
+            router.push(`/playlist?id=${created.id}&created=true`);
+          }
+        }
+      );
+    } catch (error) {
+      console.error('Error creating playlist:', error);
+      setIsCreating(false);
+      toast.error('Error creating playlist. Please try again.');
+    }
+  };
 
   // Selected Playlists and debounced versions to prevent too many re-renders
   const [selectedMyPlaylists, setSelectedMyPlaylists] = useState<number[]>([]);
@@ -310,58 +397,8 @@ export default function MergePlaylistsContent() {
                   <Button 
                     className="w-[60%] bg-teal-600 hover:bg-teal-700 hover:text-white text-white border-0" 
                     size="sm"
-                    disabled={combinedTracks.length === 0 || isCreating}
-                    onClick={async () => {
-                      // Ensure latest edits are captured even if input hasn't blurred
-                      const effectiveTitle = editingTitle && titleInputRef.current
-                        ? titleInputRef.current.value
-                        : playlistName;
-                      const effectiveDesc = editingDesc && descTextareaRef.current
-                        ? descTextareaRef.current.value
-                        : playlistDesc;
-
-                      // Validate required fields
-                      if (!effectiveTitle.trim()) {
-                        toast.error('Please enter a playlist title');
-                        return;
-                      }
-                      
-                      if (selectedMyPlaylists.length === 0 && selectedFriendPlaylists.length === 0) {
-                        toast.error('Please select at least one playlist');
-                        return;
-                      }
-                      
-                      try {
-                        setIsCreating(true);
-                        const queryParams = {
-                          friends: selectedFriendPlaylists.join(','),
-                          mine: selectedMyPlaylists.join(','),
-                          title: effectiveTitle,
-                          description: effectiveDesc,
-                          collaborators: selectedFriends.join(',')
-                        };
-                        const url = buildUrl('spotify/playlists/create', queryParams);
-
-                        // Start SSE to listen for creation completion
-                        let eventSource: EventSource | null = null;
-                        eventSource = await useServerEvents<MusicPlaylistMeta>(
-                          url,
-                          'SpotifyPlaylistCreate',
-                          MusicPlaylistMetaSchema,
-                          (created) => {
-                            console.log("Playlist created", created);
-                            eventSource?.close();
-                            if (created?.id != null) {
-                              router.push(`/playlist?id=${created.id}&created=true`);
-                            }
-                          }
-                        );
-                      } catch (error) {
-                        console.error('Error creating playlist:', error);
-                        setIsCreating(false);
-                        toast.error('Error creating playlist. Please try again.');
-                      }
-                    }}
+                    disabled={filteredRemainingCount === 0 || isCreating}
+                    onClick={handleSavePlaylist}
                   >
                     {isCreating ? 'Creating…' : 'Save Playlist'}
                   </Button>
@@ -562,6 +599,10 @@ export default function MergePlaylistsContent() {
                   onBlockArtist={(name) => {
                     if (!name) return;
                     setExcludedArtists(prev => Array.from(new Set([...prev, name])));
+                  }}
+                  onReachEnd={() => {
+                    // reveal more tracks in increments
+                    setVisibleCount((prev) => Math.min(prev + 50, filteredTracks.length));
                   }}
                   emptyLabel={
                     <div className="text-center">
