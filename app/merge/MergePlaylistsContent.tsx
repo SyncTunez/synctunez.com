@@ -57,6 +57,9 @@ export default function MergePlaylistsContent() {
   const [combinedTracks, setCombinedTracks] = useState<Array<MusicTrack>>([]);
   const [isLoadingCombinedTracks, setIsLoadingCombinedTracks] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [excludedArtists, setExcludedArtists] = useState<Array<string>>([]);
+  const [removedTrackKeys, setRemovedTrackKeys] = useState<Set<string>>(new Set());
+  const filterBadgeClass = "inline-flex items-center gap-2 px-3 py-1 text-xs rounded-full border border-destructive/80 bg-destructive/70 text-white hover:bg-destructive/80 focus-visible:outline-none";
 
   // Memoized derived data to keep props stable across unrelated re-renders
   const myPlaylistsMeta = useMemo(
@@ -70,10 +73,26 @@ export default function MergePlaylistsContent() {
     return metas.filter((playlist) => playlist.owner === filteredFriend);
   }, [friendsPlaylists, filteredFriend]);
 
-  const top50CombinedTracks = useMemo(
-    () => combinedTracks.slice(0, 50),
-    [combinedTracks]
-  );
+  const filteredTracks = useMemo(() => {
+    if (!combinedTracks.length) return [] as Array<MusicTrack>;
+    const tracks = combinedTracks.filter((t) => {
+      const artistMatch = (t.artists || []).every(a => !excludedArtists.includes(a));
+      return artistMatch;
+    });
+    return tracks;
+  }, [combinedTracks, excludedArtists]);
+
+  const filteredAndTrimmedTracks = useMemo(() => {
+    const result: Array<MusicTrack> = [];
+    for (const t of filteredTracks) {
+      const key = `${t.spotifyId || 'no-spotify'}|${t.youtubeId || 'no-youtube'}|${t.title}|${(t.artists || []).join(',')}`;
+      if (!removedTrackKeys.has(key)) {
+        result.push(t);
+      }
+      if (result.length >= 50) break;
+    }
+    return result;
+  }, [filteredTracks, removedTrackKeys]);
 
   // Selected Playlists and debounced versions to prevent too many re-renders
   const [selectedMyPlaylists, setSelectedMyPlaylists] = useState<number[]>([]);
@@ -491,26 +510,68 @@ export default function MergePlaylistsContent() {
         {/* Combined Tracks - Show after Friend Playlists on mobile */}
          <Card className="flex-1 min-w-[300px] w-full lg:w-1/3 order-3 lg:order-2 overflow-hidden h-[400px] sm:h-[600px]">
           <CardHeader>
-            <CardTitle className="text-lg sm:text-xl">Combined Tracks</CardTitle>
+            <div className="flex flex-col gap-3">
+              <CardTitle className="text-lg sm:text-xl">Combined Tracks</CardTitle>
+              {(excludedArtists.length > 0 || removedTrackKeys.size > 0) && (
+                <div className="flex flex-wrap items-center gap-2">
+                  {removedTrackKeys.size > 0 && (
+                    <button
+                      type="button"
+                      className={filterBadgeClass}
+                      aria-label="Restore removed tracks"
+                      title="Restore removed tracks"
+                      onClick={() => setRemovedTrackKeys(new Set())}
+                    >
+                      <span className="truncate max-w-[16ch]">{removedTrackKeys.size} {removedTrackKeys.size === 1 ? 'track' : 'tracks'}</span>
+                      <span aria-hidden="true" className="text-white/80">×</span>
+                    </button>
+                  )}
+                  {excludedArtists.map((name) => (
+                    <button
+                      key={name}
+                      type="button"
+                      className={filterBadgeClass}
+                      aria-label={`Remove ${name} from excluded artists`}
+                      title="Remove filter"
+                      onClick={() => setExcludedArtists(prev => prev.filter(n => n !== name))}
+                    >
+                      <span className="truncate max-w-[16ch]">{name}</span>
+                      <span aria-hidden="true" className="text-white/80">×</span>
+                    </button>
+                  ))}
+                  <Button variant="ghost" size="sm" onClick={() => setExcludedArtists([])} aria-label="Clear filters">
+                    Clear Filters
+                  </Button>
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="p-0 -ml-4">
             {useMemo(() => {
               if (isLoadingCombinedTracks) return <TrackTableSkeleton />;
               return (
                 <TrackTable
-                  tracks={top50CombinedTracks}
+                  tracks={filteredAndTrimmedTracks}
                   isSpotify={true}
                   showTrackCount={true}
-                  totalTracks={combinedTracks.length}
+                  totalTracks={filteredTracks.length}
+                  onRemoveTrack={(track, key) => {
+                    setRemovedTrackKeys(prev => new Set(prev).add(key));
+                  }}
+                  scrollClassName="h-[320px] sm:h-[380px] md:h-[420px] overflow-y-auto overflow-x-hidden pr-2"
+                  onBlockArtist={(name) => {
+                    if (!name) return;
+                    setExcludedArtists(prev => Array.from(new Set([...prev, name])));
+                  }}
                   emptyLabel={
                     <div className="text-center">
                       <p className="text-muted-foreground mb-2">No tracks found.</p>
-                      <p className="text-sm text-muted-foreground">Select playlists from you and your friends to see combined tracks here.</p>
+                      <p className="text-sm text-muted-foreground">Select playlists from you and your friends, then filter or remove tracks to curate your final list.</p>
                     </div>
                   }
                 />
               );
-            }, [isLoadingCombinedTracks, top50CombinedTracks, combinedTracks.length])}
+            }, [isLoadingCombinedTracks, filteredAndTrimmedTracks, filteredTracks.length])}
           </CardContent>
         </Card>
       </div>

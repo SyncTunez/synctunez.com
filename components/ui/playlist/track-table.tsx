@@ -14,6 +14,8 @@ import { IconBrandSpotify } from "@tabler/icons-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { MusicTrack } from '@/lib/api/schemas';
 import { tr } from 'zod/v4/locales';
+import { Button } from "@/components/ui/button";
+import { IconTrash, IconBan } from "@tabler/icons-react";
 
 // Helper to format ms → mm:ss
 function formatDuration(ms: number): string {
@@ -30,6 +32,9 @@ export interface TrackTableProps {
     emptyLabel?: React.ReactNode;
     showTrackCount?: boolean;
     totalTracks?: number;
+    onRemoveTrack?: (track: MusicTrack, key: string) => void;
+    scrollClassName?: string; // controls the scroll container height/behavior
+    onBlockArtist?: (artistName: string) => void;
 }
 
 export const TrackTable: React.FC<TrackTableProps> = ({
@@ -44,6 +49,9 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                                                           ),
                                                           showTrackCount = false,
                                                           totalTracks,
+                                                          onRemoveTrack,
+                                                          scrollClassName,
+                                                           onBlockArtist,
                                                       }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [containerWidth, setContainerWidth] = useState<number>(0);
@@ -101,9 +109,15 @@ export const TrackTable: React.FC<TrackTableProps> = ({
         </colgroup>
     );
 
+    const buildTrackKey = (track: MusicTrack): string => {
+        const idPart = `${track.spotifyId || 'no-spotify'}|${track.youtubeId || 'no-youtube'}`;
+        const metaPart = `${track.title}|${(track.artists || []).join(',')}`;
+        return `${idPart}|${metaPart}`;
+    };
+
     return (
         <div ref={containerRef} className={className}>
-            <div className="h-[450px] overflow-y-auto overflow-x-hidden pr-2"> {/* Reduced from pr-4 to pr-2 */}
+            <div className={scrollClassName || "h-[450px] overflow-y-auto overflow-x-hidden pr-2"}> {/* Reduced from pr-4 to pr-2 */}
                 <Table style={tableStyle}>
                     {colGroup}
                     <TableHeader className="sticky top-0 z-20">
@@ -116,9 +130,8 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {tracks.map((track: any, idx: number) => {
-                            // Create a unique key combining multiple identifiers to avoid duplicates
-                            const uniqueKey = `${track.spotifyId || 'no-spotify'}_${track.youtubeId || 'no-youtube'}_${track.title}_${track.artists.join('_')}_${idx}`;
+                        {tracks.map((track: any) => {
+                            const uniqueKey = buildTrackKey(track);
                             
                             return (
                                 <TableRow key={uniqueKey} className="group">
@@ -136,13 +149,52 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                                         </TableCell>
                                     )}
                                     <TableCell className="p-2 truncate">
-                                        <div className="font-medium truncate">{truncateWords(track.title, 6)}</div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="font-medium truncate flex-1 min-w-0">{truncateWords(track.title, 6)}</div>
+                                            {onRemoveTrack && (
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="hover:bg-accent hover:[&>svg]:text-white flex-shrink-0"
+                                                            aria-label={`Remove ${track.title} from list`}
+                                                            onClick={() => onRemoveTrack(track, uniqueKey)}
+                                                        >
+                                                            <IconTrash className="w-4 h-4 text-muted-foreground" />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent side="left" align="center">Remove Track</TooltipContent>
+                                                </Tooltip>
+                                            )}
+                                        </div>
                                     </TableCell>
                                     {showArtist && (
                                         <TableCell className="p-2 text-muted-foreground">
-                                            <div className="truncate">
-                                                {track.artists.slice(0, 2).join(', ')}
-                                                {track.artists.length > 2 && ` +${track.artists.length - 2} more`}
+                                            <div className="flex items-center gap-2">
+                                                <div className="truncate flex-1 min-w-0">
+                                                    {track.artists.slice(0, 2).join(', ')}
+                                                    {track.artists.length > 2 && ` +${track.artists.length - 2} more`}
+                                                </div>
+                                                {onBlockArtist && (
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="hover:bg-accent hover:[&>svg]:text-white flex-shrink-0"
+                                                                aria-label={`Block ${track.artists?.[0] ?? 'artist'}`}
+                                                                onClick={() => {
+                                                                    const primary = (track.artists && track.artists.length > 0) ? track.artists[0] : undefined;
+                                                                    if (primary) onBlockArtist(primary);
+                                                                }}
+                                                            >
+                                                                <IconBan className="w-4 h-4 text-muted-foreground" />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent side="left" align="center">Remove Artist</TooltipContent>
+                                                    </Tooltip>
+                                                )}
                                             </div>
                                         </TableCell>
                                     )}
