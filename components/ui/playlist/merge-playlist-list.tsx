@@ -30,6 +30,12 @@ export const MergePlaylistList: React.FC<MergePlaylistListProps> = ({
   loading = false,
   filterButton,
 }) => {
+  // Count how many of the currently visible playlists are selected
+  const selectedCountInView = playlists.reduce((count, playlist) => (
+    selectedPlaylistIds.includes(playlist.id) ? count + 1 : count
+  ), 0);
+  const visibleIds = playlists.map((p) => p.id);
+  const selectAllId = React.useId();
   // Get service icon based on the 'from' field
   const getServiceIcon = (service: string) => {
     switch (service.toLowerCase()) {
@@ -63,24 +69,33 @@ export const MergePlaylistList: React.FC<MergePlaylistListProps> = ({
               </div>
             )}
             {playlists.length > 0 && (
-              <Checkbox
-                checked={selectedPlaylistIds.length === playlists.length && playlists.length > 0}
-                indeterminate={selectedPlaylistIds.length > 0 && selectedPlaylistIds.length < playlists.length}
-                onChange={(checked) => {
-                  if (checked) {
-                    onPlaylistSelect(playlists.map(p => p.id));
-                  } else {
-                    onPlaylistSelect([]);
-                  }
-                }}
-                aria-label="Select all playlists"
-                className="flex-shrink-0"
-              />
-            )}
-            {selectedPlaylistIds.length > 0 && (
-              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                {selectedPlaylistIds.length} selected
-              </span>
+              <div className="flex items-center gap-2">
+                <label htmlFor={selectAllId} className={`flex items-center gap-2 cursor-pointer ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                  <Checkbox
+                    id={selectAllId}
+                    checked={selectedCountInView === playlists.length && playlists.length > 0}
+                    indeterminate={selectedCountInView > 0 && selectedCountInView < playlists.length}
+                    disabled={loading}
+                    onChange={(e) => {
+                      const isChecked = e.currentTarget.checked;
+                      if (isChecked) {
+                        const union = Array.from(new Set([...selectedPlaylistIds, ...visibleIds]));
+                        onPlaylistSelect(union);
+                      } else {
+                        const removed = selectedPlaylistIds.filter((id) => !visibleIds.includes(id));
+                        onPlaylistSelect(removed);
+                      }
+                    }}
+                    aria-label="Select all playlists"
+                  />
+                  {selectedCountInView === 0 && (
+                    <span className="text-xs text-muted-foreground select-none">Select all</span>
+                  )}
+                </label>
+                {selectedCountInView > 0 && (
+                  <span className="text-xs text-muted-foreground">{selectedCountInView} selected</span>
+                )}
+              </div>
             )}
           </div>
         </CardTitle>

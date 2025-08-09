@@ -18,6 +18,7 @@ interface FriendSelectionProps {
   emptyMessage?: string
   className?: string
   forceFullHeight?: boolean
+  friends?: Array<Friend>
 }
 
 // FriendSelectionSkeleton component to prevent layout shifts
@@ -104,29 +105,43 @@ export default function FriendSelection({
   title = "Collaborators",
   emptyMessage = "No friends found",
   className,
-  forceFullHeight = false 
+  forceFullHeight = false,
+  friends: friendsProp,
 }: FriendSelectionProps) {
   const userContext = useContext(UserContext) as UserContextType
-  const [friends, setFriends] = useState<Array<Friend>>([])
+  const [friendsState, setFriendsState] = useState<Array<Friend>>([])
   const [loading, setLoading] = useState(true)
 
   // Fetch friends - using regular fetch instead of SSE
   useEffect(() => {
+    if (friendsProp) {
+      setLoading(false);
+      return;
+    }
     const loadFriends = async () => {
       try {
         const res = await fetch(buildUrl(`account/friends`))
         const json = await res.json()
         const parsed = FriendSchema.array().safeParse(json)
         if (parsed.success) {
-          setFriends(parsed.data)
+          setFriendsState(parsed.data)
         }
       } finally {
         setLoading(false)
       }
     };
-  
     loadFriends();
-  }, []);
+  }, [friendsProp]);
+
+  // Prune selected collaborators if they were removed from the friends list
+  useEffect(() => {
+    const effectiveFriends = friendsProp ?? friendsState;
+    const friendUsernames = new Set(effectiveFriends.map(f => f.username));
+    const pruned = selectedFriends.filter(u => friendUsernames.has(u));
+    if (pruned.length !== selectedFriends.length) {
+      onFriendSelectionChange(pruned);
+    }
+  }, [friendsProp, friendsState, selectedFriends, onFriendSelectionChange]);
 
   const handleFriendToggle = (username: string, checked: boolean) => {
     if (checked) {
@@ -137,17 +152,19 @@ export default function FriendSelection({
   };
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (selectedFriends.length === friends.length) {
+    const effectiveFriends = friendsProp ?? friendsState;
+    if (selectedFriends.length === effectiveFriends.length) {
       // If all are selected, deselect all
       onFriendSelectionChange([]);
     } else {
       // Select all
-      onFriendSelectionChange(friends.map(friend => friend.username));
+      onFriendSelectionChange(effectiveFriends.map(friend => friend.username));
     }
   };
 
-  const allSelected = friends.length > 0 && selectedFriends.length === friends.length;
-  const someSelected = selectedFriends.length > 0 && selectedFriends.length < friends.length;
+  const effectiveFriends = friendsProp ?? friendsState;
+  const allSelected = effectiveFriends.length > 0 && selectedFriends.length === effectiveFriends.length;
+  const someSelected = selectedFriends.length > 0 && selectedFriends.length < effectiveFriends.length;
 
   // Define class for container height constraints - same as FriendsCard
   const cardClassName = forceFullHeight
@@ -159,7 +176,7 @@ export default function FriendSelection({
       <CardHeader>
         <CardTitle className="text-lg flex items-center justify-between">
           {title}
-          {friends.length > 0 && (
+          {effectiveFriends.length > 0 && (
             <div className="flex items-center gap-2">
               <Checkbox
                 checked={allSelected}
@@ -169,7 +186,7 @@ export default function FriendSelection({
                 className="flex-shrink-0"
               />
               <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                {selectedFriends.length} of {friends.length} selected
+                {selectedFriends.length} of {effectiveFriends.length} selected
               </span>
             </div>
           )}
@@ -188,7 +205,7 @@ export default function FriendSelection({
               </div>
             ))}
           </div>
-        ) : friends.length === 0 ? (
+        ) : effectiveFriends.length === 0 ? (
           <div className="flex items-center justify-center h-32 text-muted-foreground px-4">
             <div className="text-center">
               <IconUser className="w-8 h-8 mx-auto mb-2" />
@@ -198,7 +215,7 @@ export default function FriendSelection({
         ) : (
           <ScrollArea className="h-full min-h-0 max-h-[450px] sm:max-h-[550px]">
             <div className="divide-y min-w-0">
-              {friends.map((friend) => (
+              {effectiveFriends.map((friend) => (
                 <FriendRow
                   key={friend.username}
                   friend={friend}

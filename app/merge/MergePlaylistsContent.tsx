@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useLiveResourceJson } from "@/hooks/useLiveResource";
 import { MusicPlaylistImportResult, MusicPlaylistMeta } from "@/lib/api/types";
 import { buildUrl } from "@/lib/api/apiClient";
-import { MusicPlaylistImportFriendResult, MusicPlaylistImportFriendResultSchema, MusicPlaylistImportResultSchema, MusicPlaylistMetaSchema, MusicTrack, MusicTrackSchema, SpotifyPlaylist, SpotifyPlaylistSchema } from "@/lib/api/schemas";
+import { MusicPlaylistImportFriendResult, MusicPlaylistImportFriendResultSchema, MusicPlaylistImportResultSchema, MusicPlaylistMetaSchema, MusicTrack, MusicTrackSchema, SpotifyPlaylist, SpotifyPlaylistSchema, Friend } from "@/lib/api/schemas";
 import { useServerEvents } from "@/lib/api/ServerEvents";
 import FriendSelection from "@/components/ui/friend-selection";
 import {
@@ -45,6 +45,7 @@ export default function MergePlaylistsContent() {
 
   const [importedPlaylists, setImportedPlaylists] = useState<Array<MusicPlaylistImportResult>>([]);
   const [friendsPlaylists, setFriendsPlaylists] = useState<Array<MusicPlaylistImportResult>>([]);
+  const [friendsList, setFriendsList] = useState<Array<Friend>>([]);
   const [isLoadingImportedPlaylists, setIsLoadingImportedPlaylists] = useState(true);
   const [isLoadingFriendsPlaylists, setIsLoadingFriendsPlaylists] = useState(true);
   
@@ -354,7 +355,7 @@ export default function MergePlaylistsContent() {
         {/* Friends and Collaborators - Stack vertically on mobile, side by side on desktop */}
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 w-full lg:flex-1">
           <div className="flex-1 min-w-[300px] flex items-stretch w-full h-[250px] sm:h-[300px] overflow-hidden">
-            <FriendsCard forceFullHeight={false} />
+            <FriendsCard forceFullHeight={false} onFriendsChange={setFriendsList} />
           </div>
           
           <div className="flex-1 min-w-[300px] flex items-stretch w-full max-h-[250px] sm:max-h-[300px] overflow-hidden">
@@ -365,6 +366,7 @@ export default function MergePlaylistsContent() {
               emptyMessage="No friends found"
               className="w-full"
               forceFullHeight={false}
+              friends={friendsList}
             />  
           </div>
         </div>
@@ -380,10 +382,12 @@ export default function MergePlaylistsContent() {
                 setSelectedMyPlaylists([]);
                 return;
               }
-              if (playlistIds.length === importedPlaylists.length) {
+              // If multiple ids are provided (e.g., select all), set exactly to that list
+              if (playlistIds.length > 1) {
                 setSelectedMyPlaylists(playlistIds);
                 return;
               }
+              // Toggle single clicked id
               const clickedId = playlistIds[0];
               setSelectedMyPlaylists((prev) =>
                 prev.includes(clickedId)
@@ -411,10 +415,12 @@ export default function MergePlaylistsContent() {
                 setSelectedFriendPlaylists([]);
                 return;
               }
-              if (playlistIds.length === friendsPlaylists.length) {
+              // If multiple ids are provided (e.g., select all in current view), set exactly to that list
+              if (playlistIds.length > 1) {
                 setSelectedFriendPlaylists(playlistIds);
                 return;
               }
+              // Toggle single clicked id
               const clickedId = playlistIds[0];
               setSelectedFriendPlaylists((prev) =>
                 prev.includes(clickedId)

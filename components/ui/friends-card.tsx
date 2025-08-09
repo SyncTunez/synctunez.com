@@ -75,7 +75,7 @@ type FriendEntry = {
   profileUrl: string;
 };
 
-export default function FriendsCard({ forceFullHeight = false }: { forceFullHeight?: boolean }) {
+export default function FriendsCard({ forceFullHeight = false, onFriendsChange }: { forceFullHeight?: boolean, onFriendsChange?: (friends: Array<Friend>) => void }) {
   const userContext = useContext(UserContext) as UserContextType
 
   const [friends, setFriends] = useState<Array<Friend>>([])
@@ -200,6 +200,7 @@ export default function FriendsCard({ forceFullHeight = false }: { forceFullHeig
         
         if (parsed.success) {
           setFriends(parsed.data)
+          onFriendsChange?.(parsed.data)
           addBreadcrumb('Friends list loaded successfully', 'friends', {
             friendCount: parsed.data.length,
             userId: userContext?.userAccount?.username
@@ -354,6 +355,11 @@ console.log("handleFriendAction", values);
           const friendsParsed = FriendSchema.array().safeParse(friendsJson);
           if (friendsParsed.success) {
             setFriends(friendsParsed.data);
+            onFriendsChange?.(friendsParsed.data)
+            // Notify other components (e.g., Collaborators) that friends changed
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('friends:updated'));
+            }
           } else {
             captureComponentError(
               `Failed to parse refreshed friends data: ${friendsParsed.error.message}`,
@@ -481,6 +487,11 @@ console.log("handleFriendAction", values);
           const friendsParsed = FriendSchema.array().safeParse(friendsJson);
           if (friendsParsed.success) {
             setFriends(friendsParsed.data);
+            onFriendsChange?.(friendsParsed.data)
+            // Notify other components that friends changed
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('friends:updated'));
+            }
             console.log("Friends list updated:", friendsParsed.data);
           } else {
             console.error("Failed to parse refreshed friends data:", friendsParsed.error);
@@ -549,6 +560,11 @@ console.log("handleFriendAction", values);
           const friendsParsed = FriendSchema.array().safeParse(friendsJson);
           if (friendsParsed.success) {
             setFriends(friendsParsed.data);
+            onFriendsChange?.(friendsParsed.data)
+            // Notify other components that friends changed
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('friends:updated'));
+            }
             console.log("Friends list updated:", friendsParsed.data);
           } else {
             console.error("Failed to parse refreshed friends data:", friendsParsed.error);
