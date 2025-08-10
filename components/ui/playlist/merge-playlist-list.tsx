@@ -88,13 +88,10 @@ export const MergePlaylistList: React.FC<MergePlaylistListProps> = ({
                     }}
                     aria-label="Select all playlists"
                   />
-                  {selectedCountInView === 0 && (
-                    <span className="text-xs text-muted-foreground select-none">Select all</span>
-                  )}
+                  <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                    {selectedCountInView} of {playlists.length} selected
+                  </span>
                 </label>
-                {selectedCountInView > 0 && (
-                  <span className="text-xs text-muted-foreground">{selectedCountInView} selected</span>
-                )}
               </div>
             )}
           </div>

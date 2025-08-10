@@ -72,7 +72,8 @@ export default function MergePlaylistsContent() {
   const friendsPlaylistsMetaFiltered = useMemo(() => {
     const metas = friendsPlaylists.map((playlist) => playlist.meta);
     if (!filteredFriend) return metas;
-    return metas.filter((playlist) => playlist.owner === filteredFriend);
+    const target = filteredFriend.toLowerCase();
+    return metas.filter((playlist) => (playlist.owner || '').toLowerCase() === target);
   }, [friendsPlaylists, filteredFriend]);
 
   const filteredTracks = useMemo(() => {
