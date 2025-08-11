@@ -430,10 +430,10 @@ export default function MergePlaylistsContent() {
         </div>
       </div>
     
-      {/* Main content row - Stack vertically on mobile */}
-      <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 min-h-[400px] sm:min-h-[600px]">
+      {/* Main content row - Single column on small screens, 3 columns on large */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 min-h-[400px] sm:min-h-[600px]">
         {/* My Playlists */}
-        <div className="w-full lg:w-1/3 lg:max-w-[400px] order-1 lg:order-1 h-[400px] sm:h-[600px]">
+        <div className="w-full lg:order-1 h-[400px] sm:h-[600px]">
           {useMemo(() => {
             const handleSelectMyPlaylists = (playlistIds: number[]) => {
               if (playlistIds.length === 0) {
@@ -466,7 +466,7 @@ export default function MergePlaylistsContent() {
         </div>
         
         {/* Friend Playlists - Show before Combined Tracks on mobile */}
-        <div className="w-full lg:w-1/3 lg:max-w-[400px] order-2 lg:order-3 h-[400px] sm:h-[600px]">
+        <div className="w-full order-2 lg:order-3 h-[400px] sm:h-[600px]">
           {useMemo(() => {
             const handleSelectFriendPlaylists = (playlistIds: number[]) => {
               if (playlistIds.length === 0) {
@@ -547,7 +547,7 @@ export default function MergePlaylistsContent() {
         </div>
         
         {/* Combined Tracks - Show after Friend Playlists on mobile */}
-         <Card className="flex-1 min-w-[300px] w-full lg:w-1/3 order-3 lg:order-2 overflow-hidden h-[400px] sm:h-[600px]">
+         <Card className="w-full order-3 lg:order-2 overflow-hidden h-[400px] sm:h-[600px]">
           <CardHeader>
             <div className="flex flex-col gap-3">
               <CardTitle className="text-lg sm:text-xl">Combined Tracks</CardTitle>
