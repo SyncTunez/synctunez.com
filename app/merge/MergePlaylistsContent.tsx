@@ -12,6 +12,7 @@ import { MusicPlaylistImportResult, MusicPlaylistMeta } from "@/lib/api/types";
 import { buildUrl } from "@/lib/api/apiClient";
 import { MusicPlaylistImportFriendResult, MusicPlaylistImportFriendResultSchema, MusicPlaylistImportResultSchema, MusicPlaylistMetaSchema, MusicTrack, MusicTrackSchema, SpotifyPlaylist, SpotifyPlaylistSchema, Friend } from "@/lib/api/schemas";
 import { useServerEvents } from "@/lib/api/ServerEvents";
+import { buildStableTrackKey } from "@/lib/utils";
 import FriendSelection from "@/components/ui/friend-selection";
 import {
   DropdownMenu,
@@ -88,7 +89,7 @@ export default function MergePlaylistsContent() {
   const filteredAndTrimmedTracks = useMemo(() => {
     const result: Array<MusicTrack> = [];
     for (const t of filteredTracks) {
-      const key = `${t.spotifyId || 'no-spotify'}|${t.youtubeId || 'no-youtube'}|${t.title}|${(t.artists || []).join(',')}`;
+      const key = buildStableTrackKey(t);
       if (!removedTrackKeys.has(key)) {
         result.push(t);
       }
@@ -101,7 +102,7 @@ export default function MergePlaylistsContent() {
   const filteredRemainingCount = useMemo(() => {
     let count = 0;
     for (const t of filteredTracks) {
-      const key = `${t.spotifyId || 'no-spotify'}|${t.youtubeId || 'no-youtube'}|${t.title}|${(t.artists || []).join(',')}`;
+      const key = buildStableTrackKey(t);
       if (!removedTrackKeys.has(key)) count++;
     }
     return count;
@@ -141,7 +142,7 @@ export default function MergePlaylistsContent() {
       // Build list of removed tracks as md5(title|artist|album)
       const removedHashes: string[] = [];
       for (const t of combinedTracks) {
-        const key = `${t.spotifyId || 'no-spotify'}|${t.youtubeId || 'no-youtube'}|${t.title}|${(t.artists || []).join(',')}`;
+        const key = buildStableTrackKey(t);
         if (removedTrackKeys.has(key)) {
           const base = `${t.title}|${(t.artists || [""])[0]}|${t.album}`;
           removedHashes.push(md5(base));
