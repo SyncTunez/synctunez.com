@@ -9,6 +9,7 @@ import PageContainer from "@/components/layout/page-container";
 import { buildUrl, authorized } from '@/lib/api/apiClient';
 import type { SpotifyAccount } from '@/lib/api/types';
 import { MusicPlaylistImportResult, MusicPlaylistImportResultSchema, MusicTrackSchema, MusicTrack, MusicPlaylistMeta, SpotifyAccountSchema } from '@/lib/api/schemas';
+import { mergeAndDedupeTracks, dedupeTracks } from '@/lib/utils';
 import { useServerEvents } from '@/lib/api/ServerEvents';
 import { ServiceCard, serviceIcons } from "@/components/ui/service-card";
 import { MobileNavigationMenu } from "@/components/ui/mobile-navigation-menu";
@@ -110,7 +111,7 @@ export default function AccountPage() {
                     'ImportedPlaylistTracks',
                     MusicTrackSchema.array(),
                     (data) => {
-                        setTracks((oldData) => [...oldData, ...data]);
+                        setTracks((oldData) => mergeAndDedupeTracks(oldData, data));
                         setIsLoadingTracks(false);
                     }
                 );

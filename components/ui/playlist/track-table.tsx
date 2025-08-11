@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { IconBrandSpotify } from "@tabler/icons-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { MusicTrack } from '@/lib/api/schemas';
+import { buildStableTrackKey } from '@/lib/utils';
 import { tr } from 'zod/v4/locales';
 import { Button } from "@/components/ui/button";
 import { IconTrash, IconBan } from "@tabler/icons-react";
@@ -134,11 +135,7 @@ export const TrackTable: React.FC<TrackTableProps> = ({
         </colgroup>
     );
 
-    const buildTrackKey = (track: MusicTrack): string => {
-        const idPart = `${track.spotifyId || 'no-spotify'}|${track.youtubeId || 'no-youtube'}`;
-        const metaPart = `${track.title}|${(track.artists || []).join(',')}`;
-        return `${idPart}|${metaPart}`;
-    };
+    // Use a stable key that matches deduplication logic
 
     return (
         <div ref={containerRef} className={className}>
@@ -160,7 +157,7 @@ export const TrackTable: React.FC<TrackTableProps> = ({
                     </TableHeader>
                     <TableBody>
                         {tracks.map((track: any) => {
-                            const uniqueKey = buildTrackKey(track);
+                            const uniqueKey = buildStableTrackKey(track as MusicTrack);
                             
                             return (
                                 <TableRow key={uniqueKey} className="group">

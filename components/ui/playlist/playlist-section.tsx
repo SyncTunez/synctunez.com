@@ -38,6 +38,7 @@ import { useRef, useEffect } from 'react';
 import {Table, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import { MusicPlaylistImportResultSchema, MusicPlaylistMeta, MusicTrack, MusicTrackSchema, SpotifyPlaylistSchema, SpotifyTrackSchema } from '@/lib/api/schemas';
 import { useServerEvents } from "@/lib/api/ServerEvents";
+import { mergeAndDedupeTracks } from '@/lib/utils';
 
 interface PlaylistSectionProps {
     mainPlaylists: MusicPlaylistMeta[];
@@ -410,7 +411,7 @@ export function PlaylistSection({
                     MusicTrackSchema.array(), 
                     (data) => {
                         console.log('Received Spotify tracks:', data);
-                        setSpotifyTracks(oldData => [...oldData, ...data]);
+                        setSpotifyTracks(oldData => mergeAndDedupeTracks(oldData, data));
                         setIsLoadingSpotifyTracks(false);
                     }
                 );

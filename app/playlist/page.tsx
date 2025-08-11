@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { mergeAndDedupeTracks, dedupeTracks } from '@/lib/utils';
 
 export default function PlaylistPage() {
   const searchParams = useSearchParams();
@@ -69,7 +70,7 @@ export default function PlaylistPage() {
             if(data.length > 0) {
               const found = data[0];
               setSelectedMeta(found.meta);
-              setTracks(found.tracks);
+              setTracks(dedupeTracks(found.tracks));
             } else {
               setSelectedMeta(null);
             }
