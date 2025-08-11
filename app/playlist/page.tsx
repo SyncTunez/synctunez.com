@@ -30,6 +30,7 @@ export default function PlaylistPage() {
   const [selectedMeta, setSelectedMeta] = useState<MusicPlaylistMeta | null>(null);
   const [loadingMeta, setLoadingMeta] = useState<boolean>(false);
   const hasShownCreatedToast = useRef(false);
+  const [visibleCount, setVisibleCount] = useState<number>(50);
 
   useEffect(() => {
     if (createdParam === 'true' && !hasShownCreatedToast.current) {
@@ -47,38 +48,6 @@ export default function PlaylistPage() {
     }
   }, [createdParam, router, searchParams]);
 
-  useEffect(() => {
-    let eventSource: EventSource | null = null;
-
-    async function loadTracks() {
-      // Reset
-      setTracks([]);
-      if (playlistId == null) {
-        setIsLoading(false);
-        return;
-      }
-
-      setIsLoading(true);
-      try {
-        eventSource = await useServerEvents<Array<MusicTrack>>(
-          buildUrl(`music/playlists/tracks?id=${playlistId}`),
-          "ImportedPlaylistTracks",
-          MusicTrackSchema.array(),
-          (data) => {
-            setTracks((prev) => [...prev, ...data]);
-            setIsLoading(false);
-          }
-        );
-      } catch (err) {
-        setIsLoading(false);
-      }
-    }
-
-    loadTracks();
-    return () => {
-      eventSource?.close();
-    };
-  }, []);
 
   // Load metadata for imported playlist ids by listening to imported playlists and selecting the matching id
   useEffect(() => {
@@ -100,6 +69,7 @@ export default function PlaylistPage() {
             if(data.length > 0) {
               const found = data[0];
               setSelectedMeta(found.meta);
+              setTracks(found.tracks);
             } else {
               setSelectedMeta(null);
             }
@@ -115,6 +85,11 @@ export default function PlaylistPage() {
       eventSource?.close();
     };
   }, [playlistId]);
+
+  // Clamp or reset visible count when track list size changes
+  useEffect(() => {
+    setVisibleCount((prev) => Math.min(Math.max(50, prev), tracks.length));
+  }, [tracks.length]);
 
   const invalidId = idParam != null && Number.isNaN(Number(idParam));
 
@@ -219,8 +194,14 @@ export default function PlaylistPage() {
               <TrackTableSkeleton />
             ) : (
               <TrackTable
-                tracks={tracks}
+                tracks={tracks.slice(0, visibleCount)}
                 isSpotify={true}
+                showTrackCount={true}
+                totalTracks={tracks.length}
+                scrollClassName="h-[320px] sm:h-[380px] md:h-[420px] overflow-y-auto overflow-x-hidden pr-2"
+                onReachEnd={() => {
+                  setVisibleCount((prev) => Math.min(prev + 50, tracks.length));
+                }}
                 emptyLabel={
                   playlistId == null ? "No playlist selected." : "No tracks found."
                 }
