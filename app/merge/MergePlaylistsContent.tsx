@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { MergePlaylistList } from "@/components/ui/playlist/merge-playlist-list";
 import { TrackTable, TrackTableSkeleton } from "@/components/ui/playlist/track-table";
 import FriendsCard from "@/components/ui/friends-card";
@@ -614,7 +614,12 @@ export default function MergePlaylistsContent() {
                 />
               );
             }, [isLoadingCombinedTracks, filteredAndTrimmedTracks, filteredTracks.length])}
-          </CardContent>
+            </CardContent>
+           <CardFooter className="border-t justify-center">
+             <span className="text-xs text-muted-foreground">
+               {filteredRemainingCount} {filteredRemainingCount === 1 ? 'track' : 'tracks'}
+             </span>
+           </CardFooter>
         </Card>
       </div>
     </div>
