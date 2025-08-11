@@ -66,7 +66,7 @@ export const PlaylistRow: React.FC<PlaylistRowProps> = ({
                 </div>
             )}
 
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden min-w-0">
                 <div className={cn("font-medium text-sm truncate", titleClassName)} title={title}>{title}</div>
                 {subtitle && (
                     <div className={cn("text-xs text-muted-foreground truncate", subtitleClassName)} title={subtitle}>{subtitle}</div>
